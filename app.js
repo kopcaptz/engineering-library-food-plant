@@ -4,12 +4,19 @@
 (function (root) {
   'use strict';
 
+  const APP_VERSION = root.APP_VERSION = {
+    edition: 'v15.2',
+    date: '2026-10-30',
+    core: 'v10.0'
+  };
+
   const STORAGE_KEY_LANG = 'eng_lib_v9_lang';
   const STORAGE_KEY_SEC_TERMS = 'eng_lib_v9_sec_terms';
   const STORAGE_KEY_TRAINER = 'eng_lib_v9_trainer_progress';
   const STORAGE_KEY_LOGS = 'eng_lib_v9_shift_drafts';
   const STORAGE_KEY_LAST_PLACE = 'eng_lib_v13_last_place';
   const STORAGE_KEY_FIRST_VISIT = 'eng_lib_v13_first_visit_done';
+  const STORAGE_KEY_GUIDE_DEPTH = 'eng_lib_v15_guide_depth';
 
   const prefersReducedMotion = typeof window !== 'undefined' &&
     window.matchMedia &&
@@ -69,6 +76,7 @@
   const AppState = {
     lang: getInitialLang(),
     currency: '$',
+    guideDepth: loadJson(STORAGE_KEY_GUIDE_DEPTH, 'simple') === 'detailed' ? 'detailed' : 'simple',
     showSecTerms: loadJson(STORAGE_KEY_SEC_TERMS, true),
     firstVisitDismissed: Boolean(loadJson(STORAGE_KEY_FIRST_VISIT, false)),
     activeView: 'home',
@@ -84,6 +92,25 @@
     shiftLogDrafts: loadJson(STORAGE_KEY_LOGS, {})
   };
   root.AppState = AppState;
+
+  root.setGuideDepth = function (depth) {
+    const nextDepth = depth === 'detailed' ? 'detailed' : 'simple';
+    AppState.guideDepth = nextDepth;
+    saveJson(STORAGE_KEY_GUIDE_DEPTH, nextDepth);
+    if (typeof document !== 'undefined') {
+      document.querySelectorAll('article.system-article').forEach((art) => {
+        art.setAttribute('data-guide-depth', nextDepth);
+      });
+      document.querySelectorAll('details.guide-depth-details').forEach((det) => {
+        det.open = nextDepth === 'detailed';
+      });
+      document.querySelectorAll('.guide-depth-btn').forEach((btn) => {
+        const btnDepth = btn.getAttribute('data-depth');
+        btn.setAttribute('aria-pressed', btnDepth === nextDepth ? 'true' : 'false');
+        btn.classList.toggle('active', btnDepth === nextDepth);
+      });
+    }
+  };
 
   function updateStorageFallbackBanner() {
     const banner = typeof document !== 'undefined' && document.getElementById('storage-fallback-banner');
@@ -425,7 +452,13 @@
     }
 
     // 3. Compute 2-minute example savings using EconomicsEngine.calcModule2Economics
-    const activeCurr = (AppState.currency === '₪' || (isHe && !localStorage.getItem('eng_lib_v12_currency'))) ? '₪' : (AppState.currency || '$');
+    let storedCurr = null;
+    try {
+      if (storageAvailable && typeof localStorage !== 'undefined') {
+        storedCurr = localStorage.getItem('eng_lib_v12_currency');
+      }
+    } catch (_) {}
+    const activeCurr = (AppState.currency === '₪' || (isHe && !storedCurr)) ? '₪' : (AppState.currency || storedCurr || '$');
     const exampleTariff = activeCurr === '₪' ? 0.50 : 0.12;
     const exampleHours = 6000;
     const deltaKw = 128 - 98; // 30 kW
@@ -452,6 +485,10 @@
       return `${n} ${many}`;
     };
 
+    const lMap = root.LEARNING_MAP || {};
+    const learnPrefix = (lMap.ui && lMap.ui.cardLearnPrefix && (lMap.ui.cardLearnPrefix[lang] || lMap.ui.cardLearnPrefix.ru)) || (isHe ? 'תבינו:' : 'Поймёте:');
+    const prereqPrefix = (lMap.ui && lMap.ui.cardPrereqPrefix && (lMap.ui.cardPrereqPrefix[lang] || lMap.ui.cardPrereqPrefix.ru)) || (isHe ? 'נדרש מראש:' : 'Заранее:');
+
     const sysCardsHtml = systems.map((sys) => {
       const vMeta = getSystemVisualMeta(sys.id);
       const caseCount = allCases.filter((c) => c.systemId === sys.id).length || (sys.caseIds ? sys.caseIds.length : 2);
@@ -462,6 +499,9 @@
       const countLine = isHe
         ? `${caseCount} אירועים · ${calcPart}`
         : `${formatRuCount(caseCount, 'случай', 'случая', 'случаев')} · ${calcPart}`;
+      const topicMeta = (lMap.topics && lMap.topics[sys.id]) || {};
+      const learnTxt = (topicMeta.willUnderstand && (topicMeta.willUnderstand[lang] || topicMeta.willUnderstand.ru)) || '';
+      const prereqTxt = (topicMeta.needFirst && (topicMeta.needFirst[lang] || topicMeta.needFirst.ru)) || '';
       return `
         <a href="#system-${sys.id}" class="home-v13-sys-card" data-sys-card="${sys.id}">
           <span class="home-v13-sys-icon" style="background:${vMeta.bg}; color:${vMeta.fg};">
@@ -469,10 +509,28 @@
           </span>
           <span class="home-v13-sys-title">${vMeta.shortTitle[lang] || vMeta.shortTitle.ru}</span>
           <span class="home-v13-sys-desc">${vMeta.oneLine[lang] || vMeta.oneLine.ru}</span>
+          <div class="home-v13-sys-learn"><strong>${learnPrefix}</strong> ${learnTxt}</div>
+          <div class="home-v13-sys-prereq"><strong>${prereqPrefix}</strong> ${prereqTxt}</div>
           <span class="home-v13-sys-counts">${countLine}</span>
         </a>
       `;
     }).join('');
+
+    const purposeText = (lMap.purpose && (lMap.purpose[lang] || lMap.purpose.ru)) || '';
+    const purposeHeading = (lMap.ui && lMap.ui.purposeHeading && (lMap.ui.purposeHeading[lang] || lMap.ui.purposeHeading.ru)) || (isHe ? 'מהי הספרייה הזו' : 'Что это за библиотека');
+    const routeHeading = (lMap.ui && lMap.ui.routeHeading && (lMap.ui.routeHeading[lang] || lMap.ui.routeHeading.ru)) || (isHe ? 'מאיפה להתחיל' : 'С чего начать');
+    const expLineHtml = (lMap.ui && lMap.ui.experiencedHtml && (lMap.ui.experiencedHtml[lang] || lMap.ui.experiencedHtml.ru)) || '';
+    const routeItemsHtml = ((lMap.route && Array.isArray(lMap.route)) ? lMap.route : []).map((st) => `
+      <li class="home-route-item">
+        <a href="${st.href}" class="home-route-step">
+          <span class="home-route-step-num">${st.n}</span>
+          <span class="home-route-step-body">
+            <strong class="home-route-step-label">${(st.label && (st.label[lang] || st.label.ru)) || ''}</strong>
+            <span class="home-route-step-hint">${(st.hint && (st.hint[lang] || st.hint.ru)) || ''}</span>
+          </span>
+        </a>
+      </li>
+    `).join('');
 
     // 5. Shift tools (6 compact tiles)
     const shiftTools = [
@@ -555,6 +613,17 @@
               <span class="home-v13-door-cta" style="color:#15803d;">${isHe ? 'להתחלת הלימוד ←' : 'Начать учёбу →'}</span>
             </a>
           </div>
+        </section>
+
+        <!-- Назначение библиотеки и маршрут «С чего начать» (v15.2) -->
+        <section class="home-purpose" aria-labelledby="home-purpose-title">
+          <h2 id="home-purpose-title" class="home-purpose-h2">${purposeHeading}</h2>
+          <p class="home-purpose-text">${purposeText}</p>
+          <h3 class="home-route-h3">${routeHeading}</h3>
+          <ol class="home-route">
+            ${routeItemsHtml}
+          </ol>
+          <p class="home-route-experienced">${expLineHtml}</p>
         </section>
 
         <!-- Пример на 2 минуты (Случай 3.1) -->
@@ -1067,18 +1136,47 @@
   let guideTocObserver = null;
   let guideTocScrollHandler = null;
 
+  const GUIDE_BLOCK_TO_STEPS = {
+    summary: [],
+    how: ['principle'],
+    nodes: ['diagram', 'equipment'],
+    iso: ['equipment'],
+    logbook: ['parameters'],
+    relations: ['parameters'],
+    symptoms: ['case'],
+    boundaries: [],
+    formulas: ['calculation'],
+    selfcheck: ['selfcheck'],
+    sources: ['sources']
+  };
+
   root.setActiveGuideTocKey = function (sysId, blockKey) {
     const tocBar = document.getElementById(`guide-toc-${sysId}`);
-    if (!tocBar) return;
-    tocBar.querySelectorAll('.guide-toc-btn').forEach((btn) => {
-      const isMatch = btn.getAttribute('data-toc-key') === blockKey;
-      btn.classList.toggle('active', isMatch);
-      if (isMatch) {
-        btn.setAttribute('aria-current', 'true');
-      } else {
-        btn.removeAttribute('aria-current');
-      }
-    });
+    if (tocBar) {
+      tocBar.querySelectorAll('.guide-toc-btn').forEach((btn) => {
+        const isMatch = btn.getAttribute('data-toc-key') === blockKey;
+        btn.classList.toggle('active', isMatch);
+        if (isMatch) {
+          btn.setAttribute('aria-current', 'true');
+        } else {
+          btn.removeAttribute('aria-current');
+        }
+      });
+    }
+    const stepsNav = document.getElementById(`guide-steps-${sysId}`);
+    if (stepsNav) {
+      const activeStepKeys = GUIDE_BLOCK_TO_STEPS[blockKey] || [];
+      stepsNav.querySelectorAll('li.guide-step').forEach((li) => {
+        const stepKey = li.getAttribute('data-step-key');
+        const isStepActive = activeStepKeys.includes(stepKey);
+        li.classList.toggle('active', isStepActive);
+        if (isStepActive) {
+          li.setAttribute('aria-current', 'step');
+        } else {
+          li.removeAttribute('aria-current');
+        }
+      });
+    }
   };
 
   function setupGuideTocObserver() {
@@ -1256,17 +1354,97 @@
       function renderGuideBlockBodyHtml(key) {
         const gb = guideBlockMap[key];
         if (!gb || !gb.html) return '';
+        const bodyIdAttr = key === 'nodes' ? ` id="guide-body-${sys.id}-nodes"` : '';
         if (!isHe) {
-          return `<div class="guide-block-body">${root.renderGuideMathHtml(gb.html.ru || '')}</div>`;
+          return `<div class="guide-block-body"${bodyIdAttr}>${root.renderGuideMathHtml(gb.html.ru || '')}</div>`;
         }
         if (gb.html.he) {
-          return `<div class="guide-block-body">${root.renderGuideMathHtml(gb.html.he, 'he')}</div>`;
+          return `<div class="guide-block-body"${bodyIdAttr}>${root.renderGuideMathHtml(gb.html.he, 'he')}</div>`;
         }
         return `
           <div class="guide-ru-only-notice" dir="rtl">${ruOnlyNoticeText}</div>
-          <div class="sec-term guide-ru-fallback" dir="ltr" lang="ru">${root.renderGuideMathHtml(gb.html.ru || '')}</div>
+          <div class="sec-term guide-ru-fallback"${bodyIdAttr} dir="ltr" lang="ru">${root.renderGuideMathHtml(gb.html.ru || '')}</div>
         `;
       }
+
+      const blockLineNumbers = [];
+      (guideData.blocks || []).forEach((b) => {
+        if (typeof b.sourceLineStart === 'number') blockLineNumbers.push(b.sourceLineStart);
+        if (typeof b.sourceLineEnd === 'number') blockLineNumbers.push(b.sourceLineEnd);
+        if (Array.isArray(b.sourceLines)) {
+          b.sourceLines.forEach((n) => {
+            if (typeof n === 'number') blockLineNumbers.push(n);
+          });
+        }
+      });
+      const minLine = blockLineNumbers.length ? Math.min(...blockLineNumbers) : 1;
+      const maxLine = blockLineNumbers.length ? Math.max(...blockLineNumbers) : 1;
+      const articleMetaText = isHe
+        ? `מהדורה ${APP_VERSION.edition} · ${APP_VERSION.date} · ליבת חישוב ${APP_VERSION.core} · מקור הטקסט: <code dir="ltr">data/he/guide_${sys.id}.he.json</code>`
+        : `Редакция ${APP_VERSION.edition} · ${APP_VERSION.date} · расчётное ядро ${APP_VERSION.core} · текст учебника: <code dir="ltr">${guideData.sourceFile || ''}</code>, строки ${minLine}–${maxLine}`;
+
+      const lMap = root.LEARNING_MAP || {};
+      const lUi = lMap.ui || {};
+      const depthLabels = lMap.depthLabels || {};
+      const isDetailedDepth = AppState.guideDepth === 'detailed';
+      const depthGroupAria = (depthLabels.groupAriaLabel && (depthLabels.groupAriaLabel[lang] || depthLabels.groupAriaLabel.ru))
+        || (isHe ? 'רמת הפירוט של ספר הלימוד' : 'Уровень подробности учебника');
+      const depthSimpleLbl = (depthLabels.simple && (depthLabels.simple[lang] || depthLabels.simple.ru))
+        || (isHe ? 'פשוט' : 'Просто');
+      const depthDetailedLbl = (depthLabels.detailed && (depthLabels.detailed[lang] || depthLabels.detailed.ru))
+        || (isHe ? 'מפורט' : 'Подробно');
+      const depthHintLbl = (depthLabels.explanation && (depthLabels.explanation[lang] || depthLabels.explanation.ru))
+        || (isHe ? 'מפורט: נוסחאות, הנחות יסוד וגבולות ישימות' : 'Подробно: формулы, допущения и границы применимости');
+      const boundariesSummaryLbl = (depthLabels.boundariesSummary && (depthLabels.boundariesSummary[lang] || depthLabels.boundariesSummary.ru))
+        || (isHe ? 'גבולות ישימות והנחות יסוד — רמת פירוט מלאה' : 'Границы применимости и допущения — подробный уровень');
+      const formulasSummaryLbl = (depthLabels.formulasSummary && (depthLabels.formulasSummary[lang] || depthLabels.formulasSummary.ru))
+        || (isHe ? 'נוסחאות ודוגמאות מספריות — רמת פירוט מלאה' : 'Формулы и численные примеры — подробный уровень');
+      const stepsAriaLabel = (lUi.stepsAriaLabel && (lUi.stepsAriaLabel[lang] || lUi.stepsAriaLabel.ru))
+        || (isHe ? 'רצף הלימוד בנושא' : 'Последовательность изучения');
+      const firstCaseId = (sys.caseIds && sys.caseIds[0]) || (sysCases[0] && sysCases[0].id) || 'case-3-1';
+      const stepPrimaryHrefMap = {
+        principle: `#guide-${sys.id}-how`,
+        diagram: `#diag-card-${sys.id}`,
+        equipment: `#guide-body-${sys.id}-nodes`,
+        parameters: `#guide-${sys.id}-logbook`,
+        calculation: `#guide-${sys.id}-formulas`,
+        case: `#guide-${sys.id}-symptoms`,
+        selfcheck: `#guide-${sys.id}-selfcheck`,
+        sources: `#guide-${sys.id}-sources`
+      };
+      const guideStepsArr = Array.isArray(lMap.steps) ? lMap.steps : [];
+      const guideStepsHtml = guideStepsArr.map((st, idx) => {
+        const stLabel = (st.label && (st.label[lang] || st.label.ru)) || st.key;
+        let stCaption = (st.caption && (st.caption[lang] || st.caption.ru)) || '';
+        if (st.key === 'equipment' && sys.id === 'air' && lUi.airIsoCaptionSuffix) {
+          const suffix = lUi.airIsoCaptionSuffix[lang] || lUi.airIsoCaptionSuffix.ru || '';
+          if (suffix) stCaption = `${stCaption} ${suffix}`;
+        }
+        const stHref = stepPrimaryHrefMap[st.key] || `#guide-${sys.id}-summary`;
+        let secondLinkHtml = '';
+        if (st.key === 'equipment' && sys.id === 'air') {
+          const secLbl = (lUi.airIsoSecondLink && (lUi.airIsoSecondLink[lang] || lUi.airIsoSecondLink.ru)) || (isHe ? 'דרגות ISO 8573 ←' : 'Классы ISO 8573 →');
+          secondLinkHtml = `<a class="guide-step-sublink" href="#guide-air-iso" onclick="window.navigateToHash('#guide-air-iso'); return false;">${secLbl}</a>`;
+        } else if (st.key === 'calculation') {
+          const secLbl = (lUi.calcSecondLink && (lUi.calcSecondLink[lang] || lUi.calcSecondLink.ru)) || (isHe ? 'פתיחת מחשבון ←' : 'Открыть калькулятор →');
+          secondLinkHtml = `<a class="guide-step-sublink" href="#calc-${sys.id}" onclick="window.navigateToHash('#calc-${sys.id}'); return false;">${secLbl}</a>`;
+        } else if (st.key === 'case') {
+          const secLbl = (lUi.caseSecondLink && (lUi.caseSecondLink[lang] || lUi.caseSecondLink.ru)) || (isHe ? 'האירוע הראשון בנושא ←' : 'Первый случай темы →');
+          secondLinkHtml = `<a class="guide-step-sublink" href="#${firstCaseId}" onclick="window.navigateToHash('#${firstCaseId}'); return false;">${secLbl}</a>`;
+        }
+        return `
+          <li class="guide-step" data-step-key="${st.key}">
+            <a class="guide-step-link" href="${stHref}" onclick="window.navigateToHash('${stHref}'); return false;">
+              <span class="guide-step-top">
+                <span class="guide-step-num">${st.n || (idx + 1)}</span>
+                <span class="guide-step-label">${stLabel}</span>
+              </span>
+              <span class="guide-step-caption">${stCaption}</span>
+            </a>
+            ${secondLinkHtml}
+          </li>
+        `;
+      }).join('');
 
       const sysSummary3Lines = {
         steam: {
@@ -1381,7 +1559,7 @@
 
       return `
         <article class="section-card system-article searchable-block ${isCurrent ? 'active-system-article' : ''}"
-          id="system-${sys.id}" data-legacy-anchor="${sys.legacyAnchor}" data-keywords="${sys.keywords || ''}">
+          id="system-${sys.id}" data-guide-depth="${AppState.guideDepth}" data-legacy-anchor="${sys.legacyAnchor}" data-keywords="${sys.keywords || ''}">
           <span id="sys-${sys.id}" class="legacy-anchor-target"></span>
           ${sys.id === 'steam' ? '<span id="sec-steam-condensate" class="legacy-anchor-target"></span>' : ''}
           ${sys.id === 'chillers' ? '<span id="sec-chillers" class="legacy-anchor-target"></span>' : ''}
@@ -1393,12 +1571,26 @@
               <span class="system-article-svg-badge" style="background:${getSystemVisualMeta(sys.id).bg}; color:${getSystemVisualMeta(sys.id).fg};">
                 ${getSystemVisualMeta(sys.id).svg}
               </span>
-              <div>
+              <div style="flex:1; min-width:0;">
                 <h2 id="system-heading-${sys.id}" tabindex="-1">${title}</h2>
                 <div class="sec-term system-sec-subtitle" dir="${isHe ? 'ltr' : 'rtl'}">${secTitle}</div>
+                <p class="system-article-meta">${articleMetaText}</p>
               </div>
             </div>
+            <div class="guide-depth-toggle no-print" role="group" aria-label="${depthGroupAria}">
+              <div class="guide-depth-btn-row">
+                <button type="button" class="guide-depth-btn ${!isDetailedDepth ? 'active' : ''}" data-depth="simple" aria-pressed="${!isDetailedDepth ? 'true' : 'false'}" onclick="window.setGuideDepth('simple')">${depthSimpleLbl}</button>
+                <button type="button" class="guide-depth-btn ${isDetailedDepth ? 'active' : ''}" data-depth="detailed" aria-pressed="${isDetailedDepth ? 'true' : 'false'}" onclick="window.setGuideDepth('detailed')">${depthDetailedLbl}</button>
+              </div>
+              <span class="guide-depth-hint">${depthHintLbl}</span>
+            </div>
           </div>
+
+          <nav class="guide-steps-strip no-print" id="guide-steps-${sys.id}" aria-label="${stepsAriaLabel}">
+            <ol class="guide-steps-list">
+              ${guideStepsHtml}
+            </ol>
+          </nav>
 
           <!-- ЛИПКОЕ ОГЛАВЛЕНИЕ СИСТЕМЫ (10 ПУНКТОВ, ВОЗДУХ — 11 С ISO 8573) -->
           <nav class="guide-toc-bar no-print" id="guide-toc-${sys.id}" aria-label="${isHe ? 'תוכן עניינים של המערכת' : 'Оглавление системы'}">
@@ -1476,17 +1668,21 @@
                 <div class="diagram-canvas-inner" id="diag-inner-${sys.id}" style="width:${AppState.diagramZoom}%;" dir="ltr">
                   <img src="${svgSrc}" alt="${diagCap}" class="diagram-svg-img" loading="lazy" />
                   <div class="diagram-hotspots-layer" dir="ltr">
-                    ${nodes.map((n) => `
+                    ${nodes.map((n) => {
+                      const rawPinTitle = (n.title[lang] || n.title.ru);
+                      const cleanPinTitle = (isHe ? rawPinTitle.replace(/\s*\/\s*[А-Яа-яЁё][^)]*/g, '') : rawPinTitle).replace(/"/g, '&quot;');
+                      return `
                       <button type="button" class="diagram-node-pin"
                         id="${n.id}"
                         data-node-id="${n.id}"
                         style="left:${n.xPct}%; top:${n.yPct}%;"
                         onclick="window.openDiagramNodeModal('${sys.id}', '${n.id}', this)"
-                        aria-label="${(n.title[lang] || n.title.ru).replace(/"/g, '&quot;')}"
-                        title="${(n.title[lang] || n.title.ru).replace(/"/g, '&quot;')}">
+                        aria-label="${cleanPinTitle}"
+                        title="${cleanPinTitle}">
                         <span>${n.num}</span>
                       </button>
-                    `).join('')}
+                    `;
+                    }).join('')}
                   </div>
                 </div>
               </div>
@@ -1605,36 +1801,43 @@
           <!-- БЛОК 7: boundaries (Что можно оператору, когда звать специалиста) -->
           <section class="guide-textbook-block" id="guide-${sys.id}-boundaries" data-guide-key="boundaries">
             <h2 class="guide-block-h2" id="guide-heading-${sys.id}-boundaries" tabindex="-1">${renderBlockHeadingText('boundaries')}</h2>
-            ${renderGuideBlockBodyHtml('boundaries')}
+            <details class="guide-depth-details" id="depth-${sys.id}-boundaries"${isDetailedDepth ? ' open' : ''}>
+              <summary class="guide-depth-summary">${boundariesSummaryLbl}</summary>
+              ${renderGuideBlockBodyHtml('boundaries')}
+            </details>
           </section>
 
           <!-- БЛОК 8: formulas (Формулы на учебных примерах + engineerLayers <details> + кнопка к #calc-<sysId>) -->
           <section class="guide-textbook-block" id="guide-${sys.id}-formulas" data-guide-key="formulas">
             <h2 class="guide-block-h2" id="guide-heading-${sys.id}-formulas" tabindex="-1">${renderBlockHeadingText('formulas')}</h2>
-            ${renderGuideBlockBodyHtml('formulas')}
-            <div class="system-engineer-layer">
-              <h3>${isHe ? 'ו. רובד הנדסי מעמיק: נוסחאות, גבולות ישימות ומקורות ראשוניים מאומתים' : 'Е. Инженерный уровень: расчётные формулы, допущения и первоисточники с номерами страниц'}</h3>
-              ${engDetails.map((ed) => {
-                const sumObj = ed.title || ed.summary || {};
-                const bodyObj = ed.bodyHtml || ed.contentHtml || {};
-                return `
-                  <details class="engineer-details" id="${ed.id}">
-                    <summary>🔬 ${sumObj[lang] || sumObj.ru || ''}</summary>
-                    <div class="engineer-details-body">
-                      ${bodyObj[lang] || bodyObj.ru || ''}
-                    </div>
-                  </details>
-                `;
-              }).join('')}
-            </div>
-            <div class="guide-block-actions no-print" style="margin-block-start:0.85rem;">
+            <div class="guide-block-actions no-print" style="margin-block-start:0.5rem;">
               <a class="btn btn-primary btn-sm" href="#calc-${sys.id}">${isHe ? 'מחשבון המערכת ←' : 'Перейти к расчёту системы →'}</a>
             </div>
-            <div class="system-calc-modules-bar no-print" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-block-top:0.65rem;">
+            <div class="system-calc-modules-bar no-print" style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-block-start:0.65rem; margin-block-end:0.75rem;">
               ${(modLinksMap[sys.id] || []).map((m) => `
                 <a class="btn btn-outline btn-sm system-calc-module-link" href="${m.hash}">${isHe ? m.he : m.ru}</a>
               `).join('')}
             </div>
+            <details class="guide-depth-details" id="depth-${sys.id}-formulas"${isDetailedDepth ? ' open' : ''}>
+              <summary class="guide-depth-summary">${formulasSummaryLbl}</summary>
+              ${renderGuideBlockBodyHtml('formulas')}
+              <div class="system-engineer-layer">
+                <h3>${isHe ? 'ו. רובד הנדסי מעמיק: נוסחאות, גבולות ישימות ומקורות ראשוניים מאומתים' : 'Е. Инженерный уровень: расчётные формулы, допущения и первоисточники с номерами страниц'}</h3>
+                ${engDetails.map((ed, edIdx) => {
+                  const sumObj = ed.title || ed.summary || {};
+                  const bodyObj = ed.bodyHtml || ed.contentHtml || {};
+                  const safeEdId = ed.id || (engDetails.length === 1 ? `engineer-details-${sys.id}` : `engineer-details-${sys.id}-${edIdx}`);
+                  return `
+                    <details class="engineer-details" id="${safeEdId}">
+                      <summary>🔬 ${sumObj[lang] || sumObj.ru || ''}</summary>
+                      <div class="engineer-details-body">
+                        ${bodyObj[lang] || bodyObj.ru || ''}
+                      </div>
+                    </details>
+                  `;
+                }).join('')}
+              </div>
+            </details>
           </section>
 
           <!-- БЛОК 9: selfcheck (Проверь себя: вопросы и ответы в <details class="selfcheck-answer">) -->
@@ -1671,6 +1874,9 @@
     }).join('');
 
     container.innerHTML = tabsHtml + sectionsHtml;
+    systems.forEach((sys) => {
+      root.setActiveGuideTocKey(sys.id, 'summary');
+    });
     setupGuideTocObserver();
   }
 
@@ -2693,7 +2899,7 @@
     };
     setTxt('skip-link-el', 'Перейти к основному содержанию', 'דלג לתוכן הראשי');
     syncHeaderTitleByViewport();
-    setTxt('site-badge-el', 'RU / HE • v15.1', 'עברית / RU • v15.1');
+    setTxt('site-badge-el', `RU / HE • ${APP_VERSION.edition}`, `עברית / RU • ${APP_VERSION.edition}`);
     setTxt('site-subtitle-el',
       'Пар • Конденсат • Чиллеры • Сжатый воздух • Обратный осмос (RO) — эксплуатация, диагностика, расчёты, сменные журналы и первоисточники S01–S23',
       'קיטור • עיבוי • צ\'ילרים • אוויר דחוס • אוסמוזה הפוכה (RO) — תפעול, אבחון תקלות, חישובים, יומני משמרת ומקורות S01–S23');
@@ -2746,8 +2952,8 @@
       '5. Пар (5А: Перевод давления • 5Б: Расход пара по нагрузке)',
       '5. קיטור (5א: המרת לחץ • 5ב: ספיקת קיטור לפי עומס)');
     setTxt('site-footer-el',
-      'Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.1 (2026-10-30), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.',
-      'ספריית ההנדסה למפעל מזון (עברית / RU, מהדורה v15.1 (2026-10-30), ליבת חישוב v10.0) • כל הנתונים והנוסחאות מאומתים מול המקורות הראשוניים S01–S23.');
+      `Инженерная библиотека пищевого предприятия (RU / HE, редакция ${APP_VERSION.edition} (${APP_VERSION.date}), расчётное ядро ${APP_VERSION.core}) • Все утверждения верифицированы по первоисточникам S01–S23.`,
+      `ספריית ההנדסה למפעל מזון (עברית / RU, מהדורה ${APP_VERSION.edition} (${APP_VERSION.date}), ליבת חישוב ${APP_VERSION.core}) • כל הנתונים והנוסחאות מאומתים מול המקורות הראשוניים S01–S23.`);
     const gSearch = document.getElementById('global-search');
     if (gSearch) {
       gSearch.placeholder = isHe
@@ -2960,8 +3166,8 @@
         </div>
         <div class="metadata-disclaimer-card" id="project-metadata-disclaimer" style="margin-block-start:0;">
           <div class="metadata-disclaimer-header">
-            <strong>${isHe ? 'מהדורה v15.1 · ליבת חישוב v10.0' : 'Редакция v15.1 · расчётное ядро v10.0'}</strong>
-            <span class="badge-sub" dir="ltr">${isHe ? 'Rev. v15.1 • Core v10.0 • 2026-10-30 • RU / HE' : 'Ред. v15.1 • Ядро v10.0 • 2026-10-30 • RU / HE'}</span>
+            <strong>${isHe ? `מהדורה ${APP_VERSION.edition} · ליבת חישוב ${APP_VERSION.core}` : `Редакция ${APP_VERSION.edition} · расчётное ядро ${APP_VERSION.core}`}</strong>
+            <span class="badge-sub" dir="ltr">${isHe ? `Rev. ${APP_VERSION.edition} • Core ${APP_VERSION.core} • ${APP_VERSION.date} • RU / HE` : `Ред. ${APP_VERSION.edition} • Ядро ${APP_VERSION.core} • ${APP_VERSION.date} • RU / HE`}</span>
           </div>
           <ul class="metadata-disclaimer-list">
             <li><strong>${isHe ? 'אופי לימודי-הנדסי:' : 'Учебно-расчётный характер:'}</strong> ${isHe ? 'החומרים באתר מיועדים להדרכת מפעילים ומהנדסים, אבחון תקלות וחישובי בקרה הנדסיים במפעל מזון.' : 'материалы сайта предназначены для инженерно-технического обучения, оперативной диагностики и проверочных расчётов персонала пищевого предприятия.'}</li>
@@ -3342,6 +3548,7 @@
           const gMeta = getSystemVisualMeta(grp.sysId);
           return `
           <div class="calc-overview-group" id="calc-overview-group-${grp.sysId}">
+            ${grp.sysId !== 'chillers' ? `<span id="calc-${grp.sysId}" class="legacy-anchor-target"></span>` : ''}
             <h3 class="calc-overview-group-title">
               <span class="calc-overview-sys-icon" style="background:${gMeta.bg}; color:${gMeta.fg};">${gMeta.svg}</span>
               <span>${grp.title[lang] || grp.title.ru}</span>
@@ -3589,6 +3796,11 @@
       root.selectSystem(sysId, false);
       root.setActiveGuideTocKey(sysId, blockKey);
       const blockEl = document.getElementById(rawHash);
+      if (blockEl) {
+        blockEl.querySelectorAll('details.guide-depth-details').forEach((d) => {
+          d.open = true;
+        });
+      }
       const h2El = document.getElementById(`guide-heading-${sysId}-${blockKey}`) || (blockEl && blockEl.querySelector('h2'));
       // v14.0.1: блок встаёт под липким оглавлением (+12 px); на телефоне шапка не липкая,
       // поэтому её высота из отступа вычитается.
@@ -3733,10 +3945,18 @@
     // Any other DOM ID (e.g. #params-table-* or engineer details inside a system lesson)
     const targetEl = document.getElementById(rawHash);
     if (targetEl) {
+      let scrollOptions = {};
       const parentSys = targetEl.closest('.system-article');
       if (parentSys && parentSys.id.startsWith('system-')) {
         const sysId = parentSys.id.replace(/^system-/, '');
         root.selectSystem(sysId, false);
+        const tocBarEl = document.getElementById(`guide-toc-${sysId}`);
+        const measuredTocHeight = tocBarEl ? Math.ceil(tocBarEl.getBoundingClientRect().height) : 0;
+        const tocBarHeight = measuredTocHeight > 0 ? measuredTocHeight : 56;
+        const headerEl = document.querySelector('.site-header');
+        const headerHeight = headerEl ? Math.ceil(headerEl.getBoundingClientRect().height) : 0;
+        const stickyHeader = root.syncGuideTocOffset ? root.syncGuideTocOffset() : headerHeight;
+        scrollOptions = { padTop: tocBarHeight + 12 - (headerHeight - stickyHeader) };
       } else {
         const parentTool = targetEl.closest('.tool-subview');
         if (parentTool) {
@@ -3750,10 +3970,22 @@
       }
       const freshEl = document.getElementById(rawHash) || targetEl;
       if (freshEl.tagName === 'DETAILS') freshEl.open = true;
-      const parentDetails = freshEl.closest('details');
-      if (parentDetails) parentDetails.open = true;
+      let ancestorDetails = freshEl.parentElement ? freshEl.parentElement.closest('details') : null;
+      while (ancestorDetails) {
+        ancestorDetails.open = true;
+        ancestorDetails = ancestorDetails.parentElement ? ancestorDetails.parentElement.closest('details') : null;
+      }
+      const parentBlock = freshEl.closest('.guide-textbook-block');
+      if (parentBlock && parentSys && parentSys.id.startsWith('system-')) {
+        const sysId = parentSys.id.replace(/^system-/, '');
+        parentBlock.querySelectorAll('details.guide-depth-details').forEach((d) => {
+          d.open = true;
+        });
+        const bKey = parentBlock.getAttribute('data-guide-key');
+        if (bKey) root.setActiveGuideTocKey(sysId, bKey);
+      }
       const focusTarget = freshEl.querySelector('h1, h2, h3, h4, summary, th') || freshEl;
-      root.scrollAndFocusBlock(freshEl, focusTarget);
+      root.scrollAndFocusBlock(freshEl, focusTarget, scrollOptions);
     }
   }
 
@@ -4433,19 +4665,19 @@
       if (AppState.activeView === 'learn') setupGuideTocObserver();
     });
 
-    // v14 Stage 2.3: Expand all self-check answers automatically in print mode
+    // v14 Stage 2.3 + v15.2 (п. 2.4d): Expand all self-check answers and depth details automatically in print mode
     if (typeof window !== 'undefined' && window.matchMedia) {
       const printMql = window.matchMedia('print');
       const handlePrintMediaChange = (e) => {
         if (e.matches) {
-          document.querySelectorAll('details.selfcheck-answer').forEach((d) => {
+          document.querySelectorAll('details.selfcheck-answer, details.guide-depth-details').forEach((d) => {
             if (!d.open) {
               d.setAttribute('data-opened-for-print', 'true');
               d.open = true;
             }
           });
         } else {
-          document.querySelectorAll('details.selfcheck-answer[data-opened-for-print="true"]').forEach((d) => {
+          document.querySelectorAll('details.selfcheck-answer[data-opened-for-print="true"], details.guide-depth-details[data-opened-for-print="true"]').forEach((d) => {
             d.removeAttribute('data-opened-for-print');
             d.open = false;
           });

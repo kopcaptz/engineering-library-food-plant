@@ -4021,6 +4021,460 @@
     padding: 8px 12px !important;
     text-align: start !important;
   }
+
+  /* =========================================================================
+     v15.2: Entrance & Two Depth Levels (Home Purpose, 8-Step Strip, Depth Toggle)
+     ========================================================================= */
+  .home-purpose {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-inline-start: 4px solid #0f4c81;
+  }
+
+  .home-purpose-h2 {
+    margin: 0;
+    font-size: clamp(1.08rem, 1.8vw, 1.25rem);
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .home-purpose-text {
+    margin: 0;
+    font-size: 0.94rem;
+    line-height: 1.52;
+    color: #1e293b;
+  }
+
+  .home-route-h3 {
+    margin: 2px 0 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0f4c81;
+  }
+
+  .home-route {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .home-route-item {
+    margin: 0;
+    padding: 0;
+    display: flex;
+  }
+
+  .home-route-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    inline-size: 100%;
+    min-block-size: 48px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #0f172a;
+    text-decoration: none;
+    transition: border-color 0.12s ease, background-color 0.12s ease, box-shadow 0.12s ease;
+  }
+
+  .home-route-step:hover {
+    border-color: #0f4c81;
+    background: #eff6ff;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .home-route-step:focus-visible {
+    outline: 3px solid #0f4c81;
+    outline-offset: 2px;
+  }
+
+  .home-route-step-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-inline-size: 0;
+  }
+
+  .home-route-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 22px;
+    block-size: 22px;
+    border-radius: 999px;
+    background: #0f4c81;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .home-route-step-label,
+  .home-route-step-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.25;
+  }
+
+  .home-route-step-hint,
+  .home-route-step-sub {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: #475569;
+  }
+
+  .home-route-experienced {
+    margin: 2px 0 0;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: #334155;
+  }
+
+  .home-route-experienced a,
+  .home-route-exp-link {
+    color: #0f4c81;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .home-route-experienced a:focus-visible,
+  .home-route-exp-link:focus-visible {
+    outline: 2px solid #0f4c81;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .home-v13-sys-learn,
+  .home-v13-sys-prereq {
+    margin: 0;
+    font-size: 0.81rem;
+    line-height: 1.34;
+    color: #334155;
+  }
+
+  .home-v13-sys-learn strong,
+  .home-v13-sys-prereq strong {
+    color: #0f172a;
+  }
+
+  @media (max-width: 1023px) {
+    .home-route {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .home-purpose {
+      padding: 12px 14px;
+      gap: 8px;
+    }
+
+    .home-route {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .home-v13-sys-card {
+      padding: 12px 14px;
+      gap: 5px;
+    }
+
+    .home-v13-sys-icon {
+      inline-size: 34px;
+      block-size: 34px;
+    }
+
+    .home-v13-sys-title {
+      font-size: 1.02rem;
+      line-height: 1.2;
+    }
+
+    .home-v13-sys-desc {
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
+    .home-v13-sys-learn,
+    .home-v13-sys-prereq {
+      font-size: 0.76rem;
+      line-height: 1.26;
+    }
+
+    .home-v13-sys-counts {
+      font-size: 0.78rem;
+      line-height: 1.22;
+    }
+  }
+
+  .system-article-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .system-article-meta {
+    margin: 4px 0 0;
+    font-size: 0.82rem;
+    line-height: 1.38;
+    color: #475569;
+    font-weight: 500;
+  }
+
+  .guide-depth-toggle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+  }
+
+  .guide-depth-btn-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .guide-depth-btn {
+    min-block-size: 36px;
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    color: #0f172a;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  }
+
+  .guide-depth-btn:hover {
+    border-color: #0f4c81;
+    background: #eff6ff;
+  }
+
+  .guide-depth-btn.active,
+  .guide-depth-btn[aria-pressed="true"] {
+    background: #0f4c81;
+    border-color: #0f4c81;
+    color: #ffffff;
+  }
+
+  .guide-depth-btn:focus-visible {
+    outline: 3px solid #0f4c81;
+    outline-offset: 2px;
+  }
+
+  .guide-depth-hint {
+    font-size: 0.81rem;
+    line-height: 1.35;
+    color: #475569;
+  }
+
+  .guide-steps-strip {
+    position: static;
+    max-inline-size: 100%;
+    margin-block: 10px 6px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    box-sizing: border-box;
+  }
+
+  .guide-steps-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    overflow-x: auto;
+    max-inline-size: 100%;
+    scrollbar-width: thin;
+  }
+
+  .guide-step {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .guide-step-link {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    inline-size: 100%;
+    min-block-size: 42px;
+    padding: 5px 8px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-sizing: border-box;
+    transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+  }
+
+  .guide-step-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .guide-step-caption {
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.22;
+    color: #475569;
+  }
+
+  .guide-step-sublink {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #0f4c81;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    padding-inline: 4px;
+    white-space: nowrap;
+  }
+
+  .guide-step-sublink:focus-visible {
+    outline: 2px solid #0f4c81;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .guide-step-link:hover {
+    border-color: #0f4c81;
+    background: #eff6ff;
+    color: #0f4c81;
+  }
+
+  .guide-step-link:focus-visible {
+    outline: 3px solid #0f4c81;
+    outline-offset: 2px;
+  }
+
+  .guide-step[aria-current="step"] .guide-step-link,
+  .guide-step.active .guide-step-link {
+    background: #0f4c81;
+    border-color: #0f4c81;
+    color: #ffffff;
+  }
+
+  .guide-step[aria-current="step"] .guide-step-caption,
+  .guide-step.active .guide-step-caption {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .guide-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 18px;
+    block-size: 18px;
+    border-radius: 999px;
+    background: rgba(15, 76, 129, 0.12);
+    color: inherit;
+    font-size: 0.72rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .guide-step[aria-current="step"] .guide-step-num,
+  .guide-step.active .guide-step-num {
+    background: rgba(255, 255, 255, 0.24);
+    color: #ffffff;
+  }
+
+  @media (max-width: 1023px) {
+    .guide-step {
+      flex: 0 0 auto;
+      max-inline-size: 195px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .guide-steps-strip {
+      margin-block: 6px 4px;
+      padding: 4px 6px;
+    }
+
+    .guide-step {
+      max-inline-size: 170px;
+    }
+
+    .guide-step-link {
+      min-block-size: 36px;
+      padding: 3px 7px;
+      font-size: 0.76rem;
+    }
+
+    .guide-step-caption {
+      font-size: 0.68rem;
+      line-height: 1.15;
+    }
+  }
+
+  details.guide-depth-details {
+    margin-block-start: 8px;
+    border: 1px solid #bae6fd;
+    border-radius: 10px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+
+  details.guide-depth-details > summary.guide-depth-summary {
+    padding: 10px 14px;
+    min-block-size: 42px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f9ff;
+    color: #0f4c81;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  details.guide-depth-details > summary.guide-depth-summary:hover {
+    background: #e0f2fe;
+  }
+
+  details.guide-depth-details[open] > summary.guide-depth-summary {
+    border-block-end: 1px solid #bae6fd;
+  }
+
+  details.guide-depth-details > .guide-block-body,
+  details.guide-depth-details > .guide-ru-fallback,
+  details.guide-depth-details > .system-engineer-layer {
+    padding: 12px 14px;
+  }
 }
 
 @layer print {
@@ -4251,19 +4705,23 @@
       font-size: 8.5pt !important;
     }
 
-    /* v14 Stage 2.3: Expand all self-check answers in print mode */
+    /* v14 Stage 2.3 + v15.2 (п. 2.4d): Expand all self-check answers and depth details in print mode */
     .guide-toc-bar,
+    .guide-steps-strip,
+    .guide-depth-toggle,
     .selfcheck-toolbar {
       display: none !important;
     }
 
-    details.selfcheck-answer::details-content {
+    details.selfcheck-answer::details-content,
+    details.guide-depth-details::details-content {
       display: block !important;
       content-visibility: visible !important;
     }
 
     details.selfcheck-answer > .selfcheck-answer-body,
-    details.selfcheck-answer > .selfcheck-a-text {
+    details.selfcheck-answer > .selfcheck-a-text,
+    details.guide-depth-details > * {
       display: block !important;
       content-visibility: visible !important;
     }
