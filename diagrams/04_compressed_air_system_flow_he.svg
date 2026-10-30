@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="1600" height="960">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .header-bg { fill: #0f172a; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #ffffff; }
+      .header-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #fbbf24; }
+      .node-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-warn { fill: #fffbeb; stroke: #d97706; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-blue { fill: #eff6ff; stroke: #1d4ed8; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-green { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-red { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 8; ry: 8; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10.2px; fill: #334155; text-anchor: middle; }
+      .pipe-red { fill: none; stroke: #dc2626; stroke-width: 3; }
+      .pipe-orange { fill: none; stroke: #ea580c; stroke-width: 2.8; stroke-dasharray: 7,4; }
+      .pipe-blue { fill: none; stroke: #2563eb; stroke-width: 3; }
+      .pipe-cyan { fill: none; stroke: #0891b2; stroke-width: 3; }
+      .pipe-green { fill: none; stroke: #16a34a; stroke-width: 3; }
+      .flow-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .zone-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 10; ry: 10; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #334155; }
+      .footer-bg { fill: #e2e8f0; }
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #1e293b; }
+          .header-title, .header-sub, .zone-title, .flow-label, .footer-text { text-anchor: end; }
+    </style>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0891b2"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="960"/>
+  <rect class="header-bg" x="0" y="0" width="1600" height="72"/>
+  <text class="header-title" x="28" y="32" direction="rtl" unicode-bidi="embed">תרשים עקרוני לימודי 4‏: ‏מערכת אוויר דחוס ‏(‏דחיסה‏, ייבוש‏, סינון ודרגות טוהר ‎‭ISO 8573-1‬‎‏)‏</text>
+  <text class="header-sub" x="28" y="54" direction="rtl" unicode-bidi="embed">תרשים זרימה ונקודות בקרה לימודי ‏(‏אינו שרטוט של מפעל ספציפי‏)‏ | פרק 4 בספרייה ההנדסית</text>
+
+  <!-- Zones -->
+  <rect class="zone-box" x="20" y="88" width="495" height="600"/>
+  <text class="zone-title" x="38" y="114" direction="rtl" unicode-bidi="embed">אזור I‏. חדר מדחסים‏: ‏דחיסה וקירור ראשוני</text>
+
+  <rect class="zone-box" x="530" y="88" width="545" height="600"/>
+  <text class="zone-title" x="548" y="114" direction="rtl" unicode-bidi="embed">אזור II‏. ייבוש אוויר ‏(‏נקודת טל PDP‏)‏ ודרגות סינון</text>
+
+  <rect class="zone-box" x="1090" y="88" width="490" height="600"/>
+  <text class="zone-title" x="1108" y="114" direction="rtl" unicode-bidi="embed">אזור III‏. רשת החלוקה הטבעתית וקטגוריות צרכנים</text>
+
+  <!-- Node 1: Air Intake & Screw Compressor -->
+  <rect class="node-box-blue" x="42" y="148" width="450" height="136"/>
+  <text class="node-title" x="267" y="174" direction="rtl" unicode-bidi="embed">1. מסנן יניקה ומדחס אוויר בורגי</text>
+  <text class="node-text" x="267" y="194" direction="rtl" unicode-bidi="embed">יניקת אוויר חיצוני נקי וקריר ‏(‏כל ‎‭−3 °C‬‎ ביניקה ‏←‏ חיסכון של כ-‎‭1%‬‎ בחשמל‏!‏)‏</text>
+  <text class="node-text" x="267" y="212" direction="rtl" unicode-bidi="embed">יחידת דחיסה בורגית מוזרקת-שמן או נטולת-שמן ‏(‎‭Oil-Free Class 0‬‎)‏</text>
+  <text class="node-text" x="267" y="230" direction="rtl" unicode-bidi="embed">משטרי בקרה‏: ‏עומס‎‭/‬‎סרק ‏(‎‭Load/Unload‬‎)‏‏, ‏מודולציה‏, מווסת מהירות ‏(VSD)‏</text>
+  <text class="node-text" x="267" y="248" direction="rtl" unicode-bidi="embed">‏(‏במצב סרק מדחס בורגי צורך ‎‭15–35%‬‎ מההספק החשמלי בעומס מלא‏!‏)‏</text>
+  <text class="node-text" x="267" y="266" direction="rtl" unicode-bidi="embed">בקרה‏: ‏טמפ׳ דחיסה ‏(‎‭&lt; 105–110 °C‬‎)‏‏, ‏מפל לחץ ΔP במפריד השמן‏, זרם מנוע</text>
+
+  <!-- Node 2: Aftercooler & Moisture Separator -->
+  <rect class="node-box-warn" x="42" y="326" width="450" height="122"/>
+  <text class="node-title" x="267" y="352" direction="rtl" unicode-bidi="embed">2. מצנן קצה ‏(Aftercooler)‏ ומפריד נוזלים ציקלוני</text>
+  <text class="node-text" x="267" y="372" direction="rtl" unicode-bidi="embed">קירור האוויר הדחוס עד לטמפ׳ ‎‭T_amb + (5…15 °C)‬‎</text>
+  <text class="node-text" x="267" y="390" direction="rtl" unicode-bidi="embed">עיבוי וסילוק של ‎‭65–85%‬‎ מכלל הלחות הנוזלית כבר במפריד הציקלוני‏!</text>
+  <text class="node-text" x="267" y="408" direction="rtl" unicode-bidi="embed">‏(‏כאשר הטמפ׳ ביציאה ‎‭&gt; 35–40 °C‬‎ מייבש האוויר נכנס לעומס-יתר תרמי‏)‏</text>
+  <text class="node-text" x="267" y="426" direction="rtl" unicode-bidi="embed">פוטנציאל השבת חום‏: ‏עד ‎‭70–94%‬‎ מהאנרגיה החשמלית של המדחס הופכת לחום‏!</text>
+
+  <!-- Node 3: Wet Receiver & Condensate Treatment -->
+  <rect class="node-box" x="42" y="490" width="450" height="162"/>
+  <text class="node-title" x="267" y="516" direction="rtl" unicode-bidi="embed">3. מכל אוויר ‏"רטוב‏" ומערכת ניקוז קונדנסט</text>
+  <text class="node-text" x="267" y="536" direction="rtl" unicode-bidi="embed">שיכוך פעימות לחץ‏, קירור נוסף והפרדת טיפות מים</text>
+  <text class="node-text" x="267" y="554" direction="rtl" unicode-bidi="embed">מנקזי קונדנסט ללא אובדן אוויר ‏(‎‭Zero-Loss Float / Electronic Drain‬‎)‏</text>
+  <text class="node-text" x="267" y="572" direction="rtl" unicode-bidi="embed">במקום פורקי טיימר או ברזים ידניים פתוחים חלקית‏!</text>
+  <text class="node-text" x="267" y="592" direction="rtl" unicode-bidi="embed">מפריד שמן-מים ‏(‎‭Oil/Water Separator‬‎)‏ לפני הזרמה לביוב</text>
+  <text class="node-text" x="267" y="610" direction="rtl" unicode-bidi="embed">‏(‏הקונדנסט ממדחס מוזרק-שמן הוא שפכים מזוהמים בשמן‏!‏)‏</text>
+
+  <!-- Zone II Nodes -->
+  <!-- Node 4: Pre-filters (Coalescing) -->
+  <rect class="node-box-blue" x="555" y="148" width="495" height="112"/>
+  <text class="node-title" x="802" y="174" direction="rtl" unicode-bidi="embed">4. מסנני קדם לאוויר דחוס ‏(‏ציקלון ‏+ מסנן מתלכד Coalescing‏)‏</text>
+  <text class="node-text" x="802" y="194" direction="rtl" unicode-bidi="embed">סילוק טיפות מים‏, חלקיקים מוצקים ואירוסול שמן ‏(‏עד ‎‭0.01 mg/m³‬‎‏)‏</text>
+  <text class="node-text" x="802" y="212" direction="rtl" unicode-bidi="embed">בקרת מד לחץ הפרשי ΔP על המסנן ‏(‏מסנן חדש ‎‭~0.07–0.15 bar‬‎‏;</text>
+  <text class="node-text" x="802" y="230" direction="rtl" unicode-bidi="embed">החלפת אלמנט ב-‎‭ΔP ≈ 0.35–0.50 bar‬‎‏: ‏כל ‎‭+0.14 bar‬‎ מפל לחץ ‎‭= +1%‬‎ צריכת חשמל‏!‏)‏</text>
+
+  <!-- Node 5: Air Dryers (2 branches: Refrigerant vs Desiccant/Membrane) -->
+  <rect class="node-box-green" x="555" y="302" width="235" height="175"/>
+  <text class="node-title" x="672" y="328" direction="rtl" unicode-bidi="embed">5א‏. מייבש אוויר</text>
+  <text class="node-title" x="672" y="346" direction="rtl" unicode-bidi="embed">בקירור ‏(Refrigerant)‏</text>
+  <text class="node-text" x="672" y="368" direction="rtl" unicode-bidi="embed">נקודת טל תחת לחץ ‏(PDP)‏‏:</text>
+  <text class="node-text" x="672" y="386" direction="rtl" unicode-bidi="embed">‎‭+3 °C … +7 °C‬‎</text>
+  <text class="node-text" x="672" y="404" direction="rtl" unicode-bidi="embed">‏(‏דרגות ‎‭4–5‬‎ ללחות לפי ‎‭ISO 8573-1‬‎‏)‏</text>
+  <text class="node-text" x="672" y="424" direction="rtl" unicode-bidi="embed">לאולמות ייצור ממוזגים‎‭/‬‎מחוממים</text>
+  <text class="node-text" x="672" y="442" direction="rtl" unicode-bidi="embed">ללא אובדן אוויר דחוס</text>
+  <text class="node-text" x="672" y="460" direction="rtl" unicode-bidi="embed">לרענון ‏(Purge)‏‏!</text>
+
+  <rect class="node-box-warn" x="815" y="302" width="235" height="175"/>
+  <text class="node-title" x="932" y="328" direction="rtl" unicode-bidi="embed">5ב‏. מייבש ספיחה ‎‭/‬‎ ממברנלי</text>
+  <text class="node-title" x="932" y="346" direction="rtl" unicode-bidi="embed">‏(‏ייבוש עמוק Desiccant‏)‏</text>
+  <text class="node-text" x="932" y="368" direction="rtl" unicode-bidi="embed">נקודת טל תחת לחץ ‏(PDP)‏‏:</text>
+  <text class="node-text" x="932" y="386" direction="rtl" unicode-bidi="embed">‎‭−20 °C, −40 °C‬‎ או ‎‭−70 °C‬‎</text>
+  <text class="node-text" x="932" y="404" direction="rtl" unicode-bidi="embed">‏(‏דרגות ‎‭1–3‬‎ ללחות לפי ‎‭ISO 8573-1‬‎‏)‏</text>
+  <text class="node-text" x="932" y="424" direction="rtl" unicode-bidi="embed">לאזורי הקפאה ולקווים</text>
+  <text class="node-text" x="932" y="442" direction="rtl" unicode-bidi="embed">שבהם הדבר נדרש לפי HACCP</text>
+  <text class="node-text" x="932" y="460" direction="rtl" unicode-bidi="embed">‏(‏אחרי סופח הלחות — חובה מסנן אבק‏!‏)‏</text>
+
+  <!-- Node 6: Final Filtration & Dry Receiver -->
+  <rect class="node-box-blue" x="555" y="518" width="495" height="134"/>
+  <text class="node-title" x="802" y="544" direction="rtl" unicode-bidi="embed">6. סינון סופי‏, רגש נקודת טל ‏(PDP)‏ ומכל אוויר ‏"יבש‏"</text>
+  <text class="node-text" x="802" y="564" direction="rtl" unicode-bidi="embed">אחרי מייבש ספיחה‏: ‏מסנן אבק ‎‭1 µm‬‎ ‏(‏לעצירת אבק חומר הספיחה‏)‏</text>
+  <text class="node-text" x="802" y="582" direction="rtl" unicode-bidi="embed">לדרגה 1 בשמן ‏(‏‎‭≤ 0.01 mg/m³‬‎ לפי ‎‭ISO 8573-1‬‎‏; בהתאם ל-HACCP‏)‏‏: ‏מסנן פחם פעיל לאדי שמן</text>
+  <text class="node-text" x="802" y="600" direction="rtl" unicode-bidi="embed">מד נקודת טל רציף בקו ‏(‎‭PDP Sensor, °C‬‎)‏ ‏+ מד ספיקת אוויר ‏(Flow Meter)‏</text>
+  <text class="node-text" x="802" y="618" direction="rtl" unicode-bidi="embed">מכל אגירה ‏"יבש‏" ומווסת לחץ לקו הראשי ‏(Demand Flow Controller)‏</text>
+
+  <!-- Zone III Nodes -->
+  <!-- Node 7: Ring Main -->
+  <rect class="node-box" x="1115" y="148" width="445" height="120"/>
+  <text class="node-title" x="1337" y="174" direction="rtl" unicode-bidi="embed">7. צנרת חלוקה טבעתית לאוויר דחוס ‏(Loop Header)‏</text>
+  <text class="node-text" x="1337" y="194" direction="rtl" unicode-bidi="embed">טבעת סגורה מאזנת לחצים ומקטינה מפלי לחץ ΔP פי ‎‭2–4‬‎</text>
+  <text class="node-text" x="1337" y="212" direction="rtl" unicode-bidi="embed">מפל לחץ מרבי מומלץ מחדר המדחסים לנקודה המרוחקת‏: ‏‎‭ΔP &lt; 0.3–0.5 bar‬‎</text>
+  <text class="node-text" x="1337" y="230" direction="rtl" unicode-bidi="embed">ירידות למכונות — מחלקו העליון של הקו הראשי בלבד ‏(‏‏"צוואר אווז‏"‏)‏</text>
+  <text class="node-text" x="1337" y="248" direction="rtl" unicode-bidi="embed">איתור דליפות אולטרסוני‏: ‏ללא תחזוקה ‎‭20–30%‬‎ מהתפוקה אובדים בדליפות‏!</text>
+
+  <!-- Node 8: Non-contact users -->
+  <rect class="node-box-green" x="1115" y="310" width="445" height="142"/>
+  <text class="node-title" x="1337" y="336" direction="rtl" unicode-bidi="embed">8. צרכנים ללא מגע עם המזון ‏(‏פנאומטיקה ומכשור‏)‏</text>
+  <text class="node-text" x="1337" y="356" direction="rtl" unicode-bidi="embed">בוכנות פנאומטיות בקווי אריזה‏, שסתומים מפעילים ומיצבים</text>
+  <text class="node-text" x="1337" y="374" direction="rtl" unicode-bidi="embed">דרגת ‎‭ISO 8573-1‬‎ אופיינית‏: ‏‎‭[ 2 : 4 : 2 ]‬‎ ‏(‏‎‭PDP ≤ +3 °C‬‎‏, שמן ‎‭≤ 0.1 mg/m³‬‎‏)‏</text>
+  <text class="node-text" x="1337" y="394" direction="rtl" unicode-bidi="embed">אין להעלות את הלחץ ברשת המפעלית כולה בגלל צרכן בודד</text>
+  <text class="node-text" x="1337" y="412" direction="rtl" unicode-bidi="embed">‏(‏כל ‎‭+1 bar‬‎ העלאת לחץ דחיסה ‎‭= +7…8%‬‎ תוספת צריכת חשמל</text>
+  <text class="node-text" x="1337" y="430" direction="rtl" unicode-bidi="embed">‏+ כ-‎‭12–14%‬‎ עלייה בספיקת הדליפות מכל החרירים במפעל‏!‏)‏</text>
+
+  <!-- Node 9: Food contact users -->
+  <rect class="node-box-red" x="1115" y="494" width="445" height="158"/>
+  <text class="node-title" x="1337" y="520" direction="rtl" unicode-bidi="embed">9. מגע ישיר‎‭/‬‎עקיף עם מוצר ואריזה ‏(‏לפי הערכת HACCP‏)‏</text>
+  <text class="node-text" x="1337" y="540" direction="rtl" unicode-bidi="embed">ניפוח בקבוקי ‎‭PET/‬‎מכלים‏, נישוף מוצר‏, אוורור ומילוי באזור נקי</text>
+  <text class="node-text" x="1337" y="558" direction="rtl" unicode-bidi="embed">בחירת דרגת הטוהר והציוד — לפי היישום‏, דרישות היצרן וסקר סיכוני HACCP‏!</text>
+  <text class="node-text" x="1337" y="576" direction="rtl" unicode-bidi="embed">דוגמת ‎‭CAGI [S14, p. 18]‬‎‏: ‏דרגה ‎‭[ 2 : 2 : 1 ]‬‎ ‏(‏הפניה ל-‎‭BCAS 102‬‎ — ‎‭[S14, p. 12]‬‎‏)‏</text>
+  <text class="node-text" x="1337" y="594" direction="rtl" unicode-bidi="embed">במידת הצורך לפי HACCP‏: ‏מסנן סטרילי בנקודת השימוש ‏(Point-of-Use)‏</text>
+  <text class="node-text" x="1337" y="612" direction="rtl" unicode-bidi="embed">חל איסור מוחלט על שימוש במשמנות קו ‏(FRL Lubricators)‏ באזורי מזון‏!</text>
+
+  <!-- Summary Box -->
+  <rect class="node-box" x="20" y="706" width="1560" height="172"/>
+  <text class="node-title" x="800" y="732" direction="rtl" unicode-bidi="embed">חוקים ומשוואות חישוב מרכזיות לפרק 4 ‏(‏אוויר דחוס ותקן ‎‭ISO 8573-1:2010‬‎‏)‏</text>
+  <text class="node-text" x="800" y="756" direction="rtl" unicode-bidi="embed">1) קוד טוהר האוויר לפי ‎‭ISO 8573-1:2010 [ A : B : C ]‬‎‏: ‏A — חלקיקים מוצקים‏; B — לחות לפי נקודת טל תחת לחץ PDP ‏(‏דרגה 1‏: ‏‎‭≤ −70 °C‬‎‏; דרגה 2‏: ‏‎‭≤ −40 °C‬‎‏; דרגה 4‏: ‏‎‭≤ +3 °C‬‎‏; דרגה 5‏: ‏‎‭≤ +7 °C‬‎‏)‏‏;</text>
+  <text class="node-text" x="800" y="776" direction="rtl" unicode-bidi="embed">C — סך תכולת שמן‏, אירוסול ‏+ אדים ‏(‏דרגה 1‏: ‏‎‭≤ 0.01 mg/m³‬‎‏; דרגה 2‏: ‏‎‭≤ 0.1 mg/m³‬‎‏; דרגה 3‏: ‏‎‭≤ 1 mg/m³‬‎‏; בטבלה 1 בחוברת ‎‭CAGI [S14, p. 13]‬‎ הגבולות רשומים עם סימן ‎‭&lt;‬‎‏)‏‏.</text>
+  <text class="node-text" x="800" y="800" direction="rtl" unicode-bidi="embed">2) ספיקת FAD — ספיקה נפחית מוחזרת לתנאי היניקה בפועל ‏(‎‭P_in, T_in, RH_in, [S13, p. 14]‬‎)‏‏; ספיקה תקנית ‏(‎‭NL/s, Nm³/min‬‎)‏ מתייחסת לתנאי ייחוס קבועים ‏(‏כגון ‎‭0 °C, 1.013 bar(a)‬‎‏)‏‏.</text>
+  <text class="node-text" x="800" y="824" direction="rtl" unicode-bidi="embed">3) הספק סגולי‏: ‏‎‭SP = P_el / Q_FAD‬‎‏.‏   |   4) ‏מדידת דליפות‏: ‏‎‭Q_leak = [ V_rec · (P_max − P_min) / (t_decay · P_atm) ]‬‎   או   ‎‭Leak (%) = [ t_load / (t_load + t_unload) ] × 100%‬‎‏.</text>
+  <text class="node-text" x="800" y="848" direction="rtl" unicode-bidi="embed">5) כלל האנרגיה של לחץ הדחיסה‏: ‏הורדת לחץ העבודה של המדחס ב-‎‭1 bar (14.5 psi)‬‎ מקטינה את צריכת החשמל בכ-‎‭7–8%‬‎ ומקטינה את ספיקת הדליפות ביחס ישר ללחץ המוחלט ‎‭P_abs‬‎‏.</text>
+
+  <!-- Pipes & Arrows -->
+  <path class="pipe-blue" d="M 267 284 L 267 324" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 267 448 L 267 488" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 492 565 L 522 565 L 522 204 L 553 204" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 672 260 L 672 300" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 932 260 L 932 300" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-cyan" d="M 672 477 L 672 516" marker-end="url(#arrow-cyan)"/>
+  <path class="pipe-cyan" d="M 932 477 L 932 516" marker-end="url(#arrow-cyan)"/>
+  <path class="pipe-green" d="M 1050 585 L 1080 585 L 1080 208 L 1113 208" marker-end="url(#arrow-green)"/>
+  <path class="pipe-green" d="M 1337 268 L 1337 308" marker-end="url(#arrow-green)"/>
+  <path class="pipe-green" d="M 1337 452 L 1337 492" marker-end="url(#arrow-green)"/>
+
+  <rect class="footer-bg" x="0" y="896" width="1600" height="64"/>
+  <text class="footer-text" x="36" y="920" font-weight="700" direction="rtl" unicode-bidi="embed">מקורות הנדסיים‏: ‏‎‭[S12] US DOE / CAC Improving Compressed Air System Performance Sourcebook (DOE/GO-102003-1822, PDF pp. 5–82)‬‎‏;</text>
+  <text class="footer-text" x="36" y="942" direction="rtl" unicode-bidi="embed">המשך מקורות‏: ‏‎‭[S13] Atlas Copco Compressed Air Manual 9th Ed. (Doc. 2935 0198 20); [S14] CAGI Compressed Air Purity Guide (ISO 8573-1:2010); [S15] Kaeser Guide‬‎‏.</text>
+</svg>

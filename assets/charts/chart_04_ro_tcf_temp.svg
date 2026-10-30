@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 410" role="img" aria-label="График температурного коэффициента TCF обратного осмоса по S16, Eq. 73–74, PDF p. 131–133">
+<rect width="100%" height="100%" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="380" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.8" font-weight="bold" fill="#0f172a">ГРАФИК 4. Температурный поправочный коэффициент потока пермеата TCF (база 25 °C = 1.00) [S16, Eq. 73–74, PDF p. 131]</text>
+<text x="380" y="43" text-anchor="middle" font-family="Arial, sans-serif" font-size="10.5" fill="#475569">Формула DuPont: TCF = exp[K · (1/298 − 1/(273 + T))], где K = 3020 при T ≤ 25 °C (Eq. 74) и K = 2640 при T ≥ 25 °C (Eq. 73)</text>
+<line x1="70" y1="348.0" x2="720" y2="348.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="62" y="352.0" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#334155">0.40</text>
+<line x1="70" y1="279.8" x2="720" y2="279.8" stroke="#e2e8f0" stroke-width="1"/>
+<text x="62" y="283.8" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#334155">0.60</text>
+<line x1="70" y1="211.5" x2="720" y2="211.5" stroke="#e2e8f0" stroke-width="1"/>
+<text x="62" y="215.5" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#334155">0.80</text>
+<line x1="70" y1="143.3" x2="720" y2="143.3" stroke="#e2e8f0" stroke-width="1"/>
+<text x="62" y="147.3" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#334155">1.00</text>
+<line x1="70" y1="75.1" x2="720" y2="75.1" stroke="#e2e8f0" stroke-width="1"/>
+<text x="62" y="79.1" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#334155">1.20</text>
+<line x1="70.0" y1="58" x2="70.0" y2="348" stroke="#f1f5f9" stroke-width="1"/>
+<text x="70.0" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">5 °C</text>
+<line x1="200.0" y1="58" x2="200.0" y2="348" stroke="#f1f5f9" stroke-width="1"/>
+<text x="200.0" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">10 °C</text>
+<line x1="330.0" y1="58" x2="330.0" y2="348" stroke="#f1f5f9" stroke-width="1"/>
+<text x="330.0" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">15 °C</text>
+<line x1="460.0" y1="58" x2="460.0" y2="348" stroke="#f1f5f9" stroke-width="1"/>
+<text x="460.0" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">20 °C</text>
+<line x1="590.0" y1="58" x2="590.0" y2="348" stroke="#f1f5f9" stroke-width="1"/>
+<text x="590.0" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">25 °C</text>
+<line x1="720.0" y1="58" x2="720.0" y2="348" stroke="#f1f5f9" stroke-width="1"/>
+<text x="720.0" y="366" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#334155">30 °C</text>
+<text x="395.0" y="396" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">Температура питательной воды T_f (°C)</text>
+<text x="20" y="203.0" text-anchor="middle" transform="rotate(-90 20 203.0)" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#1e293b">Коэффициент TCF (отн. ед.)</text>
+<polyline fill="none" stroke="#7c3aed" stroke-width="3" points="70.0,319.9 200.0,285.1 330.0,244.5 460.0,197.5 590.0,143.3 720.0,89.6"/>
+<circle cx="70.0" cy="319.9" r="4.5" fill="#7c3aed"/>
+<text x="70.0" y="309.9" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#5b21b6">0.4824</text>
+<circle cx="200.0" cy="285.1" r="4.5" fill="#7c3aed"/>
+<text x="200.0" y="275.1" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#5b21b6">0.5844 (окр. 0.58)</text>
+<circle cx="330.0" cy="244.5" r="4.5" fill="#7c3aed"/>
+<text x="330.0" y="234.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#5b21b6">0.7034 (окр. 0.70)</text>
+<circle cx="460.0" cy="197.5" r="4.5" fill="#7c3aed"/>
+<text x="460.0" y="187.5" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#5b21b6">0.8412</text>
+<circle cx="590.0" cy="143.3" r="4.5" fill="#7c3aed"/>
+<text x="590.0" y="133.3" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#5b21b6">1.0000</text>
+<circle cx="720.0" cy="89.6" r="4.5" fill="#7c3aed"/>
+<text x="720.0" y="79.6" text-anchor="middle" font-family="Arial, sans-serif" font-size="9.5" font-weight="bold" fill="#5b21b6">1.1574</text>
+<rect x="84" y="68" width="445" height="92" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1"/>
+<text x="94" y="86" font-family="Arial, sans-serif" font-size="10.2" font-weight="bold" fill="#0f172a">Пример нормализации DuPont [S16, Eq. 72–74 (298 и 273), PDF p. 131–133]:</text>
+<text x="94" y="103" font-family="Arial, sans-serif" font-size="9.6" fill="#334155">• Пуск (15 °C, Y=75%, TCF=0.70336246≈0.70, NDP=20.0 бар): Q_ps = 150.0 м³/ч</text>
+<text x="94" y="119" font-family="Arial, sans-serif" font-size="9.6" fill="#dc2626">• Зима (10 °C, Y=72%, TCF=0.58441151≈0.58, π_fc=2.72≈2.7 бар): Q_po = 127.0 м³/ч (−15.33%)</text>
+<text x="94" y="135" font-family="Arial, sans-serif" font-size="9.6" font-weight="bold" fill="#15803d">• Округл. учебный пример S16 (0.70/0.58, NDP 20/21.3): Q_s = 143.92 ≈ 144 м³/ч (−4.05%)</text>
+<text x="94" y="151" font-family="Arial, sans-serif" font-size="9.6" fill="#0f766e">• По Eq. 74 (298/273) без промеж. округления (NDP 20/21.28): Q_s = 143.6556 → 143.66 м³/ч (−4.23%)</text>
+</svg>

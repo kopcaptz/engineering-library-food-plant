@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="1600" height="960">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .header-bg { fill: #0f172a; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #ffffff; }
+      .header-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #fbbf24; }
+      .node-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-warn { fill: #fffbeb; stroke: #d97706; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-blue { fill: #eff6ff; stroke: #1d4ed8; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-green { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-red { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 8; ry: 8; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10.2px; fill: #334155; text-anchor: middle; }
+      .pipe-red { fill: none; stroke: #dc2626; stroke-width: 3; }
+      .pipe-orange { fill: none; stroke: #ea580c; stroke-width: 2.8; stroke-dasharray: 7,4; }
+      .pipe-blue { fill: none; stroke: #2563eb; stroke-width: 3; }
+      .pipe-cyan { fill: none; stroke: #0891b2; stroke-width: 3; }
+      .pipe-green { fill: none; stroke: #16a34a; stroke-width: 3; }
+      .flow-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .zone-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 10; ry: 10; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #334155; }
+      .footer-bg { fill: #e2e8f0; }
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #1e293b; }
+          .header-title, .header-sub, .zone-title, .flow-label, .footer-text { text-anchor: end; }
+    </style>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0891b2"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="960"/>
+  <rect class="header-bg" x="0" y="0" width="1600" height="72"/>
+  <text class="header-title" x="28" y="32" direction="rtl" unicode-bidi="embed">תרשים עקרוני לימודי 5‏: ‏מתקן אוסמוזה הפוכה RO ‏(‏טיפול קדם‏, מערך דו-שלבי ‎‭2:1‬‎ ובקרה‏)‏</text>
+  <text class="header-sub" x="28" y="54" direction="rtl" unicode-bidi="embed">תרשים זרימה ונקודות בקרה לימודי ‏(‏אינו שרטוט של מפעל ספציפי‏)‏ | פרק 5 בספרייה ההנדסית</text>
+
+  <!-- Zones -->
+  <rect class="zone-box" x="20" y="88" width="490" height="600"/>
+  <text class="zone-title" x="38" y="114" direction="rtl" unicode-bidi="embed">אזור I‏. טיפול קדם במי ההזנה ‏(PRETREATMENT)‏</text>
+
+  <rect class="zone-box" x="525" y="88" width="610" height="600"/>
+  <text class="zone-title" x="543" y="114" direction="rtl" unicode-bidi="embed">אזור II‏. מערך ממברנות RO דו-שלבי ‏(‏תצורת ‎‭2:1‬‎ בטור על הרכז‏)‏</text>
+
+  <rect class="zone-box" x="1150" y="88" width="430" height="600"/>
+  <text class="zone-title" x="1168" y="114" direction="rtl" unicode-bidi="embed">אזור III‏. זרמי יציאה‏, שטיפה ובקרת תהליך</text>
+
+  <!-- Zone I Nodes -->
+  <rect class="node-box-blue" x="42" y="142" width="445" height="104"/>
+  <text class="node-title" x="264" y="168" direction="rtl" unicode-bidi="embed">1. מסנן רב-מצעי ‎‭(MMF) /‬‎ אולטרה-פילטרציה ‏(UF)‏</text>
+  <text class="node-text" x="264" y="188" direction="rtl" unicode-bidi="embed">הרחקת מוצקים מרחפים‏, סחף‏, קולואידים וברזל מחומצן</text>
+  <text class="node-text" x="264" y="206" direction="rtl" unicode-bidi="embed">בקרה‏: ‏מפל לחץ ΔP במסנן ‏(‏שטיפה נגדית ב-‎‭ΔP ≈ 0.3–0.6 bar‬‎‏)‏‏, עכירות ‎‭&lt; 1.0 NTU‬‎‏,</text>
+  <text class="node-text" x="264" y="224" direction="rtl" unicode-bidi="embed">מדד צפיפות הסחף ‎‭SDI₁₅ &lt; 5.0‬‎ ‏(‏מומלץ בתכנון ‎‭SDI₁₅ &lt; 3.0‬‎‏)‏</text>
+
+  <rect class="node-box-warn" x="42" y="276" width="445" height="118"/>
+  <text class="node-title" x="264" y="302" direction="rtl" unicode-bidi="embed">2. מכלול סילוק כלור חופשי ‏(‏פחם פעיל GAC או מינון SMBS‏)‏</text>
+  <text class="node-text" x="264" y="322" direction="rtl" unicode-bidi="embed">יעד כלור חופשי בכניסה לממברנות‏: ‏מתחת ל-LoD של בדיקת DPD ‏(‏חובה לתעד דגם ו-LoD‏!‏)‏</text>
+  <text class="node-text" x="264" y="340" direction="rtl" unicode-bidi="embed">מינון סודיום מטא-ביסולפיט ‏(SMBS)‏‏: ‏‎‭1.8–3.0 mg‬‎ לכל ‎‭1.0 mg Cl₂‬‎</text>
+  <text class="node-text" x="264" y="358" direction="rtl" unicode-bidi="embed">בקרה‏: ‏פוטנציאל חמצון-חיזור ORP ‏(‏תלוי ב-‎‭pH/‬‎מים‎‭/SBS‬‎‏; דוגמת ‎‭[S16, p. 67]‬‎‏: ‏‎‭175–200 mV‬‎‏)‏</text>
+  <text class="node-text" x="264" y="376" direction="rtl" unicode-bidi="embed">ובקרת ביסולפיט שאריתי ‎‭HSO₃⁻‬‎ ברכז ‏(‎‭≥ 0.5 mg/L‬‎)‏</text>
+
+  <rect class="node-box-green" x="42" y="424" width="445" height="104"/>
+  <text class="node-title" x="264" y="450" direction="rtl" unicode-bidi="embed">3. הגנה מפני אבנית‏: ‏מרכך מחליף יונים ‏(IX)‏ או אנטיסקלנט ‏+ חומצה</text>
+  <text class="node-text" x="264" y="470" direction="rtl" unicode-bidi="embed">מניעת שקיעת מלחים קשי-תמס ‎‭CaCO₃, CaSO₄, BaSO₄, SrSO₄, SiO₂‬‎ בזנב המערכת</text>
+  <text class="node-text" x="264" y="488" direction="rtl" unicode-bidi="embed">חשוב‏: ‏אסור לשלב פלוקולנטים קטיוניים עם אנטיסקלנט אניוני ‏(‏סכנת ג׳ל על הממברנה‏)‏‏!</text>
+  <text class="node-text" x="264" y="506" direction="rtl" unicode-bidi="embed">‏(‏חומצה מורידה LSI אך הופכת ביקרבונט ‎‭HCO₃⁻‬‎ לגז ‎‭CO₂‬‎ העובר לתוצר ומעלה EC‏)‏</text>
+
+  <rect class="node-box" x="42" y="558" width="445" height="94"/>
+  <text class="node-title" x="264" y="584" direction="rtl" unicode-bidi="embed">4. מסנן תרמילים ‏(Cartridge Filter)‏ מגן ‎‭5 µm‬‎</text>
+  <text class="node-text" x="264" y="604" direction="rtl" unicode-bidi="embed">הגנה אחרונה על משאבת הלחץ הגבוה והממברנות מפני בריחת חלקיקים</text>
+  <text class="node-text" x="264" y="622" direction="rtl" unicode-bidi="embed">בקרה‏: ‏מדי לחץ כניסה‎‭/‬‎יציאה ΔP‏, טמפ׳ המים ‏(‎‭&lt; 45 °C‬‎)‏‏, ‏pH‏, מוליכות ‎‭EC_f‬‎‏, ספיקת ‎‭FI_f‬‎</text>
+
+  <!-- Zone II Nodes -->
+  <rect class="node-box-red" x="550" y="142" width="560" height="98"/>
+  <text class="node-title" x="830" y="168" direction="rtl" unicode-bidi="embed">5. משאבת לחץ גבוה ‏(HPP)‏ עם התנעה רכה ‎‭/‬‎ וסת תדר ‏(VFD)‏</text>
+  <text class="node-text" x="830" y="188" direction="rtl" unicode-bidi="embed">מייצרת לחץ עבודה ‎‭P_f1‬‎ להתגברות על הלחץ האוסמוטי π ועל מפלי הלחץ ΔP</text>
+  <text class="node-text" x="830" y="206" direction="rtl" unicode-bidi="embed">הגנות‏: ‏פרסוסטט לחץ יניקה נמוך ‏(LPS)‏ ולחץ דחיסה גבוה ‏(‏HPS‏, עד ‎‭41 bar‬‎ למים מליחים‏)‏</text>
+  <text class="node-text" x="830" y="224" direction="rtl" unicode-bidi="embed">קצב עליית לחץ בהתנעה ‎‭≤ 0.7 bar/s (10 psi/s)‬‎ למניעת הלם מים ונזק מכני לממברנות‏!</text>
+
+  <!-- Stage 1 -->
+  <rect class="node-box-blue" x="550" y="276" width="560" height="170"/>
+  <text class="node-title" x="830" y="302" direction="rtl" unicode-bidi="embed">6. דרגה ראשונה ‏(‏‎‭Stage 1‬‎ — למשל 4 בתי ממברנה בני 6 אלמנטים כ״א‏)‏</text>
+  <text class="node-text" x="830" y="324" direction="rtl" unicode-bidi="embed">כניסת הזנה ‎‭P_f1‬‎ ‏←‏ זרימה משיקית לאורך רשת המרווח ‏(Feed Spacer)‏ ‏←‏ יציאה ‎‭P_f2‬‎</text>
+  <text class="node-text" x="830" y="342" direction="rtl" unicode-bidi="embed">בקרת מפל לחץ בדרגה 1‏: ‏‎‭ΔP₁ = P_f1 − P_f2‬‎ ‏(‏עליית ‎‭ΔP₁‬‎ ב-‎‭+15%‬‎ מעידה על</text>
+  <text class="node-text" x="830" y="360" direction="rtl" unicode-bidi="embed">סתימת האלמנטים הראשונים במוצקים מרחפים‏, קולואידים‏, ברזל או ביופילם‏!‏)‏</text>
+  <text class="node-text" x="830" y="380" direction="rtl" unicode-bidi="embed">נקודות דיגום תוצר נפרדות בכל בית ממברנה ‏(‏עבור Profiling וגשוש Probing של אטמי O-ring‏)‏</text>
+  <text class="node-text" x="830" y="398" direction="rtl" unicode-bidi="embed">אטם תמלחת ‏(Brine Seal)‏ בכניסה לכל אלמנט ‏+ טבעות מרווח ‏(Shims)‏ במתאם הכניסה</text>
+  <text class="node-text" x="830" y="416" direction="rtl" unicode-bidi="embed">וטבעת דחף ‏(Thrust Ring)‏ בקצה היציאה של בית הממברנה למניעת טלסקופיות</text>
+
+  <!-- Stage 2 -->
+  <rect class="node-box-warn" x="550" y="486" width="560" height="166"/>
+  <text class="node-title" x="830" y="512" direction="rtl" unicode-bidi="embed">7. דרגה שנייה ‏(‏‎‭Stage 2‬‎ — למשל 2 בתי ממברנה המוזנים מרכז דרגה 1‏)‏</text>
+  <text class="node-text" x="830" y="534" direction="rtl" unicode-bidi="embed">רכז דרגה 1 נכנס לדרגה 2 בלחץ ‎‭P_f2‬‎ ‏←‏ יציאת רכז סופי מן המערכת בלחץ ‎‭P_c‬‎</text>
+  <text class="node-text" x="830" y="552" direction="rtl" unicode-bidi="embed">ביציאת דרגה 2‏, ביחס השבה ‎‭Y = 75%‬‎‏, נפח המים מצטמצם פי 4‏,</text>
+  <text class="node-text" x="830" y="570" direction="rtl" unicode-bidi="embed">וריכוז המלחים ‏(‏בהנחת דחייה ‎‭SR = 100%‬‎‏)‏ גדל פי ‎‭CF = 1 / (1 − Y) = 4.0‬‎‏!</text>
+  <text class="node-text" x="830" y="590" direction="rtl" unicode-bidi="embed">בקרת מפל לחץ בדרגה 2‏: ‏‎‭ΔP₂ = P_f2 − P_c‬‎ ומוליכות תוצר דרגה ‎‭2 (EC_p2)‬‎</text>
+  <text class="node-text" x="830" y="608" direction="rtl" unicode-bidi="embed">‏(‏שקיעת אבנית Scaling מתחילה לרוב בזנב הדרגה האחרונה‏: ‏ירידת ספיקה‏, עליית ‎‭EC_p2‬‎ ו-‎‭ΔP₂‬‎‏)‏</text>
+  <text class="node-text" x="830" y="626" direction="rtl" unicode-bidi="embed">גבול מכני למפל לחץ ΔP‏: ‏‎‭≤ 1.0 bar (15 psi)‬‎ לאלמנט בודד ו-‎‭≤ 3.5 bar (50 psi)‬‎ לבית ממברנה רב-אלמנטי</text>
+
+  <!-- Zone III Nodes -->
+  <rect class="node-box-green" x="1175" y="142" width="380" height="168"/>
+  <text class="node-title" x="1365" y="166" direction="rtl" unicode-bidi="embed">8. קו תוצר כללי — פרמיאט ‏(‏מים מטופלים‏)‏</text>
+  <text class="node-text" x="1365" y="186" direction="rtl" unicode-bidi="embed">מכשור‏: ‏מד ספיקה ‎‭Q_p‬‎‏, מד מוליכות ‎‭EC_p‬‎‏,</text>
+  <text class="node-text" x="1365" y="204" direction="rtl" unicode-bidi="embed">מד לחץ ‎‭P_p‬‎‏, שסתום אל-חזור‏, שסתום הפניה לניקוז</text>
+  <text class="node-text" x="1365" y="222" direction="rtl" unicode-bidi="embed">‏(‏תוצר בשעה הראשונה לאחר התנעה‎‭/‬‎שטיפה כימית מופנה לניקוז‏!‏)‏</text>
+  <text class="node-text" x="1365" y="242" direction="rtl" unicode-bidi="embed">איסור לחץ נגדי בתוצר ‏(‏סיכון היפרדות שכבות הממברנה‏)‏‏:</text>
+  <text class="node-text" x="1365" y="260" direction="rtl" unicode-bidi="embed">לחץ התוצר ‎‭P_p‬‎ אסור שיעלה ולו לשנייה על ‎‭P_f‬‎ או ‎‭P_c‬‎</text>
+  <text class="node-text" x="1365" y="278" direction="rtl" unicode-bidi="embed">ביותר מ-‎‭0.3 bar (≈ 4.35 psi) / 5 psi (≈ 0.345 bar)‬‎‏!</text>
+
+  <rect class="node-box-red" x="1175" y="342" width="380" height="145"/>
+  <text class="node-title" x="1365" y="368" direction="rtl" unicode-bidi="embed">9. קו הרכז ‏(Concentrate)‏ ושסתום הוויסות</text>
+  <text class="node-text" x="1365" y="390" direction="rtl" unicode-bidi="embed">שסתום ויסות הרכז קובע את יחס ההשבה של המתקן‏:</text>
+  <text class="node-text" x="1365" y="408" direction="rtl" unicode-bidi="embed">‎‭Y = Q_p / (Q_p + Q_c)‬‎</text>
+  <text class="node-text" x="1365" y="428" direction="rtl" unicode-bidi="embed">מכשור‏: ‏מד ספיקה ‎‭Q_c‬‎‏, מד לחץ ‎‭P_c‬‎‏, מוליכות ‎‭EC_c, pH_c‬‎</text>
+  <text class="node-text" x="1365" y="448" direction="rtl" unicode-bidi="embed">אסור לסגור את ‎‭Q_c‬‎ מתחת לספיקת הרכז המזערית המותרת</text>
+  <text class="node-text" x="1365" y="466" direction="rtl" unicode-bidi="embed">או להפעיל את משאבת הלחץ הגבוה מול שסתום רכז סגור‏!</text>
+
+  <rect class="node-box" x="1175" y="525" width="380" height="127"/>
+  <text class="node-title" x="1365" y="551" direction="rtl" unicode-bidi="embed">10. מערכת שטיפת הדממה ושטיפה כימית ‏(CIP)‏</text>
+  <text class="node-text" x="1365" y="571" direction="rtl" unicode-bidi="embed">בכל עצירה‏: ‏דחיקת התמלחת המרוכזת מבתי הממברנה</text>
+  <text class="node-text" x="1365" y="589" direction="rtl" unicode-bidi="embed">באמצעות מי תוצר בלחץ נמוך ‏(‎‭~3 bar‬‎)‏ ללא אנטיסקלנט</text>
+  <text class="node-text" x="1365" y="609" direction="rtl" unicode-bidi="embed">קריטריונים לביצוע CIP ‏(‏לאחר אימות מכשור ונרמול נתונים‏)‏‏:</text>
+  <text class="node-text" x="1365" y="627" direction="rtl" unicode-bidi="embed">‎‭NPF −10%, NSP +5…20%, ΔP +10…20%‬‎ ‏(‏נבדק לכל דרגה בנפרד‏!‏)‏</text>
+
+  <!-- Summary Box -->
+  <rect class="node-box" x="20" y="706" width="1560" height="172"/>
+  <text class="node-title" x="800" y="732" direction="rtl" unicode-bidi="embed">משוואות בקרה‏, מאזן מכשור ונרמול נתונים מרכזיות לפרק 5 ‏(‏אוסמוזה הפוכה RO‏)‏</text>
+  <text class="node-text" x="800" y="756" direction="rtl" unicode-bidi="embed">1) מאזן מכשור אינדיקטיבי ‏(‎‭DuPont Eq. 79–80‬‎)‏‏: ‏‎‭Q_f = Q_p + Q_c;   [ (Q_f · EC_f) / (Q_p · EC_p + Q_c · EC_c) ] = 1.00 ± 0.05‬‎ ‏(‏מדד עקביות תפעולי‏: ‏אינו מחליף כיול תקופתי של המכשירים‏!‏)‏‏.</text>
+  <text class="node-text" x="800" y="780" direction="rtl" unicode-bidi="embed">2) יחס השבה ופקטור ריכוז ‏(‏בהנחת דחיית מלחים של ‎‭100%‬‎‏)‏‏: ‏‎‭Y = Q_p / Q_f;   CF = 1 / (1 − Y)‬‎ ‏(‏עבור ‎‭Y = 75%‬‎ ‏←‏ ‎‭CF = 4.0‬‎‏)‏‏.‏   |   3) ‏מעבר ודחיית מלחים לפי מוליכות‏: ‏‎‭SP = (EC_p / EC_f)×100%; SR = 100% − SP‬‎‏.</text>
+  <text class="node-text" x="800" y="804" direction="rtl" unicode-bidi="embed">4) כוח מניע נטו של הלחץ‏: ‏‎‭NDP = P_f − (ΔP / 2) − P_p − π_fc + π_p‬‎‏.‏   |   5) ‏ספיקת תוצר מנורמלת ‏(‎‭DuPont Eq. 72‬‎)‏‏: ‏‎‭Q_s = Q_o · (NDP_s / NDP_o) · (TCF_s / TCF_o)‬‎‏.</text>
+  <text class="node-text" x="800" y="828" direction="rtl" unicode-bidi="embed">6) מדוע חובה לנרמל נתונים‏: ‏התקררות המים בכל ‎‭−4 °C‬‎ מקטינה את ספיקת התוצר ‏"הגולמית‏" בכ-‎‭10%‬‎ עקב עליית צמיגות המים‏. רק גרפים מנורמלים ‏(NPF, NSP, ΔP)‏ מבדילים בין השפעת הטמפרטורה לבין אלח‎‭/‬‎אבנית‏!</text>
+  <text class="node-text" x="800" y="852" direction="rtl" unicode-bidi="embed">7) איתור מקור מוליכות גבוהה בתוצר‏: ‏שלב 1 — מיפוי ‏(‏Profiling‏: ‏מדידת ‎‭EC_p‬‎ מכל בית ממברנה בנפרד‏)‏‏; שלב 2 — גשוש ‏(‏Probing עם צינורית 6 מ״מ בתוך צינור איסוף התוצר בצעדים של 20 ס״מ לאיתור אטם O-ring פגום‏)‏‏.</text>
+
+  <!-- Pipes & Arrows -->
+  <path class="pipe-blue" d="M 264 246 L 264 274" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 264 394 L 264 422" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 264 528 L 264 556" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 487 605 L 516 605 L 516 190 L 548 190" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-red" d="M 830 240 L 830 274" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="840" y="262" direction="rtl" unicode-bidi="embed">הזנה בלחץ גבוה ‎‭P_f1‬‎</text>
+
+  <!-- Stage 1 concentrate -> Stage 2 feed -->
+  <path class="pipe-orange" d="M 830 446 L 830 484" marker-end="url(#arrow-orange)"/>
+  <text class="flow-label" x="840" y="470" direction="rtl" unicode-bidi="embed">רכז דרגה 1 ‏←‏ כניסה לדרגה ‎‭2 (P_f2)‬‎</text>
+
+  <!-- Permeate from Stage 1 and Stage 2 -> Node 8 -->
+  <path class="pipe-cyan" d="M 1110 325 L 1142 325 L 1142 205 L 1173 205" marker-end="url(#arrow-cyan)"/>
+  <path class="pipe-cyan" d="M 1110 535 L 1142 535 L 1142 225 L 1173 225" marker-end="url(#arrow-cyan)"/>
+
+  <!-- Concentrate from Stage 2 -> Node 9 -->
+  <path class="pipe-red" d="M 1110 605 L 1158 605 L 1158 415 L 1173 415" marker-end="url(#arrow-red)"/>
+
+  <rect class="footer-bg" x="0" y="896" width="1600" height="64"/>
+  <text class="footer-text" x="36" y="920" font-weight="700" direction="rtl" unicode-bidi="embed">מקורות הנדסיים‏: ‏‎‭[S16] DuPont FilmTec RO Technical Manual (Form No. 45-D01504-en, Rev. 20, Aug 2026, pp. 11–169); [S17] DuPont FilmTec Limiting Conditions (45-D04388-en)‬‎‏;</text>
+  <text class="footer-text" x="36" y="942" direction="rtl" unicode-bidi="embed">המשך מקורות‏: ‏‎‭[S18] Hydranautics TSB107.30 (Foulants &amp; Cleaning, Apr 2026, pp. 1–17); [S19] Hydranautics RODataXL Manual (ASTM D4516); [S20] Toray RO O&amp;M Manual‬‎‏.</text>
+</svg>

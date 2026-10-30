@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Инженерная библиотека пищевого предприятия | ספריית ההנדסה למפעל מזון</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link" id="skip-link-el">Перейти к основному содержанию</a>
+
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ И НАВИГАЦИЯ (v13: 5 ПУНКТОВ В ОДИН РЯД) -->
+  <header class="site-header no-print">
+    <div class="header-top">
+      <div class="brand-block">
+        <h1>
+          <a href="#home" class="brand-link" id="site-brand-link">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"></path><path d="M8 7h7M8 11h5"></path></svg>
+            <span id="site-title-el">Инженерная библиотека завода</span>
+          </a>
+          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v14</span>
+        </h1>
+        <p class="site-subtitle" id="site-subtitle-el" style="display:none;">Пар • Конденсат • Чиллеры • Сжатый воздух • Обратный осмос (RO)</p>
+      </div>
+
+      <!-- Навигационная полоса (Desktop ≥ 768px: 5 пунктов) -->
+      <nav class="nav-bar" id="desktop-main-nav" aria-label="Основное меню">
+        <a href="#home" class="nav-pill active" id="nav-home" data-nav-view="home" aria-current="page">Главная</a>
+        <a href="#problem" class="nav-pill" id="nav-problem" data-nav-view="problem">Что-то не так</a>
+        <a href="#calc" class="nav-pill" id="nav-calculators" data-nav-view="calc">Расчёты</a>
+        <a href="#learn" class="nav-pill" id="nav-learn" data-nav-view="learn">Учёба</a>
+        <a href="#tools" class="nav-pill" id="nav-tools" data-nav-view="tools">Инструменты</a>
+      </nav>
+
+      <div class="header-controls">
+        <!-- Кнопка открытия строки поиска -->
+        <button type="button" class="search-toggle-btn" id="search-toggle-btn" aria-label="Поиск" aria-expanded="false" aria-controls="header-search-drawer" onclick="window.toggleHeaderSearch()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+        </button>
+
+        <!-- Компактный переключатель языка RU / עב -->
+        <div class="lang-switch-group" role="group" aria-label="Language Switcher / בחירת שפה">
+          <button type="button" class="lang-btn active" id="lang-btn-ru" data-lang-switch="ru" aria-pressed="true">RU</button>
+          <button type="button" class="lang-btn" id="lang-btn-he" data-lang-switch="he" aria-pressed="false">עב</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Выдвижная строка поиска (открывается по нажатию на иконку поиска) -->
+    <div class="header-search-drawer" id="header-search-drawer" hidden>
+      <div class="header-search-drawer-inner">
+        <div class="search-box">
+          <input type="search" id="global-search" placeholder="Поиск (RU / עברית / EN: чиллер, אוסמוזה, COP, FAD, NDP, DPD, S08...)" aria-label="Поиск по инженерной библиотеке">
+        </div>
+        <button type="button" class="btn btn-sm btn-outline search-drawer-close-btn" id="search-drawer-close-btn" onclick="window.toggleHeaderSearch(false)" aria-label="Закрыть поиск">✕</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="app-shell">
+    <!-- Неблокирующее уведомление, если localStorage недоступен -->
+    <div id="storage-fallback-banner" class="storage-fallback-banner no-print" role="status" aria-live="polite" style="display:none;"></div>
+
+    <!-- Баннер результатов мгновенного поиска -->
+    <div id="search-results-banner" class="search-results-banner no-print" role="status" aria-live="polite">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+        <span id="search-status-text">Результаты поиска:</span>
+        <button type="button" class="btn btn-sm btn-outline" id="btn-clear-search" onclick="clearSearch()">Сбросить фильтр ✕</button>
+      </div>
+      <div id="search-results-list" class="search-results-list"></div>
+    </div>
+
+    <!-- 1. ГЛАВНАЯ ПАНЕЛЬ (VIEW: home) -->
+    <div id="view-home" class="app-view active-view no-print" data-view="home">
+      <div id="dynamic-home-dashboard"></div>
+    </div>
+
+    <!-- 2. ЭКРАН «ЧТО-ТО НЕ ТАК» (VIEW: problem) -->
+    <div id="view-problem" class="app-view no-print" data-view="problem">
+      <div id="dynamic-problem-container"></div>
+    </div>
+
+    <!-- 3. ПЯТЬ ИНЖЕНЕРНЫХ СИСТЕМ — УЧЁБА (VIEW: learn) -->
+    <div id="view-systems" class="app-view" data-view="learn">
+      <div id="dynamic-systems-container"></div>
+    </div>
+
+    <!-- 4. ИНТЕРАКТИВНЫЙ 6-ШАГОВЫЙ ТРЕНАЖЁР — РАЗБОР СЛУЧАЯ (VIEW: case) -->
+    <div id="view-case" class="app-view no-print" data-view="case">
+      <section class="section-card searchable-block no-print" id="sec-trainer" data-keywords="тренажер практикум кейс ситуация סימולטור אירוע">
+        <div id="dynamic-trainer-container"></div>
+      </section>
+    </div>
+
+    <!-- 5. ИНЖЕНЕРНЫЕ КАЛЬКУЛЯТОРЫ (VIEW: calc) -->
+    <div id="view-calc" class="app-view" data-view="calc">
+    <section class="section-card searchable-block no-print" id="sec-calculators" data-keywords="калькулятор расчёт מחשבון חישוב cop fad ndp tcf pdp">
+      <div class="section-header">
+        <div>
+          <h2 id="calc-section-title">Инженерные калькуляторы (прозрачный расчёт и расчётная карточка)</h2>
+          <p class="section-lead" id="calc-section-lead">Все 5 калькуляторов (10 расчётных модулей) работают локально в браузере, показывают пошаговую подстановку в формулу с размерностями, проверяют физические ограничения и формируют готовую Расчётную карточку на русском и иврите.</p>
+        </div>
+      </div>
+
+      <div class="unit-switch-bar" id="calc-unit-switch-bar" role="group" aria-labelledby="calc-unit-switch-label" style="display:flex; flex-wrap:wrap; align-items:center; gap:0.85rem;">
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <span class="unit-switch-label" id="calc-unit-switch-label">Единицы:</span>
+          <div class="unit-switch-btns">
+            <button type="button" class="unit-switch-btn active" id="unit-btn-si" data-unit-system="si" aria-pressed="true" onclick="window.setCalculatorUnitSystem('si')">Метрические (SI)</button>
+            <button type="button" class="unit-switch-btn" id="unit-btn-us" data-unit-system="us" aria-pressed="false" onclick="window.setCalculatorUnitSystem('us')">Имперские (US)</button>
+          </div>
+          <button type="button" class="help-tip-btn" id="help-btn-units" aria-expanded="false" aria-controls="help-popover-units" aria-label="Справка по единицам измерения" onclick="window.toggleHelpPopover('units')">?</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;" role="group" aria-labelledby="calc-currency-switch-label">
+          <span class="unit-switch-label" id="calc-currency-switch-label">Валюта:</span>
+          <div class="unit-switch-btns">
+            <button type="button" class="unit-switch-btn active" id="currency-btn-usd" data-currency="$" aria-pressed="true" onclick="window.setCalculatorCurrency('$')">$ (USD)</button>
+            <button type="button" class="unit-switch-btn" id="currency-btn-ils" data-currency="₪" aria-pressed="false" onclick="window.setCalculatorCurrency('₪')">₪ (ILS)</button>
+          </div>
+          <button type="button" class="help-tip-btn" id="help-btn-currency" aria-expanded="false" aria-controls="help-popover-currency" aria-label="Справка по валюте" onclick="window.toggleHelpPopover('currency')">?</button>
+        </div>
+        <div class="help-tip-popover" id="help-popover-units" role="region" hidden></div>
+        <div class="help-tip-popover" id="help-popover-currency" role="region" hidden></div>
+      </div>
+
+      <div id="calc-overview-container" class="calc-overview-container" style="display:none;"></div>
+
+      <div id="calc-back-to-overview-bar" class="calc-back-to-overview-bar" style="display:none;">
+        <button type="button" class="btn btn-outline btn-sm calc-back-overview-btn" id="calc-back-overview-btn" onclick="window.showCalcOverview()">
+          ← Все расчёты
+        </button>
+        <span id="calc-active-module-badge" class="calc-active-module-badge"></span>
+      </div>
+
+      <div class="calc-tabs" id="calc-tabs-bar" role="tablist" aria-label="Выбор калькулятора">
+        <button type="button" class="calc-tab-btn active" id="tab-btn-calc-1" role="tab" aria-selected="true" data-target="calc-panel-1" onclick="activateCalculatorTab('calc-panel-1', 'c1a_q_l_min')">1. Конденсат (1А: Потери и возврат • 1Б: Вторичный пар TLV)</button>
+        <button type="button" class="calc-tab-btn" id="tab-btn-calc-2" role="tab" aria-selected="false" data-target="calc-panel-2" onclick="activateCalculatorTab('calc-panel-2', 'c2_vw')">2. Чиллеры (Вода / Гликоль • Approach • COP)</button>
+        <button type="button" class="calc-tab-btn" id="tab-btn-calc-3" role="tab" aria-selected="false" data-target="calc-panel-3" onclick="activateCalculatorTab('calc-panel-3', 'c3a_q1')">3. Сжатый воздух (3А: Пересчёт расхода • 3Б: Утечки • 3В: Влага)</button>
+        <button type="button" class="calc-tab-btn" id="tab-btn-calc-4" role="tab" aria-selected="false" data-target="calc-panel-4" onclick="activateCalculatorTab('calc-panel-4', 'c4a_qp')">4. Обратный осмос RO (4А: Баланс и селективность • 4Б: Нормализация Eq. 72)</button>
+        <button type="button" class="calc-tab-btn" id="tab-btn-calc-5" role="tab" aria-selected="false" data-target="calc-panel-5" onclick="activateCalculatorTab('calc-panel-5', 'c5a_pval')">5. Пар (5А: Перевод давления • 5Б: Расход пара по нагрузке)</button>
+      </div>
+
+      <!-- КАЛЬКУЛЯТОР 1: КОНДЕНСАТ (1А + 1Б) -->
+      <div class="calc-panel active" id="calc-panel-1" role="tabpanel">
+        <div class="calc-submodule-block" id="calc-subblock-1a" data-submodule="1a">
+        <div id="calc-1a" class="calc-module-anchor"><div id="calc-meta-1a"></div></div>
+        <form id="form-calc-1a" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c1a_mode">Режим задания расхода и тепла *</label>
+              <span id="c1a_mode_hint" class="hint">Выберите прямой ввод (л/мин, кг/ч), баланс % возврата или эталон DOE S21</span>
+              <select id="c1a_mode" aria-describedby="c1a_mode_hint" onchange="runCalc1A()">
+                <option value="direct_l_min" selected>Прямой расход конденсата в л/мин (Контрольный пример 6 л/мин)</option>
+                <option value="direct_kg_h">Прямой массовый расход конденсата в кг/ч</option>
+                <option value="steam_return_pct">По расходу пара (кг/ч) и доле возврата конденсата (%)</option>
+                <option value="doe_s21_imperial">Эталон DOE S21 (lb/hr и энтальпии Btu/lb → MMBtu/год)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c1a_q_l_min">Объёмный расход конденсата V_c (л/мин) *</label>
+              <span id="c1a_q_l_min_hint" class="hint">Для режима л/мин: контрольный пример = 6 л/мин (0.36 м³/ч; 0 = нулевые потери)</span>
+              <input type="number" id="c1a_q_l_min" step="any" min="0" value="6" aria-describedby="c1a_q_l_min_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_m_kg_h">Массовый расход конденсата / пара (кг/ч или lb/hr)</label>
+              <span id="c1a_m_kg_h_hint" class="hint">Для режимов кг/ч, % возврата (2000 кг/ч) или DOE (5000 lb/hr; ≥ 0)</span>
+              <input type="number" id="c1a_m_kg_h" step="any" min="0" value="2000" aria-describedby="c1a_m_kg_h_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_ret_pct">Доля возврата конденсата R_cond (0…100%)</label>
+              <span id="c1a_ret_pct_hint" class="hint">Только для режима «По расходу пара и % возврата» (напр., 60%)</span>
+              <input type="number" id="c1a_ret_pct" step="any" min="0" max="100" value="60" aria-describedby="c1a_ret_pct_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_t_cond">Температура конденсата T_cond (°C) [или h_cond Btu/lb] *</label>
+              <span id="c1a_t_cond_hint" class="hint">Жидкая вода (0 &lt; T &lt; 373.95 °C): 50 °C | 90 °C | DOE: 148 Btu/lb</span>
+              <input type="number" id="c1a_t_cond" step="any" required value="50" aria-describedby="c1a_t_cond_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_t_make">Температура подпиточной воды T_makeup (°C) [или h_fw Btu/lb] *</label>
+              <span id="c1a_t_make_hint" class="hint">Жидкая вода (0 &lt; T &lt; 373.95 °C): 20 °C | 15 °C | DOE: 28 Btu/lb</span>
+              <input type="number" id="c1a_t_make" step="any" required value="20" aria-describedby="c1a_t_make_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_rho">Плотность конденсата ρ (кг/л) *</label>
+              <span id="c1a_rho_hint" class="hint">Контрольный пример: 1.0 кг/л (1000 кг/м³)</span>
+              <input type="number" id="c1a_rho" step="any" min="0.5" required value="1" aria-describedby="c1a_rho_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_cp">Удельная теплоёмкость воды c_p (кДж/(кг·°C)) *</label>
+              <span id="c1a_cp_hint" class="hint">Контрольный пример: 4.186 кДж/(кг·°C)</span>
+              <input type="number" id="c1a_cp" step="any" min="1" required value="4.186" aria-describedby="c1a_cp_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_t_shift">Длительность смены t_shift (ч) *</label>
+              <span id="c1a_t_shift_hint" class="hint">Контрольный пример: 8 часов → 2.88 м³ и 100.464 кВт·ч</span>
+              <input type="number" id="c1a_t_shift" step="any" min="0.5" required value="8" aria-describedby="c1a_t_shift_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_t_year">Часы работы в год t_year (ч/год) [Явный ввод]</label>
+              <span id="c1a_t_year_hint" class="hint">Напр., 8000 ч/год → 2880 м³ и 100 464 кВт·ч (обязательно для тарифа)</span>
+              <input type="number" id="c1a_t_year" step="any" min="1" value="8000" placeholder="Оставьте пустым или укажите ч/год" aria-describedby="c1a_t_year_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_eta">КПД котла η_b (%) [Опц., обязателен для топлива/цены]</label>
+              <span id="c1a_eta_hint" class="hint">Допустимо 0 &lt; η_b ≤ 100% (промышленный диапазон 50–98%, напр. 80–82%)</span>
+              <input type="number" id="c1a_eta" step="any" min="0.01" max="100" placeholder="Не задан (только физ. тепло)" aria-describedby="c1a_eta_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_lhv">Теплотворная способность топлива LHV [Опц.]</label>
+              <span id="c1a_lhv_hint" class="hint">Напр., газ: 34.0 МДж/м³ (для пересчёта в м³/год или кг/год)</span>
+              <input type="number" id="c1a_lhv" step="any" min="1" placeholder="МДж/ед. топлива (опц.)" aria-describedby="c1a_lhv_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_tariff_gj">Тариф на тепло / топливо (валюта за ГДж или MMBtu) [Опц.]</label>
+              <span id="c1a_tariff_gj_hint" class="hint">Пусто = без оценки денег; 0 = нулевая цена; в DOE S21: 5 $/MMBtu</span>
+              <input type="number" id="c1a_tariff_gj" step="any" min="0" placeholder="Пусто = без расчёта денег" aria-describedby="c1a_tariff_gj_hint">
+            </div>
+            <div class="field">
+              <label for="c1a_tariff_water">Тариф на воду и химводоподготовку (валюта/м³) [Опц.]</label>
+              <span id="c1a_tariff_water_hint" class="hint">Пусто = без оценки воды; 0 = бесплатная подпитка</span>
+              <input type="number" id="c1a_tariff_water" step="any" min="0" placeholder="Пусто = без стоимости воды" aria-describedby="c1a_tariff_water_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc1A()">Рассчитать Модуль 1А</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('1A')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset1A('benchmark')">Контрольный пример ТЗ (6 л/мин, 50→20 °C, 8 ч и 8000 ч)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset1A('balance60')">Тест 1.1: 2000 кг/ч, возврат 60% (90→15 °C)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset1A('doe')">Тест 1.2: Эталон DOE S21 (5000 lb/hr, 82%, $5/MMBtu → $29,270/год)</button>
+          </div>
+        </form>
+        <div id="out-calc-1a" class="calc-output" aria-live="polite"></div>
+        </div>
+
+        <hr class="calc-submodule-hr" style="margin-block: 1.5rem; border: none; border-block-start: 2px dashed var(--border-color);">
+
+        <div class="calc-submodule-block" id="calc-subblock-1b" data-submodule="1b">
+        <div id="calc-1b" class="calc-module-anchor"><div id="calc-meta-1b"></div></div>
+        <form id="form-calc-1b" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c1_mc">Массовый расход конденсата m_c (кг/ч) *</label>
+              <span id="c1_mc_hint" class="hint">Обязательно: 0 &lt; m_c ≤ 10 000 кг/ч (Пример 1А: 1500 кг/ч)</span>
+              <input type="number" id="c1_mc" step="any" min="0.1" max="10000" required value="1500" aria-describedby="c1_mc_hint">
+            </div>
+            <div class="field">
+              <label for="c1_p1">Давление перед КО P₁ (бар изб.) *</label>
+              <span id="c1_p1_hint" class="hint">Обязательно: P₁ &gt; P₂ (напр., 5.0 бар изб.)</span>
+              <input type="number" id="c1_p1" step="any" min="0" required value="5.0" aria-describedby="c1_p1_hint">
+            </div>
+            <div class="field">
+              <label for="c1_p2">Давление в ресивере P₂ (бар изб.) *</label>
+              <span id="c1_p2_hint" class="hint">Для открытого атмосферного ресивера TLV: 0.0 бар изб.</span>
+              <input type="number" id="c1_p2" step="any" min="-0.9" required value="0.0" aria-describedby="c1_p2_hint">
+            </div>
+            <div class="field">
+              <label for="c1_hf1">Энтальпия жидкости h_f1 при P₁ (кДж/кг) *</label>
+              <span id="c1_hf1_hint" class="hint">При 5.0 бар изб. (CoolProp 8.0.0 HEOS::Water): 670.7 кДж/кг</span>
+              <input type="number" id="c1_hf1" step="any" min="1" required value="670.7" aria-describedby="c1_hf1_hint">
+            </div>
+            <div class="field">
+              <label for="c1_hf2">Энтальпия жидкости h_f2 при P₂ (кДж/кг) *</label>
+              <span id="c1_hf2_hint" class="hint">При 0.0 бар изб. (100.0 °C, CoolProp 8.0.0): 419.0 кДж/кг</span>
+              <input type="number" id="c1_hf2" step="any" min="1" required value="419.0" aria-describedby="c1_hf2_hint">
+            </div>
+            <div class="field">
+              <label for="c1_hfg2">Скрытая теплота h_fg2 при P₂ (кДж/кг) *</label>
+              <span id="c1_hfg2_hint" class="hint">При 0.0 бар изб. (100.0 °C, CoolProp 8.0.0): 2256.5 кДж/кг</span>
+              <input type="number" id="c1_hfg2" step="any" min="100" required value="2256.5" aria-describedby="c1_hfg2_hint">
+            </div>
+            <div class="field">
+              <label for="c1_dop">Диаметр переливной трубы D_op (мм) [Опц.]</label>
+              <span id="c1_dop_hint" class="hint">Для проверки условия D_cr ≥ 3·D_op [S07, PDF p. 14]</span>
+              <input type="number" id="c1_dop" step="any" min="10" placeholder="Не задан (предварит. 200 мм)" aria-describedby="c1_dop_hint">
+            </div>
+            <div class="field">
+              <label for="c1b_t_year">Часы работы в год t_year (ч/год) [Опц. для денег]</label>
+              <span id="c1b_t_year_hint" class="hint">Напр., 8000 ч/год (явный ввод для годовой стоимости вторичного пара)</span>
+              <input type="number" id="c1b_t_year" step="any" min="1" max="8784" value="" placeholder="Оставьте пустым или укажите ч/год" aria-describedby="c1b_t_year_hint">
+            </div>
+            <div class="field">
+              <label for="c1b_eta">КПД котла η_b (%) [Опц. для денег]</label>
+              <span id="c1b_eta_hint" class="hint">Типовой диапазон котлов: 70–95% [S01, PDF p. 12; S21, PDF p. 1] (в примерах S21/S22: 80–82%)</span>
+              <input type="number" id="c1b_eta" step="any" min="0.01" max="100" value="" placeholder="Напр., 80–82% [S01, S21]" aria-describedby="c1b_eta_hint">
+            </div>
+            <div class="field">
+              <label for="c1b_tariff_gj">Тариф на тепло / топливо (валюта за ГДж) [Опц.]</label>
+              <span id="c1b_tariff_gj_hint" class="hint">Пусто = без оценки денег; при вводе &gt; 0 считает годовую стоимость уноса вторичного пара</span>
+              <input type="number" id="c1b_tariff_gj" step="any" min="0.01" value="" placeholder="Пусто = без расчёта денег" aria-describedby="c1b_tariff_gj_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc1B()">Рассчитать Модуль 1Б (Вторичный пар и TLV)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('1B')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset1B('prelim')">Пример 1А без D_op (предварит. 200 мм)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset1B('dop50')">Пример 1А с D_op = 50 мм (итог 200 мм)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset1B('dop100')">Пример с D_op = 100 мм (3×100 = 300 мм)</button>
+          </div>
+        </form>
+        <div id="out-calc-1b" class="calc-output" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- КАЛЬКУЛЯТОР 2: ЧИЛЛЕРЫ -->
+      <div class="calc-panel" id="calc-panel-2" role="tabpanel">
+        <div class="calc-submodule-block" id="calc-subblock-2" data-submodule="2">
+        <div id="calc-2" class="calc-module-anchor"><div id="calc-meta-2"></div></div>
+        <form id="form-calc-2" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c2_fluid">Тип теплоносителя испарителя *</label>
+              <span id="c2_fluid_hint" class="hint">При выборе гликоля проверьте фактические ρ и c_p раствора</span>
+              <select id="c2_fluid" aria-describedby="c2_fluid_hint" onchange="onFluidChangeCalc2()">
+                <option value="water" selected>Чистая вода (ρ = 999.7 кг/м³, c_p = 4.186 кДж/(кг·°C))</option>
+                <option value="glycol">Водный раствор пропилен-/этиленгликоля (явный ввод ρ и c_p)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c2_vw">Объёмный расход теплоносителя V_w (м³/ч) *</label>
+              <span id="c2_vw_hint" class="hint">Обязательно: &gt; 0 (напр., 120.0 или 85.6 м³/ч)</span>
+              <input type="number" id="c2_vw" step="any" min="0.1" required value="120.0" aria-describedby="c2_vw_hint">
+            </div>
+            <div class="field">
+              <label for="c2_rho">Плотность теплоносителя ρ (кг/м³) *</label>
+              <span id="c2_rho_hint" class="hint">Вода: 999.7–1000 кг/м³ | 30% ПГ гликоль: ~1032 кг/м³</span>
+              <input type="number" id="c2_rho" step="any" min="500" required value="1000.0" aria-describedby="c2_rho_hint">
+            </div>
+            <div class="field">
+              <label for="c2_cp">Теплоёмкость теплоносителя c_p (кДж/(кг·°C)) *</label>
+              <span id="c2_cp_hint" class="hint">Вода: 4.186 | 30% ПГ гликоль: ~3.85 кДж/(кг·°C)</span>
+              <input type="number" id="c2_cp" step="any" min="1.0" required value="4.186" aria-describedby="c2_cp_hint">
+            </div>
+            <div class="field">
+              <label for="c2_tin">Вход теплоносителя в испаритель T_evap,in (°C) *</label>
+              <span id="c2_tin_hint" class="hint">Обязательно: строго выше T_evap,out (напр., 12.0 °C)</span>
+              <input type="number" id="c2_tin" step="any" required value="12.0" aria-describedby="c2_tin_hint">
+            </div>
+            <div class="field">
+              <label for="c2_tout">Выход теплоносителя из испарителя T_evap,out (°C) *</label>
+              <span id="c2_tout_hint" class="hint">Рабочая уставка Cool LWT (напр., 7.0 °C или −1.0 °C для гликоля)</span>
+              <input type="number" id="c2_tout" step="any" required value="7.0" aria-describedby="c2_tout_hint">
+            </div>
+            <div class="field">
+              <label for="c2_pel">Электрическая мощность чиллера W_elec (кВт) [Опц.]</label>
+              <span id="c2_pel_hint" class="hint">Строго &gt; 0 кВт для расчёта COP и кВт/TR (напр., 96.0 кВт)</span>
+              <input type="number" id="c2_pel" step="any" min="0.1" value="96.0" placeholder="Оставьте пустым без замера кВт" aria-describedby="c2_pel_hint">
+            </div>
+            <div class="field">
+              <label for="c2_tsat_ev">Температура кипения фреона T_sat,evap (°C) [Опц.]</label>
+              <span id="c2_tsat_ev_hint" class="hint">Ниже T_evap,out (напр., 3.5 °C → Approach испарителя 3.5 °C)</span>
+              <input type="number" id="c2_tsat_ev" step="any" value="" placeholder="Опционально" aria-describedby="c2_tsat_ev_hint">
+            </div>
+            <div class="field">
+              <label for="c2_tcond_out">Выход воды конденсатора T_cond,out (°C) [Опц.]</label>
+              <span id="c2_tcond_out_hint" class="hint">Заполняется в паре с T_sat,cond (напр., 32.8 или 34.5 °C)</span>
+              <input type="number" id="c2_tcond_out" step="any" value="32.8" placeholder="В паре с T_sat,cond" aria-describedby="c2_tcond_out_hint">
+            </div>
+            <div class="field">
+              <label for="c2_tsat_cd">Температура конденсации фреона T_sat,cond (°C) [Опц.]</label>
+              <span id="c2_tsat_cd_hint" class="hint">Заполняется в паре с T_cond,out (напр., 35.0 или 44.5 °C)</span>
+              <input type="number" id="c2_tsat_cd" step="any" value="35.0" placeholder="В паре с T_cond,out" aria-describedby="c2_tsat_cd_hint">
+            </div>
+            <div class="field">
+              <label for="c2_t_year">Часы работы чиллера в год t_year (ч/год) [Опц. для денег]</label>
+              <span id="c2_t_year_hint" class="hint">Напр., 4000–6000 ч/год (явный ввод для годового расхода электроэнергии)</span>
+              <input type="number" id="c2_t_year" step="any" min="1" max="8784" value="" placeholder="Оставьте пустым или укажите ч/год" aria-describedby="c2_t_year_hint">
+            </div>
+            <div class="field">
+              <label for="c2_tariff_kwh">Тариф на электроэнергию (валюта за кВт·ч) [Опц.]</label>
+              <span id="c2_tariff_kwh_hint" class="hint">Пусто = без оценки денег; при вводе &gt; 0 считает годовую стоимость электроэнергии чиллера</span>
+              <input type="number" id="c2_tariff_kwh" step="any" min="0.001" value="" placeholder="Пусто = без расчёта денег" aria-describedby="c2_tariff_kwh_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc2()">Рассчитать (Калькулятор 2)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('2')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset2('water')">Тест 2.1: Вода 120 м³/ч (12→7 °C → 697.7 кВт, COP 7.27)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset2('glycol')">Тест 2.2: 30% ПГ гликоль 120 м³/ч (+4→−1 °C → 662.2 кВт)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset2('case31')">Тест 2.3: Случай 3.1 практикума (подход конденсатора 10.0 °C)</button>
+          </div>
+        </form>
+        <div id="out-calc-2" class="calc-output" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- КАЛЬКУЛЯТОР 3: СЖАТЫЙ ВОЗДУХ (3А + 3Б + 3В) -->
+      <div class="calc-panel" id="calc-panel-3" role="tabpanel">
+        <div class="calc-submodule-block" id="calc-subblock-3a" data-submodule="3a">
+        <div id="calc-3a" class="calc-module-anchor"><div id="calc-meta-3a"></div></div>
+        <form id="form-calc-3a" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c3a_q1">Исходный объёмный расход Q₁ (л/с) *</label>
+              <span id="c3a_q1_hint" class="hint">Обязательно: &gt; 0 (Тест 3.1: 400 Нл/с)</span>
+              <input type="number" id="c3a_q1" step="any" min="0.1" required value="400" aria-describedby="c3a_q1_hint">
+            </div>
+            <div class="field">
+              <label for="c3a_p1">Абсолютное давление состояния 1 P₁_abs (бар(а)) *</label>
+              <span id="c3a_p1_hint" class="hint">Нормальные условия: 1.01325 бар(а)</span>
+              <input type="number" id="c3a_p1" step="any" min="0.05" required value="1.01325" aria-describedby="c3a_p1_hint">
+            </div>
+            <div class="field">
+              <label for="c3a_t1">Температура состояния 1 T₁ (°C) *</label>
+              <span id="c3a_t1_hint" class="hint">Нормальные условия: 0.0 °C</span>
+              <input type="number" id="c3a_t1" step="any" required value="0" aria-describedby="c3a_t1_hint">
+            </div>
+            <div class="field">
+              <label for="c3a_rh1">Относит. влажность состояния 1 φ₁ (%) и p_sat1 (бар) *</label>
+              <span id="c3a_rh1_hint" class="hint">Для сухого воздуха: φ₁ = 0%, p_sat1 = 0 бар</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c3a_rh1" step="any" min="0" max="100" required value="0" aria-label="Относительная влажность состояния 1 (%)">
+                <input type="number" id="c3a_psat1" step="any" min="0" required value="0" aria-label="Давление насыщенного пара состояния 1 (бар)">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c3a_p2">Абсолютное давление состояния 2 P₂_abs (бар(а)) *</label>
+              <span id="c3a_p2_hint" class="hint">Всас: 0.980 бар(а) (→ 471.24 л/с) или 1.000 бар(а) (→ 461.59 л/с)</span>
+              <input type="number" id="c3a_p2" step="any" min="0.05" required value="0.980" aria-describedby="c3a_p2_hint">
+            </div>
+            <div class="field">
+              <label for="c3a_t2">Температура состояния 2 T₂ (°C) *</label>
+              <span id="c3a_t2_hint" class="hint">Летний всас: +30.0 °C</span>
+              <input type="number" id="c3a_t2" step="any" required value="30" aria-describedby="c3a_t2_hint">
+            </div>
+            <div class="field">
+              <label for="c3a_rh2">Относит. влажность состояния 2 φ₂ (%) и p_sat2 (бар) *</label>
+              <span id="c3a_rh2_hint" class="hint">При +30 °C [S13, printed p. 134 / PDF p. 136]: φ₂ = 60%, p_sat2 = 0.04246 бар</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c3a_rh2" step="any" min="0" max="100" required value="60" aria-label="Относительная влажность состояния 2 (%)">
+                <input type="number" id="c3a_psat2" step="any" min="0" required value="0.04246" aria-label="Давление насыщенного пара состояния 2 (бар)">
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc3A()">Рассчитать Модуль 3А (Пересчёт расхода)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('3A')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset3A(0.980)">Тест 3.1А: P₂ = 0.980 бар(а) (→ 471.24 л/с FAD)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset3A(1.000)">Тест 3.1Б: P₂ = 1.000 бар(а) (→ 461.59 л/с FAD)</button>
+          </div>
+        </form>
+        <div id="out-calc-3a" class="calc-output" aria-live="polite"></div>
+        </div>
+
+        <hr class="calc-submodule-hr" style="margin-block: 1.5rem; border: none; border-block-start: 2px dashed var(--border-color);">
+
+        <div class="calc-submodule-block" id="calc-subblock-3b" data-submodule="3b">
+        <div id="calc-3b" class="calc-module-anchor"><div id="calc-meta-3b"></div></div>
+        <form id="form-calc-3b" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c3b_method">Метод оценки утечек *</label>
+              <span id="c3b_method_hint" class="hint">Метод 1 (спад давления ресивера) или Метод 2 (цикл Load/Unload)</span>
+              <select id="c3b_method" aria-describedby="c3b_method_hint" onchange="runCalc3B()">
+                <option value="receiver_drop" selected>Метод 1: По спаду давления в ресивере и сети (V · (P₁ − P₂) / (t · P_atm))</option>
+                <option value="load_unload">Метод 2: По времени цикла Load / Unload в нерабочую смену</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c3b_vr">Вместимость ресивера и сети V_r (м³) [Метод 1]</label>
+              <span id="c3b_vr_hint" class="hint">Тест 3.2: 10.0 м³</span>
+              <input type="number" id="c3b_vr" step="any" min="0.1" value="10.0" aria-describedby="c3b_vr_hint">
+            </div>
+            <div class="field">
+              <label for="c3b_pstart">Начальное и конечное давление P₁, P₂ (бар изб.) [Метод 1]</label>
+              <span id="c3b_pstart_hint" class="hint">Тест 3.2: спад с 7.0 до 6.0 бар изб.</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c3b_pstart" step="any" value="7.0" aria-label="Начальное давление P1 (бар изб.)">
+                <input type="number" id="c3b_pend" step="any" value="6.0" aria-label="Конечное давление P2 (бар изб.)">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c3b_tdecay">Время спада t (мин) и P_atm (бар) [Метод 1]</label>
+              <span id="c3b_tdecay_hint" class="hint">Тест 3.2: t = 5.0 мин при P_atm = 1.0 бар</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c3b_tdecay" step="any" min="0.1" value="5.0" aria-label="Время спада давления (мин)">
+                <input type="number" id="c3b_patm" step="any" min="0.5" value="1.0" aria-label="Атмосферное давление P_atm (бар)">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c3b_tload">Время под нагрузкой t_load и разгрузки t_unload (мин) [Метод 2]</label>
+              <span id="c3b_tload_hint" class="hint">Тест 3.2Б: t_load = 3.0 мин, t_unload = 7.0 мин (→ 30%)</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c3b_tload" step="any" min="0" value="3.0" aria-label="Время работы под нагрузкой t_load (мин)">
+                <input type="number" id="c3b_tunload" step="any" min="0" value="7.0" aria-label="Время холостого хода t_unload (мин)">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c3b_qcomp">Номинальная подача компрессора Q_comp (м³/мин) [Опц.]</label>
+              <span id="c3b_qcomp_hint" class="hint">Тест 3.2: 20.0 м³/мин (для расчёта доли утечек %)</span>
+              <input type="number" id="c3b_qcomp" step="any" min="0.1" value="20.0" aria-describedby="c3b_qcomp_hint">
+            </div>
+            <div class="field">
+              <label for="c3b_spec_power">Удельная мощность компрессора w_spec (кВт/(м³/мин) — только SI) [Опц.]</label>
+              <span id="c3b_spec_power_hint" class="hint">По [S12, Fact Sheet 7, PDF pp. 52–53] при 100 psig: винтовой 1-ступ. 18–19 kW/100 cfm (≈ 6.36–6.71 кВт/(м³/мин)), 2-ступ. 16–17 kW/100 cfm (≈ 5.65–6.00)</span>
+              <input type="number" id="c3b_spec_power" step="any" min="0.1" value="" placeholder="Напр., 6.5 кВт/(м³/мин) [S12]" aria-describedby="c3b_spec_power_hint">
+            </div>
+            <div class="field">
+              <label for="c3b_t_year">Часы работы сети в год t_year (ч/год) [Опц. для денег]</label>
+              <span id="c3b_t_year_hint" class="hint">Напр., 8000 ч/год (явный ввод для годовых потерь электроэнергии на утечки)</span>
+              <input type="number" id="c3b_t_year" step="any" min="1" max="8784" value="" placeholder="Оставьте пустым или укажите ч/год" aria-describedby="c3b_t_year_hint">
+            </div>
+            <div class="field">
+              <label for="c3b_tariff_kwh">Тариф на электроэнергию (валюта за кВт·ч) [Опц.]</label>
+              <span id="c3b_tariff_kwh_hint" class="hint">Пусто = без оценки денег; при вводе &gt; 0 считает годовую стоимость утечек воздуха</span>
+              <input type="number" id="c3b_tariff_kwh" step="any" min="0.001" value="" placeholder="Пусто = без расчёта денег" aria-describedby="c3b_tariff_kwh_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc3B()">Рассчитать Модуль 3Б (Утечки)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('3B')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset3B('receiver_drop')">Тест 3.2А: Спад ресивера (10 м³, 7→6 бар, 5 мин → 2.0 м³/мин, 10%)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset3B('load_unload')">Тест 3.2Б: Цикл Load/Unload (3 и 7 мин → 30%, 6.0 м³/мин)</button>
+          </div>
+        </form>
+        <div id="out-calc-3b" class="calc-output" aria-live="polite"></div>
+        </div>
+
+        <hr class="calc-submodule-hr" style="margin-block: 1.5rem; border: none; border-block-start: 2px dashed var(--border-color);">
+
+        <div class="calc-submodule-block" id="calc-subblock-3c" data-submodule="3c">
+        <div id="calc-3c" class="calc-module-anchor"><div id="calc-meta-3c"></div></div>
+        <form id="form-calc-3" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c3_qc">Подача компрессора FAD q_c (л/с) *</label>
+              <span id="c3_qc_hint" class="hint">В источнике S13, PDF p. 122: 445 л/с</span>
+              <input type="number" id="c3_qc" step="any" min="1" required value="445" aria-describedby="c3_qc_hint">
+            </div>
+            <div class="field">
+              <label for="c3_rh">Относительная влажность всаса RH (0..1) *</label>
+              <span id="c3_rh_hint" class="hint">Пример S13, p. 122: 0.60 | Учебный охладитель: 0.50</span>
+              <input type="number" id="c3_rh" step="any" min="0" max="1" required value="0.60" aria-describedby="c3_rh_hint">
+            </div>
+            <div class="field">
+              <label for="c3_rho_in">Плотность насыщ. пара на всасе (г/м³) *</label>
+              <span id="c3_rho_in_hint" class="hint">При +30 °C: 30.078 г/м³ | При +20 °C: 17.148 г/м³ [S13, PDF pp. 136, 138]</span>
+              <input type="number" id="c3_rho_in" step="any" min="0.1" required value="30.078" aria-describedby="c3_rho_in_hint">
+            </div>
+            <div class="field">
+              <label for="c3_tamb">Абсолютная температура всаса T_amb (К) *</label>
+              <span id="c3_tamb_hint" class="hint">+30 °C = 303.15 К | +20 °C = 293 К</span>
+              <input type="number" id="c3_tamb" step="any" min="200" required value="303.15" aria-describedby="c3_tamb_hint">
+            </div>
+            <div class="field">
+              <label for="c3_pafter">Абсолютное давление сжатия p_after (бар(а)) *</label>
+              <span id="c3_pafter_hint" class="hint">В примере S13, p. 122: 8.0 бар(а)</span>
+              <input type="number" id="c3_pafter" step="any" min="1.1" required value="8.0" aria-describedby="c3_pafter_hint">
+            </div>
+            <div class="field">
+              <label for="c3_tafter">Абсолютная температура после осушки / охладителя (К) *</label>
+              <span id="c3_tafter_hint" class="hint">+6 °C = 279.15 К (S13) | +25 °C = 298 К (охладитель)</span>
+              <input type="number" id="c3_tafter" step="any" min="200" required value="279.15" aria-describedby="c3_tafter_hint">
+            </div>
+            <div class="field">
+              <label for="c3_rho_out">Плотность насыщ. пара при T_after (г/м³) *</label>
+              <span id="c3_rho_out_hint" class="hint">При +6 °C: 7.246 г/м³ | При +25 °C: 22.830 г/м³ [S13, p. 138]</span>
+              <input type="number" id="c3_rho_out" step="any" min="0.1" required value="7.246" aria-describedby="c3_rho_out_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc3()">Рассчитать Модуль 3В (Влага)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('3C')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset3('s13_exact')">Исходный пример S13 (PDF с. 122: 30 °C, RH 60%, +6 °C → 27.46 кг/ч / окр. 27.4 кг/ч)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset3('aftercooler_445')">Учебный сценарий концевого охладителя (20 °C, RH 50%, 445 л/с, +25 °C → 9.09 л/ч)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset3('aftercooler_450')">Учебный сценарий охладителя (450 л/с → 9.19 л/ч)</button>
+          </div>
+        </form>
+        <div id="out-calc-3" class="calc-output" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- КАЛЬКУЛЯТОР 4: ОБРАТНЫЙ ОСМОС RO (4А + 4Б) -->
+      <div class="calc-panel" id="calc-panel-4" role="tabpanel">
+        <div class="calc-submodule-block" id="calc-subblock-4a" data-submodule="4a">
+        <div id="calc-4a" class="calc-module-anchor"><div id="calc-meta-4a"></div></div>
+        <form id="form-calc-4a" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c4a_qp">Расход пермеата Q_p (м³/ч) *</label>
+              <span id="c4a_qp_hint" class="hint">Тест 4.1: 18.0 м³/ч</span>
+              <input type="number" id="c4a_qp" step="any" min="0.1" required value="18.0" aria-describedby="c4a_qp_hint">
+            </div>
+            <div class="field">
+              <label for="c4a_qc">Расход концентрата Q_c (м³/ч) *</label>
+              <span id="c4a_qc_hint" class="hint">Тест 4.1: 6.0 м³/ч (→ Q_f = 24.0 м³/ч, Y = 75.0%)</span>
+              <input type="number" id="c4a_qc" step="any" min="0.1" required value="6.0" aria-describedby="c4a_qc_hint">
+            </div>
+            <div class="field">
+              <label for="c4a_qf_meas">Измеренный входной расход Q_f,meas (м³/ч) [Опц.]</label>
+              <span id="c4a_qf_meas_hint" class="hint">Для сверки расходомеров (напр., 24.2 м³/ч)</span>
+              <input type="number" id="c4a_qf_meas" step="any" min="0.1" value="24.2" aria-describedby="c4a_qf_meas_hint">
+            </div>
+            <div class="field">
+              <label for="c4a_ecf">Проводимость входа EC_f (мкСм/см) *</label>
+              <span id="c4a_ecf_hint" class="hint">Тест 4.1: 1200 мкСм/см (оценка по EC ≠ массовая концентрация TDS)</span>
+              <input type="number" id="c4a_ecf" step="any" min="1" required value="1200" aria-describedby="c4a_ecf_hint">
+            </div>
+            <div class="field">
+              <label for="c4a_ecp">Проводимость пермеата EC_p (мкСм/см) *</label>
+              <span id="c4a_ecp_hint" class="hint">Тест 4.1: 24 мкСм/см (→ SP_EC = 2.0%, SR_EC = 98.0% по EC)</span>
+              <input type="number" id="c4a_ecp" step="any" min="0" required value="24" aria-describedby="c4a_ecp_hint">
+            </div>
+            <div class="field">
+              <label for="c4a_ecc">Проводимость концентрата EC_c (мкСм/см) [Опц.]</label>
+              <span id="c4a_ecc_hint" class="hint">Тест 4.1: 4720 мкСм/см (для проверки баланса проводимости Eq. 80)</span>
+              <input type="number" id="c4a_ecc" step="any" min="1" value="4720" aria-describedby="c4a_ecc_hint">
+            </div>
+            <div class="field">
+              <label for="c4a_tdsf">Массовое солесодержание TDS_f, TDS_p, TDS_c (мг/л) [Опц.]</label>
+              <span id="c4a_tdsf_hint" class="hint">Опционально: для точного массового баланса солей (отдельно от оценки по EC)</span>
+              <div style="display:flex; gap:0.35rem;">
+                <input type="number" id="c4a_tdsf" step="any" min="0.1" placeholder="TDS_f" aria-label="Массовая концентрация солей питания TDS_f (мг/л)">
+                <input type="number" id="c4a_tdsp" step="any" min="0" placeholder="TDS_p" aria-label="Массовая концентрация солей пермеата TDS_p (мг/л)">
+                <input type="number" id="c4a_tdsc" step="any" min="0.1" placeholder="TDS_c" aria-label="Массовая концентрация солей концентрата TDS_c (мг/л)">
+              </div>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc4A()">Рассчитать Модуль 4А (Баланс и селективность RO)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('4A')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset4A()">Тест 4.1: Баланс RO (Qp=18, Qc=6, ECf=1200, ECp=24, ECc=4720 → Y=75%, CF_EC=3.94, B_EC=1.0017)</button>
+          </div>
+        </form>
+        <div id="out-calc-4a" class="calc-output" aria-live="polite"></div>
+        </div>
+
+        <hr class="calc-submodule-hr" style="margin-block: 1.5rem; border: none; border-block-start: 2px dashed var(--border-color);">
+
+        <div class="calc-submodule-block" id="calc-subblock-4b" data-submodule="4b">
+        <div id="calc-4b" class="calc-module-anchor"><div id="calc-meta-4b"></div></div>
+        <form id="form-calc-4" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c4_qp">Текущий расход пермеата Q_po (м³/ч) *</label>
+              <span id="c4_qp_hint" class="hint">Пример S16, PDF p. 132 (Случай 5.2): 127.0 м³/ч</span>
+              <input type="number" id="c4_qp" step="any" min="0.1" required value="127.0" aria-describedby="c4_qp_hint">
+            </div>
+            <div class="field">
+              <label for="c4_qc">Текущий расход концентрата Q_co (м³/ч) *</label>
+              <span id="c4_qc_hint" class="hint">В S16, PDF p. 132 при Recovery = 72%: Q_co = 49.39 м³/ч</span>
+              <input type="number" id="c4_qc" step="any" min="0.1" required value="49.39" aria-describedby="c4_qc_hint">
+            </div>
+            <div class="field">
+              <label for="c4_qbase">Базовый расход пермеата при пуске Q_ps (м³/ч) *</label>
+              <span id="c4_qbase_hint" class="hint">При пуске (15 °C, Y = 75%): 150.0 м³/ч</span>
+              <input type="number" id="c4_qbase" step="any" min="0.1" required value="150.0" aria-describedby="c4_qbase_hint">
+            </div>
+            <div class="field">
+              <label for="c4_ndps">Базовая движущая сила NDP_s (бар) *</label>
+              <span id="c4_ndps_hint" class="hint">S16, PDF p. 131: 20.0 бар</span>
+              <input type="number" id="c4_ndps" step="any" min="0.5" required value="20.0" aria-describedby="c4_ndps_hint">
+            </div>
+            <div class="field">
+              <label for="c4_ndpo">Текущая движущая сила NDP_o (бар) *</label>
+              <span id="c4_ndpo_hint" class="hint">S16, PDF p. 132: окр. 21.3 бар | точн. 21.28 бар</span>
+              <input type="number" id="c4_ndpo" step="any" min="0.5" required value="21.3" aria-describedby="c4_ndpo_hint">
+            </div>
+            <div class="field">
+              <label for="c4_tcfs">Базовый коэфф. температуры TCF_s *</label>
+              <span id="c4_tcfs_hint" class="hint">При 15 °C [S16, Eq. 74 (298/273)]: окр. 0.70 | точн. 0.70336246</span>
+              <input type="number" id="c4_tcfs" step="any" min="0.1" required value="0.70" aria-describedby="c4_tcfs_hint">
+            </div>
+            <div class="field">
+              <label for="c4_tcfo">Текущий коэфф. температуры TCF_o *</label>
+              <span id="c4_tcfo_hint" class="hint">При 10 °C [S16, Eq. 74 (298/273)]: окр. 0.58 | точн. 0.58441151</span>
+              <input type="number" id="c4_tcfo" step="any" min="0.1" required value="0.58" aria-describedby="c4_tcfo_hint">
+            </div>
+            <div class="field">
+              <label for="c4_pp">Разность давлений P_p − P_c (бар) [Учебная проверка]</label>
+              <span id="c4_pp_hint" class="hint">Ориентир DuPont/Toray: ≤ 0.3 бар (≈ 4.35 psi) / 5 psi (≈ 0.345 бар)</span>
+              <input type="number" id="c4_pp" step="any" value="-18.0" aria-describedby="c4_pp_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc4()">Рассчитать Модуль 4Б (Нормализация Eq. 72)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('4B')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset4('rounded')">Тест 4.2А: Пример S16 с округлением (0.70 и 0.58 → Q_s = 143.92 ≈ 144 м³/ч, −4.05%)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset4('exact')">Тест 4.2Б: По Eq. 74 (298/273) без округления (→ Q_s = 143.66 м³/ч, −4.23%)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset4('counterexample_ndp')">Тест 4.2В: Контрпример вклада NDP vs TCF (Qp 90/100, NDP 9.1/10, TCF 0.99/1.00 → 99.90 м³/ч)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset4('high_npf')">Тест 4.2Г: Рост NPF ≥ +10% (проскок O-ring / окисление, а не фоулинг)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset4('alarm')">Тест блокировки: Обратное давление (+0.60 бар)</button>
+          </div>
+        </form>
+        <div id="out-calc-4" class="calc-output" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <!-- КАЛЬКУЛЯТОР 5: ПАР (5А + 5Б) -->
+      <div class="calc-panel" id="calc-panel-5" role="tabpanel">
+        <div class="calc-submodule-block" id="calc-subblock-5a" data-submodule="5a">
+        <div id="calc-5a" class="calc-module-anchor"><div id="calc-meta-5a"></div></div>
+        <form id="form-calc-5a" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c5a_mode">Направление перевода давления *</label>
+              <span id="c5a_mode_hint" class="hint">P_abs = P_gauge + P_atm (при P_abs &gt; 0)</span>
+              <select id="c5a_mode" aria-describedby="c5a_mode_hint" onchange="runCalc5A()">
+                <option value="gauge_to_abs" selected>Из избыточного (манометрического P_gauge) → в абсолютное (P_abs)</option>
+                <option value="abs_to_gauge">Из абсолютного (P_abs) → в избыточное (манометрическое P_gauge)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c5a_unit">Единица измерения входного давления *</label>
+              <span id="c5a_unit_hint" class="hint">1 bar = 14.50377 psi = 100 kPa</span>
+              <select id="c5a_unit" aria-describedby="c5a_unit_hint" onchange="runCalc5A()">
+                <option value="bar" selected>бар (bar — barg / bara)</option>
+                <option value="psi">фунт/кв. дюйм (psi — psig / psia)</option>
+                <option value="kpa">килопаскаль (kPa — kPag / kPaa)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c5a_pval">Значение входного давления *</label>
+              <span id="c5a_pval_hint" class="hint">Тест 5.1: 6.0 бар изб. (→ 7.01325 бар абс. / 101.72 psia)</span>
+              <input type="number" id="c5a_pval" step="any" required value="6.0" aria-describedby="c5a_pval_hint">
+            </div>
+            <div class="field">
+              <label for="c5a_patm">Атмосферное давление P_atm (бар) *</label>
+              <span id="c5a_patm_hint" class="hint">Стандартное на уровне моря: 1.01325 бар</span>
+              <input type="number" id="c5a_patm" step="any" min="0.5" required value="1.01325" aria-describedby="c5a_patm_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc5A()">Рассчитать Модуль 5А (Перевод давления)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('5A')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset5A()">Тест 5.1: 6.0 бар изб. + 1.01325 бар → 7.01325 бар абс. (101.72 psia)</button>
+          </div>
+        </form>
+        <div id="out-calc-5a" class="calc-output" aria-live="polite"></div>
+        </div>
+
+        <hr class="calc-submodule-hr" style="margin-block: 1.5rem; border: none; border-block-start: 2px dashed var(--border-color);">
+
+        <div class="calc-submodule-block" id="calc-subblock-5b" data-submodule="5b">
+        <div id="calc-5b" class="calc-module-anchor"><div id="calc-meta-5b"></div></div>
+        <form id="form-calc-5" novalidate>
+          <div class="calc-grid">
+            <div class="field">
+              <label for="c5_load_mode">Способ задания тепловой нагрузки *</label>
+              <span id="c5_load_mode_hint" class="hint">Прямая мощность Q_load (кВт) или нагрев потока продукта</span>
+              <select id="c5_load_mode" aria-describedby="c5_load_mode_hint" onchange="runCalc5()">
+                <option value="direct_kw" selected>Прямой ввод тепловой мощности Q_load (кВт) — Тест 5.2А (350 кВт)</option>
+                <option value="product_heating">Через нагрев продукта: m_p · c_p · (T_out − T_in) / 3600 — Тест 5.2Б</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c5_steam_preset">Выбор проверенной точки насыщенного пара (0…12 бар изб., 11 точек)</label>
+              <span id="c5_steam_preset_hint" class="hint">Подставляет согласованные T_sat, h_g, h_f и h_fg = h_g − h_f (при P_atm = 1.013 бар)</span>
+              <select id="c5_steam_preset" aria-describedby="c5_steam_preset_hint" onchange="onSteamPresetChangeCalc5()">
+                <option value="0">0.0 бар изб. (1.013 бар абс., 100.0 °C): h_g=2675.5, h_f=419.0 → h_fg=2256.5 кДж/кг</option>
+                <option value="0.5">0.5 бар изб. (1.513 бар абс., 111.6 °C): h_g=2693.5, h_f=468.2 → h_fg=2225.3 кДж/кг</option>
+                <option value="1">1.0 бар изб. (2.013 бар абс., 120.4 °C): h_g=2706.5, h_f=505.6 → h_fg=2200.9 кДж/кг</option>
+                <option value="2">2.0 бар изб. (3.013 бар абс., 133.7 °C): h_g=2725.1, h_f=562.1 → h_fg=2163.0 кДж/кг</option>
+                <option value="3">3.0 бар изб. (4.013 бар абс., 143.7 °C): h_g=2738.2, h_f=605.2 → h_fg=2133.0 кДж/кг</option>
+                <option value="4" selected>4.0 бар изб. (5.013 бар абс., 151.9 °C): h_g=2748.2, h_f=640.5 → h_fg=2107.7 кДж/кг</option>
+                <option value="5">5.0 бар изб. (6.013 бар абс., 158.9 °C): h_g=2756.2, h_f=670.7 → h_fg=2085.5 кДж/кг</option>
+                <option value="6">6.0 бар изб. (7.013 бар абс., 165.0 °C): h_g=2762.8, h_f=697.3 → h_fg=2065.5 кДж/кг</option>
+                <option value="8">8.0 бар изб. (9.013 бар абс., 175.4 °C): h_g=2773.1, h_f=742.8 → h_fg=2030.3 кДж/кг</option>
+                <option value="10">10.0 бар изб. (11.013 бар абс., 184.1 °C): h_g=2780.7, h_f=781.3 → h_fg=1999.4 кДж/кг</option>
+                <option value="12">12.0 бар изб. (13.013 бар абс., 191.7 °C): h_g=2786.5, h_f=814.8 → h_fg=1971.7 кДж/кг</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c5_qkw">Прямая тепловая мощность Q_load (кВт)</label>
+              <span id="c5_qkw_hint" class="hint">Тест 5.2А: 350.0 кВт (при режиме прямого ввода кВт)</span>
+              <input type="number" id="c5_qkw" step="any" min="0.1" value="350.0" aria-describedby="c5_qkw_hint">
+            </div>
+            <div class="field">
+              <label for="c5_mp">Расход продукта m_p (кг/ч) и c_p (кДж/(кг·К)) [Режим нагрева]</label>
+              <span id="c5_mp_hint" class="hint">Тест 5.2Б (пастеризатор): 15000 кг/ч, c_p = 3.93 (или 3.95)</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c5_mp" step="any" min="1" value="15000" aria-label="Массовый расход продукта m_p (кг/ч)">
+                <input type="number" id="c5_cp" step="any" min="0.5" value="3.93" aria-label="Теплоёмкость продукта c_p">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c5_tin">Температуры продукта T_in и T_out (°C) [Режим нагрева]</label>
+              <span id="c5_tin_hint" class="hint">Жидкая фаза (0 &lt; T &lt; 373.95 °C): 4→75 °C или 20→85 °C</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c5_tin" step="any" value="4.0" aria-label="Начальная температура продукта T_in (°C)">
+                <input type="number" id="c5_tout" step="any" value="75.0" aria-label="Конечная температура продукта T_out (°C)">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c5_hg">Энтальпия пара h_g и жидкости h_f (кДж/кг) [Справочно: h_fg = h_g − h_f]</label>
+              <span id="c5_hg_hint" class="hint">При 4.0 бар изб. (CoolProp 8.0.0): h_g = 2748.2, h_f = 640.5 → h_fg = 2107.7 кДж/кг</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c5_hg" step="any" value="2748.2" aria-label="Полная энтальпия сухого пара h_g (кДж/кг)">
+                <input type="number" id="c5_hf" step="any" value="640.5" aria-label="Энтальпия насыщенной жидкости h_f (кДж/кг)">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c5_hfg">Скрытая теплота пара h_fg = h_g − h_f (кДж/кг) *</label>
+              <span id="c5_hfg_hint" class="hint">При 4 бар изб.: 2107.7 (контроль: 2108.1) | При 2 бар изб.: 2163.0 кДж/кг</span>
+              <input type="number" id="c5_hfg" step="any" min="500" required value="2107.7" aria-describedby="c5_hfg_hint">
+            </div>
+            <div class="field">
+              <label for="c5_x">Степень сухости пара x (0 &lt; x ≤ 1.0, обязательное поле!) *</label>
+              <span id="c5_x_hint" class="hint">Обязательно: 0.98 (→ 609.89 кг/ч) или 1.0; пустое поле вызывает ошибку!</span>
+              <input type="number" id="c5_x" step="any" min="0.5" max="1.0" required value="0.98" aria-describedby="c5_x_hint">
+            </div>
+            <div class="field">
+              <label for="c5_sf">Коэфф. запаса КО SF [Опц. предв. оценка]</label>
+              <span id="c5_sf_hint" class="hint">Напр., 2.5 (реальный выбор КО требует ΔP, MOP и таблиц!)</span>
+              <input type="number" id="c5_sf" step="any" min="1.0" value="2.5" aria-describedby="c5_sf_hint">
+            </div>
+            <div class="field">
+              <label for="c5_tdsfw">TDS / EC питательной воды и макс. котловой воды [Опц.]</label>
+              <span id="c5_tdsfw_hint" class="hint">В паре (напр., 180 и 3000 ppm) — относится только к котлу в целом!</span>
+              <div style="display:flex; gap:0.4rem;">
+                <input type="number" id="c5_tdsfw" step="any" min="1" value="180" placeholder="TDS_fw" aria-label="TDS питательной воды">
+                <input type="number" id="c5_tdsmax" step="any" min="10" value="3000" placeholder="TDS_max" aria-label="Максимальный TDS котловой воды">
+              </div>
+            </div>
+            <div class="field">
+              <label for="c5_t_year">Часы работы в год t_year (ч/год) [Опц. для денег]</label>
+              <span id="c5_t_year_hint" class="hint">Напр., 4000–8000 ч/год (явный ввод для годовой стоимости пара/топлива)</span>
+              <input type="number" id="c5_t_year" step="any" min="1" max="8784" value="" placeholder="Оставьте пустым или укажите ч/год" aria-describedby="c5_t_year_hint">
+            </div>
+            <div class="field">
+              <label for="c5_eta">КПД котла η_b (%) [Опц. для денег]</label>
+              <span id="c5_eta_hint" class="hint">Типовой диапазон котлов: 70–95% [S01, PDF p. 12; S21, PDF p. 1] (в примерах S21/S22: 80–82%)</span>
+              <input type="number" id="c5_eta" step="any" min="0.01" max="100" value="" placeholder="Напр., 80–82% [S01, S21]" aria-describedby="c5_eta_hint">
+            </div>
+            <div class="field">
+              <label for="c5_tariff_gj">Тариф на тепло / топливо (валюта за ГДж) [Опц.]</label>
+              <span id="c5_tariff_gj_hint" class="hint">Пусто = без оценки денег; при вводе &gt; 0 считает годовую стоимость генерации пара</span>
+              <input type="number" id="c5_tariff_gj" step="any" min="0.01" value="" placeholder="Пусто = без расчёта денег" aria-describedby="c5_tariff_gj_hint">
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.6rem;">
+            <button type="button" class="btn btn-primary" onclick="runCalc5()">Рассчитать Модуль 5Б (Расход пара)</button>
+            <button type="button" class="btn btn-outline" onclick="clearCalcModule('5B')">🧹 Очистить поля</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset5B('direct_preset4')">Пресет 4 бар изб. (CoolProp 8.0.0: 350 кВт, h_fg=2107.7, x=0.98 → 610.01 кг/ч)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset5B('direct_control')">Контроль ТЗ (350 кВт, ручной h_fg=2108.1, x=0.98 → 609.89 кг/ч)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset5B('pasteurizer')">Тест 5.2Б: Пастеризатор 15 000 кг/ч (4→75 °C, 2 бар изб., h_fg=2163.0 → 1935.02 кг/ч)</button>
+            <button type="button" class="btn btn-secondary" onclick="loadPreset5B('spec_example')">Тест 5.2В: Пример спецификации (15 000 кг/ч, c_p=3.95, 20→85 °C, h_fg=2120.38 → 1816.30 кг/ч)</button>
+          </div>
+        </form>
+        <div id="out-calc-5" class="calc-output" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <!-- 6. ИНСТРУМЕНТЫ СМЕНЫ (VIEW: tools) -->
+    <div id="view-tools" class="app-view" data-view="tools">
+      <div id="tools-subnav-bar" class="tools-subnav-bar no-print"></div>
+
+      <!-- 4Б. ОБХОД ОБОРУДОВАНИЯ: КОНДЕНСАТООТВОДЧИКИ И УТЕЧКИ ВОЗДУХА (A4) -->
+      <section class="section-card searchable-block tool-subview active-tool-subview" id="sec-survey" data-tool-id="sec-survey" data-keywords="обход конденсатоотводчики утечки воздуха סיור מלכודות קיטור דליפות אוויר a4">
+        <div id="dynamic-survey-container"></div>
+      </section>
+
+      <!-- 5. СМЕННЫЕ ЖУРНАЛЫ И ПЕЧАТНЫЕ БЛАНКИ A4 (RU / HE) -->
+      <section class="section-card searchable-block tool-subview" id="sec-shift-log" data-tool-id="sec-shift-log" data-keywords="сменный журнал бланк печать a4 יומן משמרת dpd lod">
+        <div id="dynamic-shift-logs-container"></div>
+      </section>
+
+      <!-- 4А. СОХРАНЁННЫЕ РАСЧЁТЫ И СРАВНЕНИЕ ВАРИАНТОВ (#sec-saved) -->
+      <section class="section-card searchable-block tool-subview no-print" id="sec-saved" data-tool-id="sec-saved" data-keywords="мои расчёты сохранение сравнение החישובים שלי השוואת חישובים">
+        <div id="dynamic-saved-calcs-container"></div>
+      </section>
+
+      <!-- 4.1. ТАБЛИЦА НАСЫЩЕННОГО ПАРА (#sec-steam-table, 11 ТОЧЕК COOLPROP 8.0.0) -->
+      <section class="section-card searchable-block tool-subview no-print" id="sec-steam-table" data-tool-id="sec-steam-table" data-keywords="таблица насыщенного пара энтальпия טבלת קיטור רווי coolprop">
+        <div id="dynamic-steam-table-container"></div>
+      </section>
+
+      <!-- 6. ТРЁХЪЯЗЫЧНЫЙ ИНЖЕНЕРНЫЙ СЛОВАРЬ (RU / HE / EN) -->
+      <section class="section-card searchable-block tool-subview no-print" id="sec-glossary" data-tool-id="sec-glossary" data-keywords="словарь термины מילון מונחים cop fad ndp tcf pdp rla lrtc prv tcv cru smbs lod dpd sdi loto">
+        <div id="dynamic-glossary-container"></div>
+      </section>
+
+      <!-- 7. РЕЕСТР 23 ПЕРВОИСТОЧНИКОВ S01–S23 И ПАМЯТКА NOTEBOOKLM -->
+      <section class="section-card searchable-block tool-subview no-print" id="sec-copyright" data-tool-id="sec-copyright" data-keywords="источники первоисточники מקורות s01 s02 s03 s04 s05 s06 s07 s08 s09 s10 s11 s12 s13 s14 s15 s16 s17 s18 s19 s20 s21 s22 s23 notebooklm">
+        <div id="dynamic-sources-container"></div>
+      </section>
+
+      <!-- 8. НАСТРОЙКИ И ПЕЧАТЬ (ВНУТРИ ИНСТРУМЕНТОВ) -->
+      <section class="section-card tool-subview no-print" id="sec-settings" data-tool-id="sec-settings">
+        <div id="dynamic-settings-container"></div>
+      </section>
+    </div>
+
+    <!-- 7. О РЕДАКЦИИ И ПРАВИЛА БЕЗОПАСНОСТИ (VIEW: about) -->
+    <div id="view-about" class="app-view no-print" data-view="about">
+      <section class="section-card" id="sec-about">
+        <div id="dynamic-about-container"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- МОДАЛЬНОЕ ОКНО КАРТОЧКИ УЗЛА ИНТЕРАКТИВНОЙ СХЕМЫ (<dialog closedby="any">) -->
+  <dialog id="diagram-node-dialog" class="node-dialog" closedby="any" aria-labelledby="node-dialog-title">
+    <div class="node-dialog-header">
+      <h3 id="node-dialog-title" style="margin:0; font-size:1.05rem;">Узел схемы</h3>
+      <form method="dialog" style="margin:0;">
+        <button type="submit" class="btn btn-sm btn-outline" id="node-dialog-close-btn">Закрыть ✕</button>
+      </form>
+    </div>
+    <div class="node-dialog-body" id="node-dialog-body"></div>
+  </dialog>
+
+  <footer class="site-footer no-print" id="site-footer-el">
+    Инженерная библиотека пищевого предприятия (RU / HE, редакция v14, расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
+  </footer>
+
+  <!-- МОБИЛЬНАЯ НИЖНЯЯ НАВИГАЦИЯ (< 768px: 5 КНОПОК С ИКОНКОЙ И КОРОТКОЙ ПОДПИСЬЮ) -->
+  <nav class="mobile-bottom-nav no-print" id="mobile-bottom-nav" aria-label="Мобильная навигация">
+    <a href="#home" class="mobile-nav-btn active" id="mob-nav-home" data-nav-view="home" aria-current="page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span id="mob-nav-home-label">Главная</span>
+    </a>
+    <a href="#problem" class="mobile-nav-btn" id="mob-nav-problem" data-nav-view="problem">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span id="mob-nav-problem-label">Проблема</span>
+    </a>
+    <a href="#calc" class="mobile-nav-btn" id="mob-nav-calc" data-nav-view="calc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/><line x1="16" y1="18" x2="16" y2="18"/></svg>
+      <span id="mob-nav-calc-label">Расчёты</span>
+    </a>
+    <a href="#learn" class="mobile-nav-btn" id="mob-nav-learn" data-nav-view="learn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span id="mob-nav-learn-label">Учёба</span>
+    </a>
+    <a href="#tools" class="mobile-nav-btn" id="mob-nav-tools" data-nav-view="tools">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span id="mob-nav-tools-label">Ещё</span>
+    </a>
+  </nav>
+
+  <!-- ЯДРО РАСЧЁТОВ (НЕИЗМЕННОЕ И ПРОВЕРЕННОЕ ТЕСТАМИ) И ДВУЯЗЫЧНЫЕ МОДУЛИ ДАННЫХ / UI -->
+  <script src="calculators.js"></script>
+  <script src="data/i18n_ui.js"></script>
+  <script src="data/systems_chillers.js"></script>
+  <script src="data/systems_steam_condensate.js"></script>
+  <script src="data/systems_air_ro.js"></script>
+  <script src="data/guide_steam.js"></script>
+  <script src="data/guide_condensate.js"></script>
+  <script src="data/guide_chillers.js"></script>
+  <script src="data/guide_air.js"></script>
+  <script src="data/guide_ro.js"></script>
+  <script src="data/trainer_cases_part1.js"></script>
+  <script src="data/trainer_cases_part2.js"></script>
+  <script src="data/shift_logs.js"></script>
+  <script src="data/glossary_and_sources.js"></script>
+  <script src="data/units.js"></script>
+  <script src="data/economics.js"></script>
+  <script src="data/survey.js"></script>
+  <script src="data/saved_calcs.js"></script>
+  <script src="data/steam_table.js"></script>
+  <script src="data/symptoms.js"></script>
+  <script src="calc_ui.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="1600" height="960">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .header-bg { fill: #0f172a; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #ffffff; }
+      .header-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #fbbf24; }
+      .node-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-warn { fill: #fffbeb; stroke: #d97706; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-blue { fill: #eff6ff; stroke: #1d4ed8; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-green { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-red { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 8; ry: 8; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10.2px; fill: #334155; text-anchor: middle; }
+      .pipe-red { fill: none; stroke: #dc2626; stroke-width: 3; }
+      .pipe-orange { fill: none; stroke: #ea580c; stroke-width: 2.8; stroke-dasharray: 7,4; }
+      .pipe-blue { fill: none; stroke: #2563eb; stroke-width: 3; }
+      .pipe-cyan { fill: none; stroke: #0891b2; stroke-width: 3; }
+      .pipe-green { fill: none; stroke: #16a34a; stroke-width: 3; }
+      .flow-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .zone-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 10; ry: 10; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #334155; }
+      .footer-bg { fill: #e2e8f0; }
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #1e293b; }
+    </style>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0891b2"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="960"/>
+  <rect class="header-bg" x="0" y="0" width="1600" height="72"/>
+  <text class="header-title" x="28" y="32">УЧЕБНАЯ ПРИНЦИПИАЛЬНАЯ СХЕМА 2: СБОР И ВОЗВРАТ КОНДЕНСАТА, ВТОРИЧНЫЙ ПАР И БАЛАНС КОТЕЛЬНОЙ</text>
+  <text class="header-sub" x="28" y="54">УЧЕБНАЯ СХЕМА ПОТОКОВ И УЗЛОВ КОНТРОЛЯ (НЕ СХЕМА КОНКРЕТНОГО ПРЕДПРИЯТИЯ) | Раздел 2 Инженерной библиотеки</text>
+
+  <!-- Zones -->
+  <rect class="zone-box" x="20" y="88" width="470" height="600"/>
+  <text class="zone-title" x="38" y="114">ЗОНА I. СБОР КОНДЕНСАТА И ВТОРИЧНЫЙ ПАР ВСКИПАНИЯ</text>
+
+  <rect class="zone-box" x="510" y="88" width="535" height="600"/>
+  <text class="zone-title" x="528" y="114">ЗОНА II. КОНТРОЛЬ КАЧЕСТВА (ПРОВОДИМОСТЬ) И НАСОСНЫЕ СТАНЦИИ</text>
+
+  <rect class="zone-box" x="1065" y="88" width="515" height="600"/>
+  <text class="zone-title" x="1083" y="114">ЗОНА III. ВОДЯНОЙ И ТЕПЛОВОЙ БАЛАНС КОТЕЛЬНОЙ</text>
+
+  <!-- Node 1: HP Traps -->
+  <rect class="node-box-red" x="42" y="155" width="426" height="112"/>
+  <text class="node-title" x="255" y="180">1. Конденсатоотводчики аппаратов высокого давления P₁</text>
+  <text class="node-text" x="255" y="200">На выходе из аппаратов конденсат находится при T_sat(P₁)</text>
+  <text class="node-text" x="255" y="218">с энтальпией жидкости h_f(P₁) (напр. 721 кДж/кг при 7 бар изб.)</text>
+  <text class="node-text" x="255" y="236">После КО давление падает до P₂ → избыток тепла мгновенно</text>
+  <text class="node-text" x="255" y="253">превращает часть жидкости во вторичный пар вскипания!</text>
+
+  <!-- Node 2: Flash Vessel -->
+  <rect class="node-box-warn" x="42" y="325" width="426" height="148"/>
+  <text class="node-title" x="255" y="350">2. Сепаратор вторичного пара (Flash Steam Vessel)</text>
+  <text class="node-text" x="255" y="370">Доля вторичного пара: x_flash = [h_f(P₁) − h_f(P₂)] / h_fg(P₂)</text>
+  <text class="node-text" x="255" y="388">Верхний выход: сухой вторичный пар низкого давления P₂</text>
+  <text class="node-text" x="255" y="406">(идет на деаэратор, ГВС, CIP или низкотемп. подогреватели)</text>
+  <text class="node-text" x="255" y="424">Нижний выход (через КО F&amp;T): жидкий конденсат при T_sat(P₂)</text>
+  <text class="node-text" x="255" y="442">Экономия: сохраняет 8–18% массы и 40–50% тепла потока!</text>
+
+  <!-- Node 3: Low Pressure Users -->
+  <rect class="node-box-green" x="42" y="540" width="426" height="110"/>
+  <text class="node-title" x="255" y="566">3. Потребители вторичного пара низкого давления P₂</text>
+  <text class="node-text" x="255" y="586">Подогрев воды для мойки (CIP), пастеризация, отопление, деаэратор</text>
+  <text class="node-text" x="255" y="604">Подпорный и подпиточный клапан (Backpressure / Makeup PRV)</text>
+  <text class="node-text" x="255" y="622">для стабильного баланса давления вторичного пара</text>
+
+  <!-- Node 4: Conductivity Monitoring & Dump Valve -->
+  <rect class="node-box-warn" x="535" y="155" width="485" height="142"/>
+  <text class="node-title" x="777" y="180">4. Узел автоматического контроля качества конденсата</text>
+  <text class="node-text" x="777" y="200">Датчик удельной электропроводности (Conductivity Sensor, мкСм/см)</text>
+  <text class="node-text" x="777" y="218">с температурной компенсацией + Датчик pH / мутности / жира</text>
+  <text class="node-text" x="777" y="236">Чистый конденсат: низкая проводимость (~10–30 мкСм/см);</text>
+  <text class="node-text" x="777" y="254">При пробое теплообменника (молоко, сок, рассол, CIP) → скачок EC!</text>
+  <text class="node-text" x="777" y="272">При превышении уставки: 3-ходовой клапан сбрасывает поток в дренаж</text>
+
+  <!-- Node 5: Emergency Drain -->
+  <rect class="node-box-red" x="535" y="345" width="230" height="76"/>
+  <text class="node-title" x="650" y="370">5. Аварийный сброс в дренаж</text>
+  <text class="node-text" x="650" y="390">При загрязнении конденсата</text>
+  <text class="node-text" x="650" y="407">(защита котла от вспенивания)</text>
+
+  <!-- Node 6: Condensate Recovery Unit (CRU / PowerTrap) -->
+  <rect class="node-box-blue" x="535" y="465" width="485" height="190"/>
+  <text class="node-title" x="777" y="490">6. Конденсатная насосная станция (Два типа привода)</text>
+  <text class="node-text" x="777" y="510">Вариант А: Электрическая станция (Spirax Sarco CRU, бак + центробежные насосы)</text>
+  <text class="node-text" x="777" y="528">Ограничение: риск кавитации при T конденсата &gt; 95–98 °C (нужен подпор NPSHa)</text>
+  <text class="node-text" x="777" y="548">Вариант Б: Механический паровой насос-конденсатоотводчик (TLV PowerTrap GT/GP)</text>
+  <text class="node-text" x="777" y="566">Перекачивает кипящий конденсат (100+ °C) давлением рабочего пара без кавитации!</text>
+  <text class="node-text" x="777" y="586">Уравнительная линия (Balancing / Exhaust Line): в паровое пространство</text>
+  <text class="node-text" x="777" y="604">(закрытая схема) или в атмосферу (открытая схема со свободным сливом)</text>
+  <text class="node-text" x="777" y="622">Защита линий от углекислотной (CO₂) и кислородной (O₂) коррозии</text>
+
+  <!-- Node 7: Boiler Feed Tank & Deaerator Balance -->
+  <rect class="node-box-green" x="1090" y="155" width="465" height="205"/>
+  <text class="node-title" x="1322" y="180">7. Деаэратор и питательный бак котельной (Баланс)</text>
+  <text class="node-text" x="1322" y="202">Вход 1: Возвратный конденсат (доля возврата R_cond = m_cond / m_steam)</text>
+  <text class="node-text" x="1322" y="220">Вход 2: Вторичный пар из сепаратора продувки и сепаратора конденсата</text>
+  <text class="node-text" x="1322" y="238">Вход 3: Холодная подпиточная вода ХВО/RO (доля 1 − R_cond)</text>
+  <text class="node-text" x="1322" y="262">Тройной эффект высокого возврата конденсата:</text>
+  <text class="node-text" x="1322" y="280">1) Экономия топлива котла (конденсат несет ~15–25% энтальпии пара)</text>
+  <text class="node-text" x="1322" y="298">2) Прямая экономия сырой воды, соли, реагентов и стоков</text>
+  <text class="node-text" x="1322" y="316">3) Снижение TDS питательной воды → резкое сокращение продувки котла!</text>
+
+  <!-- Node 8: Blowdown Heat Recovery -->
+  <rect class="node-box-warn" x="1090" y="425" width="465" height="210"/>
+  <text class="node-title" x="1322" y="452">8. Котел и система рекуперации тепла продувки</text>
+  <text class="node-text" x="1322" y="474">Доля продувки: BD = TDS_feed / (TDS_boiler_max − TDS_feed)</text>
+  <text class="node-text" x="1322" y="494">Чем выше доля чистого конденсата R_cond, тем ниже TDS_feed</text>
+  <text class="node-text" x="1322" y="512">и тем меньше горячей котловой воды сбрасывается в продувку!</text>
+  <text class="node-text" x="1322" y="536">Двухступенчатая утилизация тепла продувки (US DOE Tip Sheet #9):</text>
+  <text class="node-text" x="1322" y="554">Ступень 1: Расширитель продувки → вторичный пар в деаэратор</text>
+  <text class="node-text" x="1322" y="572">Ступень 2: Теплообменник «продувка / холодная вода ХВО»</text>
+  <text class="node-text" x="1322" y="590">(Подогрев питательной воды на каждые +6 °C экономит ~1% топлива!)</text>
+
+  <!-- Summary Formula Box -->
+  <rect class="node-box" x="20" y="706" width="1560" height="172"/>
+  <text class="node-title" x="800" y="732">КЛЮЧЕВЫЕ РАСЧЕТНЫЕ СООТНОШЕНИЯ РАЗДЕЛА 2 (КОНДЕНСАТ И ВТОРИЧНЫЙ ПАР)</text>
+  <text class="node-text" x="800" y="756">1) Доля вторичного пара вскипания: x_flash (%) = [ (h_f1 − h_f2) / h_fg2 ] × 100%   |   2) Экономия тепла при возврате конденсата: Q_sav = m_cond · (h_f_cond − h_f_makeup) / η_boiler</text>
+  <text class="node-text" x="800" y="780">3) Солесодержание смешанной питательной воды: TDS_feed = (1 − R_cond)·TDS_makeup + R_cond·TDS_cond   |   4) Коэффициент продувки: BD = TDS_feed / (TDS_boiler − TDS_feed)</text>
+  <text class="node-text" x="800" y="804">5) Правило антикавитационного запаса (NPSHa): при атмосферном сборе каждый +1 м столба воды над всасом насоса позволяет поднять макс. температуру конденсата примерно на +2 °C.</text>
+  <text class="node-text" x="800" y="828">6) Контроль конденсатной линии: аномальный прогрев и высокочастотный шум за конкретным КО указывают на пролет острого пара, а падение pH конденсата ниже 7.0 — на углекислотную коррозию (CO₂).</text>
+
+  <!-- Pipes & Arrows -->
+  <path class="pipe-orange" d="M 255 267 L 255 323" marker-end="url(#arrow-orange)"/>
+  <text class="flow-label" x="265" y="300">Двухфазный поток (P₁ → P₂)</text>
+
+  <!-- 2 -> 3 (Flash steam out bottom-left to LP users) -->
+  <path class="pipe-red" d="M 140 473 L 140 538" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="150" y="512">Вторичный пар P₂ в цех</text>
+
+  <!-- 2 -> 7 (Flash steam to Deaerator via top channel above boxes) -->
+  <path class="pipe-red" d="M 42 355 L 28 355 L 28 132 L 1322 132 L 1322 153" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="730" y="125">Вторичный пар P₂ в деаэратор котельной</text>
+
+  <!-- 2 -> 4 (Liquid condensate out right) -->
+  <path class="pipe-green" d="M 468 415 L 498 415 L 498 215 L 533 215" marker-end="url(#arrow-green)"/>
+  <text class="flow-label" x="492" y="355" transform="rotate(-90 492,355)">Жидкий конденсат P₂</text>
+
+  <!-- 3 -> 4 (Condensate from LP users) -->
+  <path class="pipe-green" d="M 468 595 L 498 595 L 498 240 L 533 240" marker-end="url(#arrow-green)"/>
+
+  <!-- 4 -> 5 (Dump to drain on high conductivity) -->
+  <path class="pipe-red" d="M 650 297 L 650 343" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="660" y="325">При аварии (высокая EC)</text>
+
+  <!-- 4 -> 6 (Clean condensate to pump station) -->
+  <path class="pipe-green" d="M 850 297 L 850 463" marker-end="url(#arrow-green)"/>
+  <text class="flow-label" x="860" y="385">Чистый конденсат (норма EC)</text>
+
+  <!-- 6 -> 7 (Pumped return to Boiler Deaerator) -->
+  <path class="pipe-green" d="M 1020 555 L 1052 555 L 1052 255 L 1088 255" marker-end="url(#arrow-green)"/>
+  <text class="flow-label" x="1046" y="435" transform="rotate(-90 1046,435)">Напорный возврат конденсата</text>
+
+  <!-- 7 -> 8 -->
+  <path class="pipe-blue" d="M 1322 360 L 1322 423" marker-end="url(#arrow-blue)"/>
+  <text class="flow-label" x="1332" y="396">Питательная вода в котел</text>
+
+  <rect class="footer-bg" x="0" y="896" width="1600" height="64"/>
+  <text class="footer-text" x="36" y="920" font-weight="700">Источники инженерных принципов: [S01] US DOE Steam Sourcebook (printed pp. 24–35 / PDF pp. 30–41); [S05] Spirax Sarco Electric Condensate Recovery Unit (SB-P681-10);</text>
+  <text class="footer-text" x="36" y="942">Продолжение источников: [S06] Spirax Sarco BCSR3 (AI-P693-36); [S07] TLV PowerTrap GT/GP Manual (172-65318MA); [S21–S23] US DOE Steam Tip Sheets #8, #9, #12.</text>
+</svg>

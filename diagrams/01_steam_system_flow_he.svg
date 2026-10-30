@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="1600" height="960">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .header-bg { fill: #0f172a; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #ffffff; }
+      .header-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #fbbf24; }
+      .node-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-warn { fill: #fffbeb; stroke: #d97706; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-blue { fill: #eff6ff; stroke: #1d4ed8; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-green { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-red { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 8; ry: 8; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10.2px; fill: #334155; text-anchor: middle; }
+      .pipe-red { fill: none; stroke: #dc2626; stroke-width: 3; }
+      .pipe-orange { fill: none; stroke: #ea580c; stroke-width: 2.8; stroke-dasharray: 7,4; }
+      .pipe-blue { fill: none; stroke: #2563eb; stroke-width: 3; }
+      .pipe-cyan { fill: none; stroke: #0891b2; stroke-width: 3; }
+      .pipe-green { fill: none; stroke: #16a34a; stroke-width: 3; }
+      .flow-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .zone-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 10; ry: 10; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #334155; }
+      .footer-bg { fill: #e2e8f0; }
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #1e293b; }
+          .header-title, .header-sub, .zone-title, .flow-label, .footer-text { text-anchor: end; }
+    </style>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0891b2"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="960"/>
+  <rect class="header-bg" x="0" y="0" width="1600" height="72"/>
+  <text class="header-title" x="28" y="32" direction="rtl" unicode-bidi="embed">תרשים עקרוני לימודי 1‏: ‏מערכת הקיטור במפעל ‏(‏ייצור‏, חלוקה וניקוז קונדנסט‏)‏</text>
+  <text class="header-sub" x="28" y="54" direction="rtl" unicode-bidi="embed">תרשים זרימה ונקודות בקרה לימודי ‏(‏אינו שרטוט של מפעל ספציפי‏)‏ | פרק 1 בספרייה ההנדסית</text>
+
+  <!-- Zones -->
+  <rect class="zone-box" x="20" y="88" width="390" height="790"/>
+  <text class="zone-title" x="38" y="114" direction="rtl" unicode-bidi="embed">אזור I‏. חדר דוודים וטיפול במים</text>
+
+  <rect class="zone-box" x="430" y="88" width="530" height="790"/>
+  <text class="zone-title" x="448" y="114" direction="rtl" unicode-bidi="embed">אזור II‏. קו קיטור ראשי והפחתת לחץ ‏(PRV)‏</text>
+
+  <rect class="zone-box" x="980" y="88" width="600" height="790"/>
+  <text class="zone-title" x="998" y="114" direction="rtl" unicode-bidi="embed">אזור III‏. מחליף חום ויחידת מלכודת קיטור</text>
+
+  <!-- Node 1: Makeup water -->
+  <rect class="node-box-blue" x="50" y="135" width="330" height="74"/>
+  <text class="node-title" x="215" y="159" direction="rtl" unicode-bidi="embed">1. טיפול כימי במים ‏(‏ריכוך ‎‭/‬‎ אוסמוזה הפוכה RO‏)‏</text>
+  <text class="node-text" x="215" y="179" direction="rtl" unicode-bidi="embed">מי תוספת לדוד ‏(Makeup Water)‏</text>
+  <text class="node-text" x="215" y="196" direction="rtl" unicode-bidi="embed">בקרה‏: ‏קשיות‏, pH‏, מוליכות חשמלית סגולית</text>
+
+  <!-- Node 2: Deaerator -->
+  <rect class="node-box-warn" x="50" y="255" width="330" height="92"/>
+  <text class="node-title" x="215" y="279" direction="rtl" unicode-bidi="embed">2. דה-אירטור ‏(‏מסלק גזים‏)‏ ומכל מי הזנה</text>
+  <text class="node-text" x="215" y="299" direction="rtl" unicode-bidi="embed">סילוק ‎‭O₂‬‎ ו-‎‭CO₂‬‎ באמצעות קיטור בלחץ נמוך</text>
+  <text class="node-text" x="215" y="316" direction="rtl" unicode-bidi="embed">ערבוב מי תוספת וקונדנסט מוחזר מהמפעל</text>
+  <text class="node-text" x="215" y="333" direction="rtl" unicode-bidi="embed">בקרה‏: ‏‎‭T ≈ 102–105 °C‬‎‏, לחץ דה-אירטור‏, מפלס מים</text>
+
+  <!-- Node 3: Feed pump -->
+  <rect class="node-box" x="85" y="390" width="260" height="58"/>
+  <text class="node-title" x="215" y="414" direction="rtl" unicode-bidi="embed">3. משאבת הזנה לדוד הקיטור</text>
+  <text class="node-text" x="215" y="434" direction="rtl" unicode-bidi="embed">הגנה מפני קוויטציה ‏(‏עומד יניקה ‎‭NPSH /‬‎ טמפ׳ המים‏)‏</text>
+
+  <!-- Node 4: Steam Boiler -->
+  <rect class="node-box-red" x="50" y="492" width="330" height="126"/>
+  <text class="node-title" x="215" y="516" direction="rtl" unicode-bidi="embed">4. דוד קיטור ואקונומייזר ‏(‏מחמם מי הזנה‏)‏</text>
+  <text class="node-text" x="215" y="536" direction="rtl" unicode-bidi="embed">ייצור קיטור רווי בלחץ גבוה ‎‭P₁‬‎</text>
+  <text class="node-text" x="215" y="554" direction="rtl" unicode-bidi="embed">בקרה‏: ‏מפלס מים בדוד ‏(‏מדי מפלס והגנת LWCO‏)‏‏,</text>
+  <text class="node-text" x="215" y="571" direction="rtl" unicode-bidi="embed">לחץ קיטור ‎‭P₁‬‎‏, טמפ׳ גזי פליטה‏, ‎‭O₂/CO‬‎‏,</text>
+  <text class="node-text" x="215" y="588" direction="rtl" unicode-bidi="embed">תקינות שסתום הביטחון ‏(Safety Valve)‏</text>
+
+  <!-- Node 5: Blowdown -->
+  <rect class="node-box" x="50" y="665" width="330" height="92"/>
+  <text class="node-title" x="215" y="689" direction="rtl" unicode-bidi="embed">5. ניקוז עילי רציף וניקוז תחתי של הדוד ‏(Blowdown)‏</text>
+  <text class="node-text" x="215" y="709" direction="rtl" unicode-bidi="embed">בקרת מוליכות חשמלית ‏(‏אומדן מליחות TDS‏, למשל ‎‭BCSR3‬‎‏)‏</text>
+  <text class="node-text" x="215" y="726" direction="rtl" unicode-bidi="embed">מכל התפשטות ניקוזים ‏(‏קיטור שניוני לדה-אירטור‏)‏</text>
+  <text class="node-text" x="215" y="743" direction="rtl" unicode-bidi="embed">ומחליף חום לחימום מוקדם של מי התוספת הקרים</text>
+
+  <!-- Zone II Nodes -->
+  <!-- Node 6: Steam Header & Separator -->
+  <rect class="node-box-red" x="455" y="160" width="480" height="102"/>
+  <text class="node-title" x="695" y="185" direction="rtl" unicode-bidi="embed">6. מרכזיית קיטור ‎‭P₁‬‎‏, מפריד טיפות וניקוזי קו</text>
+  <text class="node-text" x="695" y="205" direction="rtl" unicode-bidi="embed">הפרדת רסס מים לאספקת קיטור רווי יבש ‏(‎‭x → 1.0‬‎)‏</text>
+  <text class="node-text" x="695" y="223" direction="rtl" unicode-bidi="embed">שיפוע הקו בכיוון הזרימה‏; הסתעפויות לצרכנים מחלקו העליון של הצינור בלבד‏!</text>
+  <text class="node-text" x="695" y="241" direction="rtl" unicode-bidi="embed">כיסי ניקוז ‏(Drip Legs)‏ כל ‎‭30–50‬‎ מ׳ ולפני עליות בקו</text>
+
+  <!-- Node 7: Drip Leg Trap -->
+  <rect class="node-box-warn" x="455" y="315" width="250" height="78"/>
+  <text class="node-title" x="580" y="339" direction="rtl" unicode-bidi="embed">7. מכלול ניקוז קו קיטור ראשי</text>
+  <text class="node-text" x="580" y="359" direction="rtl" unicode-bidi="embed">מסנן רשת ‏+ מלכודת קיטור</text>
+  <text class="node-text" x="580" y="376" direction="rtl" unicode-bidi="embed">‏(‏תרמודינמית TD או דלי הפוך‏)‏</text>
+
+  <!-- Node 8: PRV Station -->
+  <rect class="node-box-red" x="455" y="450" width="480" height="130"/>
+  <text class="node-title" x="695" y="475" direction="rtl" unicode-bidi="embed">8. תחנת הפחתת לחץ קיטור ‏(‏PRV — Pressure Reducing Valve‏)‏</text>
+  <text class="node-text" x="695" y="495" direction="rtl" unicode-bidi="embed">שסתום ניתוק ‏←‏ מפריד נוזלים עם מלכודת ‏←‏ מסנן Y ‏(‏מותקן על הצד‏!‏)‏</text>
+  <text class="node-text" x="695" y="513" direction="rtl" unicode-bidi="embed">‏←‏ מד לחץ ‎‭P₁‬‎ ‏←‏ שסתום PRV ‏←‏ מד לחץ ‎‭P₂‬‎ ‏←‏ שסתום ביטחון ‎‭P₂‬‎</text>
+  <text class="node-text" x="695" y="531" direction="rtl" unicode-bidi="embed">הפחתת הלחץ ‎‭P₁ → P₂‬‎ מגדילה את החום הכמוס הסגולי ‎‭h_fg‬‎</text>
+  <text class="node-text" x="695" y="549" direction="rtl" unicode-bidi="embed">ומקטינה את צפיפות הקיטור ‏(‏פחות אובדן בדליפות‏)‏</text>
+
+  <!-- Zone III Nodes -->
+  <!-- Node 9: Control Valve & Air Vent -->
+  <rect class="node-box-red" x="1010" y="160" width="545" height="96"/>
+  <text class="node-title" x="1282" y="185" direction="rtl" unicode-bidi="embed">9. מכלול הזנת קיטור למתקן התהליכי ‏(‎‭P₂ → P₃‬‎)‏</text>
+  <text class="node-text" x="1282" y="205" direction="rtl" unicode-bidi="embed">מסנן ‏+ שסתום ויסות טמפרטורה ‏(TCV)‏ ‏+ מד לחץ ‎‭P₃‬‎</text>
+  <text class="node-text" x="1282" y="223" direction="rtl" unicode-bidi="embed">‏+ משחרר אוויר תרמוסטטי ‏(Air Vent)‏ ושובר ואקום ‏(Vacuum Breaker)‏</text>
+  <text class="node-text" x="1282" y="241" direction="rtl" unicode-bidi="embed">‏(‏אוויר הוא מבודד חום חריף וגורם לקורוזיה חומצית ‎‭CO₂‬‎‏!‏)‏</text>
+
+  <!-- Node 10: Heat Exchanger -->
+  <rect class="node-box-warn" x="1010" y="308" width="545" height="122"/>
+  <text class="node-title" x="1282" y="333" direction="rtl" unicode-bidi="embed">10. מחליף חום קיטור ‎‭/‬‎ מתקן בישול ופסטור במפעל</text>
+  <text class="node-text" x="1282" y="353" direction="rtl" unicode-bidi="embed">הקיטור מוסר את חום העיבוי הכמוס ‎‭x·h_fg‬‎ בטמפרטורת הרוויה ‎‭T_sat(P₃)‬‎</text>
+  <text class="node-text" x="1282" y="371" direction="rtl" unicode-bidi="embed">והופך לקונדנסט רווי באותה טמפרטורה ‎‭T_sat(P₃)‬‎ ‏(‏ללא קירור-יתר‏)‏</text>
+  <text class="node-text" x="1282" y="389" direction="rtl" unicode-bidi="embed">המוצר המחומם‏: ‏‎‭T_in → T_out‬‎ ‏(‏בקרה באמצעות רגש טמפרטורה TT‏)‏</text>
+  <text class="node-text" x="1282" y="407" direction="rtl" unicode-bidi="embed">אסור להציף את חלל הקיטור בקונדנסט ‏(‏תופעת הזדקרות Stall‏)‏‏!</text>
+
+  <!-- Node 11: Steam Trap Station -->
+  <rect class="node-box-green" x="1010" y="482" width="545" height="145"/>
+  <text class="node-title" x="1282" y="507" direction="rtl" unicode-bidi="embed">11. מכלול מלכודת קיטור ‏(Steam Trap Station)‏</text>
+  <text class="node-text" x="1282" y="527" direction="rtl" unicode-bidi="embed">שסתום ‏←‏ מסנן עם ניקוז ‏←‏ מלכודת מצוף-תרמוסטט ‏(‏F&amp;T‏, סדרת Armstrong J‏)‏</text>
+  <text class="node-text" x="1282" y="545" direction="rtl" unicode-bidi="embed">עם משחרר אוויר מובנה ‏←‏ עינית הצצה ‎‭/‬‎ ברז בדיקה ‏←‏ שסתום אל-חזור</text>
+  <text class="node-text" x="1282" y="563" direction="rtl" unicode-bidi="embed">‏(‏כאשר הלחץ הנגדי ‎‭> P₃‬‎ — משאבת-מלכודת מכנית ‎‭TLV PowerTrap GT/GP‬‎‏)‏</text>
+  <text class="node-text" x="1282" y="581" direction="rtl" unicode-bidi="embed">אבחון‏: ‏1‏)‏ אולטרסאונד ‎‭+ 2‬‎‏)‏ טמפרטורה ‎‭T_in / T_out + 3‬‎‏)‏ בדיקה חזותית</text>
+  <text class="node-text" x="1282" y="599" direction="rtl" unicode-bidi="embed">כשלים‏: ‏מלכודת קרה ‏(‏Blocked — הצפה‏)‏ לעומת פריצת קיטור חי ‏(‏Blowing — אובדן אנרגיה‏)‏</text>
+
+  <!-- Node 12: Condensate Return Line -->
+  <rect class="node-box-blue" x="455" y="765" width="1100" height="92"/>
+  <text class="node-title" x="1005" y="790" direction="rtl" unicode-bidi="embed">12. קו איסוף והשבת קונדנסט ‏(‏זרימה דו-פאזית‏: ‏קונדנסט נוזלי ‏+ קיטור שניוני מהתפשטות Flash Steam‏)‏</text>
+  <text class="node-text" x="1005" y="810" direction="rtl" unicode-bidi="embed">בקרת איכות לפני החזרה לחדר הדוודים‏: ‏מד מוליכות חשמלית ‏(Conductivity)‏‏, ‏עכירות ‎‭/‬‎ שומן ‏/ pH</text>
+  <text class="node-text" x="1005" y="828" direction="rtl" unicode-bidi="embed">בעת חדירת מוצר — ברז תלת-דרכי אוטומטי מפנה את הזרם לביוב להגנה על דוד הקיטור‏!</text>
+
+  <!-- Pipes & Arrows -->
+  <path class="pipe-blue" d="M 215 209 L 215 253" marker-end="url(#arrow-blue)"/>
+  <text class="flow-label" x="224" y="236" direction="rtl" unicode-bidi="embed">מים מטופלים ‏(‏‎‭RO/‬‎ריכוך‏)‏</text>
+
+  <path class="pipe-blue" d="M 215 347 L 215 388" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 215 448 L 215 490" marker-end="url(#arrow-blue)"/>
+  <text class="flow-label" x="224" y="474" direction="rtl" unicode-bidi="embed">מי הזנה לדוד ‏(‎‭104 °C‬‎)‏</text>
+
+  <!-- 4 -> 5 -->
+  <path class="pipe-orange" d="M 160 618 L 160 663" marker-end="url(#arrow-orange)"/>
+  <text class="flow-label" x="62" y="646" direction="rtl" unicode-bidi="embed">ניקוז מליחות TDS</text>
+  <!-- 5 -> 2 (Flash steam from blowdown) -->
+  <path class="pipe-orange" d="M 50 710 L 32 710 L 32 300 L 48 300" marker-end="url(#arrow-orange)"/>
+
+  <!-- 4 -> 6 (Main steam P1) -->
+  <path class="pipe-red" d="M 380 540 L 418 540 L 418 205 L 453 205" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="412" y="425" transform="rotate(-90 412,425)" direction="rtl" unicode-bidi="embed">קיטור חי ‎‭P₁‬‎</text>
+
+  <!-- 6 -> 7 (Drip leg) -->
+  <path class="pipe-red" d="M 580 262 L 580 313" marker-end="url(#arrow-red)"/>
+  <!-- 7 -> 12 -->
+  <path class="pipe-orange" d="M 580 393 L 580 422 L 442 422 L 442 795 L 453 795" marker-end="url(#arrow-orange)"/>
+
+  <!-- 6 -> 8 (Branch taken from TOP of header!) -->
+  <path class="pipe-red" d="M 790 160 L 790 135 L 947 135 L 947 475 L 937 475" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="720" y="129" direction="rtl" unicode-bidi="embed">הסתעפות מחלקו העליון של הקו</text>
+
+  <!-- 8 -> 9 (Reduced steam P2) -->
+  <path class="pipe-red" d="M 935 515 L 968 515 L 968 205 L 1008 205" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="962" y="410" transform="rotate(-90 962,410)" direction="rtl" unicode-bidi="embed">קיטור מופחת לחץ ‎‭P₂‬‎</text>
+
+  <!-- 9 -> 10 -->
+  <path class="pipe-red" d="M 1282 256 L 1282 306" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="1292" y="286" direction="rtl" unicode-bidi="embed">קיטור ‎‭P₃‬‎ למחליף החום</text>
+
+  <!-- 10 -> 11 -->
+  <path class="pipe-green" d="M 1282 430 L 1282 480" marker-end="url(#arrow-green)"/>
+  <text class="flow-label" x="1292" y="460" direction="rtl" unicode-bidi="embed">קונדנסט רווי ‎‭P₃‬‎</text>
+
+  <!-- 11 -> 12 -->
+  <path class="pipe-orange" d="M 1282 627 L 1282 763" marker-end="url(#arrow-orange)"/>
+  <text class="flow-label" x="1292" y="700" direction="rtl" unicode-bidi="embed">קונדנסט ‏+ קיטור שניוני ‏(Flash)‏</text>
+
+  <!-- 12 -> 2 (Return to Deaerator) -->
+  <path class="pipe-green" d="M 455 825 L 396 825 L 396 315 L 382 315" marker-end="url(#arrow-green)"/>
+  <text class="flow-label" x="391" y="750" transform="rotate(-90 391,750)" direction="rtl" unicode-bidi="embed">השבת קונדנסט נקי לדה-אירטור</text>
+
+  <rect class="footer-bg" x="0" y="896" width="1600" height="64"/>
+  <text class="footer-text" x="36" y="920" font-weight="700" direction="rtl" unicode-bidi="embed">מקורות הנדסיים‏: ‏‎‭[S01] US DOE Steam Sourcebook (DOE/GO-102012-3423, PDF pp. 7–55); [S02] Armstrong J-Series F&amp;T IOM (IB-48-EN)‬‎‏;</text>
+  <text class="footer-text" x="36" y="942" direction="rtl" unicode-bidi="embed">המשך מקורות‏: ‏‎‭[S03] Armstrong Inverted Bucket IOM (IB-19-A-EN); [S04] Spirax Sarco TDC Traps; [S06] Spirax Sarco BCSR3; [S07] TLV PowerTrap Manual‬‎‏.</text>
+</svg>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="1600" height="960">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .header-bg { fill: #0f172a; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #ffffff; }
+      .header-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #fbbf24; }
+      .node-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-warn { fill: #fffbeb; stroke: #d97706; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-blue { fill: #eff6ff; stroke: #1d4ed8; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-green { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-red { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 8; ry: 8; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10.2px; fill: #334155; text-anchor: middle; }
+      .pipe-red { fill: none; stroke: #dc2626; stroke-width: 3; }
+      .pipe-orange { fill: none; stroke: #ea580c; stroke-width: 2.8; stroke-dasharray: 7,4; }
+      .pipe-blue { fill: none; stroke: #2563eb; stroke-width: 3; }
+      .pipe-cyan { fill: none; stroke: #0891b2; stroke-width: 3; }
+      .pipe-green { fill: none; stroke: #16a34a; stroke-width: 3; }
+      .flow-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .zone-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 10; ry: 10; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #334155; }
+      .footer-bg { fill: #e2e8f0; }
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #1e293b; }
+          .header-title, .header-sub, .zone-title, .flow-label, .footer-text { text-anchor: end; }
+    </style>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0891b2"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="960"/>
+  <rect class="header-bg" x="0" y="0" width="1600" height="72"/>
+  <text class="header-title" x="28" y="32" direction="rtl" unicode-bidi="embed">תרשים עקרוני לימודי 3‏: ‏צ׳ילר ושלושת המעגלים המצומדים ‏(‏נוזל קירור‏, קרר‏, מגדל קירור‏)‏</text>
+  <text class="header-sub" x="28" y="54" direction="rtl" unicode-bidi="embed">תרשים זרימה ונקודות בקרה לימודי ‏(‏אינו שרטוט של מפעל ספציפי‏)‏ | פרק 3 בספרייה ההנדסית</text>
+
+  <!-- Zones -->
+  <rect class="zone-box" x="20" y="88" width="415" height="600"/>
+  <text class="zone-title" x="38" y="114" direction="rtl" unicode-bidi="embed">מעגל I‏. נוזל הקירור ‏(‏מים קרים ‎‭/‬‎ גליקול לתהליך‏)‏</text>
+
+  <rect class="zone-box" x="455" y="88" width="690" height="600"/>
+  <text class="zone-title" x="473" y="114" direction="rtl" unicode-bidi="embed">מעגל II‏. מחזור הקירור הדחיסתי ‏(‏מעגל הקרר בצ׳ילר‏)‏</text>
+
+  <rect class="zone-box" x="1165" y="88" width="415" height="600"/>
+  <text class="zone-title" x="1183" y="114" direction="rtl" unicode-bidi="embed">מעגל III‏. פינוי חום מהמעבה ‏(‏מגדל קירור או אוויר‏)‏</text>
+
+  <!-- Loop I: Process Cooling Load -->
+  <rect class="node-box-blue" x="40" y="160" width="355" height="125"/>
+  <text class="node-title" x="217" y="185" direction="rtl" unicode-bidi="embed">1. צרכני קירור בתהליך הייצור</text>
+  <text class="node-text" x="217" y="205" direction="rtl" unicode-bidi="embed">‏(‏מכלי תסיסה‎‭/‬‎אחסון‏, מפסטרים‏, חדרי קירור‏)‏</text>
+  <text class="node-text" x="217" y="225" direction="rtl" unicode-bidi="embed">עומס הקירור‏: ‏‎‭Q_evap = m · c_p · (T_in − T_out)‬‎</text>
+  <text class="node-text" x="217" y="243" direction="rtl" unicode-bidi="embed">הפרש טמפרטורות נקוב ‎‭ΔT ≈ 5.0–5.5 °C (12 → 7 °C)‬‎</text>
+  <text class="node-text" x="217" y="261" direction="rtl" unicode-bidi="embed">ΔT קטן בספיקה מלאה ‏= עומס קירור נמוך מצד המפעל</text>
+
+  <rect class="node-box" x="40" y="385" width="355" height="105"/>
+  <text class="node-title" x="217" y="410" direction="rtl" unicode-bidi="embed">2. תחנת שאיבת נוזל קירור ומסנן רשת</text>
+  <text class="node-text" x="217" y="430" direction="rtl" unicode-bidi="embed">מכל אוגר ‏(Buffer)‏ ‏+ מסנן רשת ‏+ משאבה ‏+ מפסק זרימה</text>
+  <text class="node-text" x="217" y="448" direction="rtl" unicode-bidi="embed">בקרת מפל לחץ מים ΔP על המאייד ‏(‏סימן לסתימה‏)‏</text>
+  <text class="node-text" x="217" y="466" direction="rtl" unicode-bidi="embed">בדיקת ריכוז פרופילן-גליקול באמצעות רפרקטומטר</text>
+
+  <!-- Loop II: Chiller 4 Main Nodes -->
+  <!-- Node 3: Evaporator (Left side of Loop II) -->
+  <rect class="node-box-blue" x="480" y="255" width="255" height="195"/>
+  <text class="node-title" x="607" y="280" direction="rtl" unicode-bidi="embed">3. מאייד הצ׳ילר ‏(Evaporator)‏</text>
+  <text class="node-text" x="607" y="302" direction="rtl" unicode-bidi="embed">רתיחת הקרר הנוזלי בלחץ נמוך</text>
+  <text class="node-text" x="607" y="319" direction="rtl" unicode-bidi="embed">‎‭P_evap‬‎ ובטמפרטורת רוויה ‎‭T_sat_evap‬‎</text>
+  <text class="node-text" x="607" y="341" direction="rtl" unicode-bidi="embed">הפרש גישה במאייד ‏(Evap Approach)‏‏:</text>
+  <text class="node-text" x="607" y="358" direction="rtl" unicode-bidi="embed">‎‭ΔT_app_ev = T_evap,out − T_sat,evap‬‎</text>
+  <text class="node-text" x="607" y="375" direction="rtl" unicode-bidi="embed">‏(‏תחום תקין לצנרת נקייה‏: ‏‎‭~1.5–3.5 °C‬‎‏)‏</text>
+  <text class="node-text" x="607" y="397" direction="rtl" unicode-bidi="embed">שחמון ביניקה ‏(Suction Superheat)‏‏:</text>
+  <text class="node-text" x="607" y="414" direction="rtl" unicode-bidi="embed">‎‭SH = T_suction − T_sat,evap‬‎ ‏(‏הגנה מפני</text>
+  <text class="node-text" x="607" y="431" direction="rtl" unicode-bidi="embed">חדירת טיפות קרר נוזלי למדחס‏!‏)‏</text>
+
+  <!-- Node 4: Compressor (Top center of Loop II) -->
+  <rect class="node-box-red" x="645" y="130" width="310" height="96"/>
+  <text class="node-title" x="800" y="155" direction="rtl" unicode-bidi="embed">4. מדחס הקירור ‏(‏בורגי ‎‭/‬‎ צנטריפוגלי‏)‏</text>
+  <text class="node-text" x="800" y="175" direction="rtl" unicode-bidi="embed">דחיסת אדי קרר יבשים ‎‭P_evap → P_cond‬‎</text>
+  <text class="node-text" x="800" y="193" direction="rtl" unicode-bidi="embed">הספק חשמלי נצרך ‎‭W_comp (kW)‬‎</text>
+  <text class="node-text" x="800" y="211" direction="rtl" unicode-bidi="embed">בקרה‏: ‏טמפ׳ דחיסה‏, ΔP ומפלס שמן</text>
+
+  <!-- Node 5: Condenser (Right side of Loop II) -->
+  <rect class="node-box-red" x="865" y="255" width="255" height="195"/>
+  <text class="node-title" x="992" y="280" direction="rtl" unicode-bidi="embed">5. מעבה הצ׳ילר ‏(Condenser)‏</text>
+  <text class="node-text" x="992" y="302" direction="rtl" unicode-bidi="embed">עיבוי גז הקרר החם לנוזל בלחץ גבוה</text>
+  <text class="node-text" x="992" y="319" direction="rtl" unicode-bidi="embed">‎‭P_cond‬‎ ובטמפרטורת רוויה ‎‭T_sat_cond‬‎</text>
+  <text class="node-text" x="992" y="341" direction="rtl" unicode-bidi="embed">הפרש גישה במעבה ‏(Cond Approach)‏‏:</text>
+  <text class="node-text" x="992" y="358" direction="rtl" unicode-bidi="embed">‎‭ΔT_app_cd = T_sat,cond − T_cond,out‬‎</text>
+  <text class="node-text" x="992" y="375" direction="rtl" unicode-bidi="embed">‏(‏עליית ה-Approach ‏= אבנית או גזים לא-מתעבים‏!‏)‏</text>
+  <text class="node-text" x="992" y="397" direction="rtl" unicode-bidi="embed">קירור-יתר של הנוזל ‏(Subcooling)‏‏:</text>
+  <text class="node-text" x="992" y="414" direction="rtl" unicode-bidi="embed">‎‭SC = T_sat,cond − T_liquid‬‎ ‏(‏הגנת שסתום EXV‏;</text>
+  <text class="node-text" x="992" y="431" direction="rtl" unicode-bidi="embed">SC תקין לבדו אינו מוכיח כמות קרר תקינה ‎‭[S09]‬‎‏)‏</text>
+
+  <!-- Node 6: Expansion Valve EXV (Bottom center of Loop II) -->
+  <rect class="node-box-warn" x="645" y="490" width="310" height="96"/>
+  <text class="node-title" x="800" y="515" direction="rtl" unicode-bidi="embed">6. מכלול ההתפשטות ‏(‏שסתום ‎‭EXV / TXV‬‎‏)‏</text>
+  <text class="node-text" x="800" y="535" direction="rtl" unicode-bidi="embed">מסנן-מייבש ‏+ עינית הצצה ‏+ שסתום התפשטות</text>
+  <text class="node-text" x="800" y="553" direction="rtl" unicode-bidi="embed">מצערור הקרר הנוזלי ‎‭P_cond → P_evap‬‎</text>
+  <text class="node-text" x="800" y="571" direction="rtl" unicode-bidi="embed">מווסת את השחמון ‏(SH)‏ או מפלס הנוזל</text>
+
+  <!-- Loop III: Cooling Tower / Condenser Water -->
+  <rect class="node-box-warn" x="1205" y="160" width="355" height="125"/>
+  <text class="node-title" x="1382" y="185" direction="rtl" unicode-bidi="embed">7. מגדל קירור או מעבה מקורר אוויר</text>
+  <text class="node-text" x="1382" y="205" direction="rtl" unicode-bidi="embed">פינוי סך החום‏: ‏‎‭Q_cond = Q_evap + W_comp‬‎</text>
+  <text class="node-text" x="1382" y="225" direction="rtl" unicode-bidi="embed">למעגל מים‏: ‏‎‭T_in (29 °C)‬‎ ‏←‏ ‎‭T_out (35 °C)‬‎</text>
+  <text class="node-text" x="1382" y="243" direction="rtl" unicode-bidi="embed">בקרה‏: ‏מאווררי מגדל הקירור‏, ניקיון סוללות‏,</text>
+  <text class="node-text" x="1382" y="261" direction="rtl" unicode-bidi="embed">ניקוז מליחות וטיפול כימי במים החוזרים</text>
+
+  <rect class="node-box" x="1205" y="385" width="355" height="105"/>
+  <text class="node-title" x="1382" y="410" direction="rtl" unicode-bidi="embed">8. משאבת מי מעבה ומסנן רשת</text>
+  <text class="node-text" x="1382" y="430" direction="rtl" unicode-bidi="embed">בקרת מפל לחץ מים ΔP על המעבה וספיקת ‎‭m_cond‬‎</text>
+  <text class="node-text" x="1382" y="448" direction="rtl" unicode-bidi="embed">בירידת ספיקת המים‏: ‏עולה הפרש הטמפרטורות ΔT של המים</text>
+  <text class="node-text" x="1382" y="466" direction="rtl" unicode-bidi="embed">באבנית בצינורות‏: ‏ΔT המים תקין‏, אך ה-Approach מזנק‏!</text>
+
+  <!-- Diagnostic & Efficiency Box at Bottom -->
+  <rect class="node-box" x="20" y="706" width="1560" height="172"/>
+  <text class="node-title" x="800" y="732" direction="rtl" unicode-bidi="embed">כיצד להבחין בין הגורמים ללחץ עיבוי גבוה וכיצד להעריך את היעילות האנרגטית של הצ׳ילר</text>
+  <text class="node-text" x="800" y="756" direction="rtl" unicode-bidi="embed">1) ספיקת מי קירור נמוכה ‏(‏מסנן סתום ‎‭/‬‎ תקלת משאבה‏)‏‏: ‏הפרש טמפרטורות המים במעבה ‏(‎‭T_w_out − T_w_in‬‎)‏ גבוה מהנורמה‏, מפל הלחץ ΔP השתנה‏, אך הפרש הגישה ‏(‎‭T_sat,cond − T_w_out‬‎)‏ קרוב לנורמה‏.</text>
+  <text class="node-text" x="800" y="780" direction="rtl" unicode-bidi="embed">2) אבנית או אלח ביולוגי בצינורות המעבה ‏(Fouling)‏‏: ‏ספיקת המים ו-ΔT המים תקינים‏, אך הפרש הגישה במעבה ‏(‎‭Approach = T_sat,cond − T_w_out‬‎)‏ גבוה משמעותית מהנורמה ‏(‎‭&gt; 3.5–4 °C‬‎)‏‏.</text>
+  <text class="node-text" x="800" y="804" direction="rtl" unicode-bidi="embed">3) גזים לא-מתעבים ‏(‏אוויר‏)‏ או עודף קרר‏: ‏Approach גבוה ‏+ בדיקה בהדממה‏: ‏בנוכחות אוויר במערכת‏, טמפרטורת הרוויה לפי הלחץ ‎‭T_sat(P_cond)‬‎ גבוהה מטמפרטורת שיווי המשקל של המים‏!</text>
+  <text class="node-text" x="800" y="828" direction="rtl" unicode-bidi="embed">4) יעילות אנרגטית‏: ‏‎‭COP = Q_evap / W_comp‬‎‏; צריכת הספק סגולית ‎‭= W_comp / TR‬‎ ‏(‏‎‭kW/TR‬‎‏, כאשר ‎‭1 TR = 3.517 kW‬‎‏)‏‏. כל עלייה של ‎‭+1 °C‬‎ בטמפרטורת העיבוי ‎‭T_sat,cond‬‎ מורידה את נצילות הצ׳ילר בכ-‎‭2–3%‬‎‏!</text>
+  <text class="node-text" x="800" y="852" direction="rtl" unicode-bidi="embed">5) מאזן אנרגיה לאימות מכשור ‏(‏צ׳ילר מקורר מים‏)‏‏: ‏‎‭Q_evap‬‎ ‏(‏תפוקת קירור במאייד‏)‏ ‎‭+ W_comp‬‎ ‏(‏הספק המדחס‏)‏ ‎‭≈ Q_cond‬‎ ‏(‏הספק החום המפונה במי המעבה‏)‏‏.</text>
+
+  <!-- Pipes & Arrows -->
+  <!-- Loop I: Chilled water between 1, 2, 3 -->
+  <path class="pipe-blue" d="M 480 295 L 412 295 L 412 220 L 397 220" marker-end="url(#arrow-blue)"/>
+  <text class="flow-label" x="400" y="315" direction="rtl" unicode-bidi="embed">אספקה ‎‭7 °C‬‎</text>
+
+  <path class="pipe-cyan" d="M 217 285 L 217 383" marker-end="url(#arrow-cyan)"/>
+  <path class="pipe-cyan" d="M 395 435 L 478 435" marker-end="url(#arrow-cyan)"/>
+  <text class="flow-label" x="400" y="426" direction="rtl" unicode-bidi="embed">חזרה ‎‭12 °C‬‎</text>
+
+  <!-- Loop II: Refrigerant Cycle (3 -> 4 -> 5 -> 6 -> 3) -->
+  <!-- 3 -> 4 (Suction gas) -->
+  <path class="pipe-cyan" d="M 555 255 L 555 178 L 643 178" marker-end="url(#arrow-cyan)"/>
+  <text class="flow-label" x="470" y="168" direction="rtl" unicode-bidi="embed">אדי יניקה ‏(‎‭P_evap, SH‬‎)‏</text>
+
+  <!-- 4 -> 5 (Discharge hot gas) -->
+  <path class="pipe-red" d="M 955 178 L 1045 178 L 1045 253" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="965" y="168" direction="rtl" unicode-bidi="embed">גז דחיסה חם ‏(‎‭P_cond‬‎)‏</text>
+
+  <!-- 5 -> 6 (Subcooled liquid) -->
+  <path class="pipe-orange" d="M 1045 450 L 1045 538 L 957 538" marker-end="url(#arrow-orange)"/>
+  <text class="flow-label" x="965" y="558" direction="rtl" unicode-bidi="embed">קרר נוזלי ‏(‎‭P_cond, SC‬‎)‏</text>
+
+  <!-- 6 -> 3 (Two-phase after expansion) -->
+  <path class="pipe-blue" d="M 645 538 L 555 538 L 555 452" marker-end="url(#arrow-blue)"/>
+  <text class="flow-label" x="470" y="558" direction="rtl" unicode-bidi="embed">תערובת אחרי ‎‭EXV (P_evap)‬‎</text>
+
+  <!-- Loop III: Condenser water between 5, 7, 8 -->
+  <path class="pipe-red" d="M 1120 295 L 1188 295 L 1188 220 L 1203 220" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="1123" y="315" direction="rtl" unicode-bidi="embed">למגדל הקירור ‎‭35 °C‬‎</text>
+
+  <path class="pipe-green" d="M 1382 285 L 1382 383" marker-end="url(#arrow-green)"/>
+  <path class="pipe-green" d="M 1205 435 L 1122 435" marker-end="url(#arrow-green)"/>
+  <text class="flow-label" x="1123" y="426" direction="rtl" unicode-bidi="embed">ממגדל הקירור ‎‭29 °C‬‎</text>
+
+  <rect class="footer-bg" x="0" y="896" width="1600" height="64"/>
+  <text class="footer-text" x="36" y="920" font-weight="700" direction="rtl" unicode-bidi="embed">מקורות הנדסיים‏: ‏‎‭[S08] Trane Series R Model RTWD Chiller IOM (RLC-SVX09T-EN, Oct 2025, pp. 12–16, 67–88)‬‎‏;</text>
+  <text class="footer-text" x="36" y="942" direction="rtl" unicode-bidi="embed">המשך מקורות‏: ‏‎‭[S09] Trane Model RTWS Chiller IOM (RLC-SVX15A-EN); [S10] Carrier AquaEdge 19DV PIC6 Controls (19DV-CLT-6SS); [S11] Daikin EWAD-TZ Manual‬‎‏.</text>
+</svg>

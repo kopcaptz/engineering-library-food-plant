@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="1600" height="960">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .header-bg { fill: #0f172a; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #ffffff; }
+      .header-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #fbbf24; }
+      .node-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-warn { fill: #fffbeb; stroke: #d97706; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-blue { fill: #eff6ff; stroke: #1d4ed8; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-green { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-red { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 8; ry: 8; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10.2px; fill: #334155; text-anchor: middle; }
+      .pipe-red { fill: none; stroke: #dc2626; stroke-width: 3; }
+      .pipe-orange { fill: none; stroke: #ea580c; stroke-width: 2.8; stroke-dasharray: 7,4; }
+      .pipe-blue { fill: none; stroke: #2563eb; stroke-width: 3; }
+      .pipe-cyan { fill: none; stroke: #0891b2; stroke-width: 3; }
+      .pipe-green { fill: none; stroke: #16a34a; stroke-width: 3; }
+      .flow-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .zone-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 10; ry: 10; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #334155; }
+      .footer-bg { fill: #e2e8f0; }
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #1e293b; }
+    </style>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0891b2"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="960"/>
+  <rect class="header-bg" x="0" y="0" width="1600" height="72"/>
+  <text class="header-title" x="28" y="32">УЧЕБНАЯ ПРИНЦИПИАЛЬНАЯ СХЕМА 5: УСТАНОВКА ОБРАТНОГО ОСМОСА (ПРЕДПОДГОТОВКА, СТАДИИ 2:1 И КОНТРОЛЬ)</text>
+  <text class="header-sub" x="28" y="54">УЧЕБНАЯ СХЕМА ПОТОКОВ И УЗЛОВ КОНТРОЛЯ (НЕ СХЕМА КОНКРЕТНОГО ПРЕДПРИЯТИЯ) | Раздел 5 Инженерной библиотеки</text>
+
+  <!-- Zones -->
+  <rect class="zone-box" x="20" y="88" width="490" height="600"/>
+  <text class="zone-title" x="38" y="114">ЗОНА I. ПРЕДВАРИТЕЛЬНАЯ ВОДОПОДГОТОВКА (PRETREATMENT)</text>
+
+  <rect class="zone-box" x="525" y="88" width="610" height="600"/>
+  <text class="zone-title" x="543" y="114">ЗОНА II. ДВУХСТАДИЙНЫЙ МЕМБРАННЫЙ БЛОК RO (СХЕМА 2:1 ПО КОНЦЕНТРАТУ)</text>
+
+  <rect class="zone-box" x="1150" y="88" width="430" height="600"/>
+  <text class="zone-title" x="1168" y="114">ЗОНА III. ПОТОКИ ВЫХОДА, ПРОМЫВКА И КОНТРОЛЬ</text>
+
+  <!-- Zone I Nodes -->
+  <rect class="node-box-blue" x="42" y="142" width="445" height="104"/>
+  <text class="node-title" x="264" y="168">1. Мультимедийный фильтр / Ультрафильтрация (UF)</text>
+  <text class="node-text" x="264" y="188">Удаление взвешенных частиц, ила, коллоидов и окисленного железа</text>
+  <text class="node-text" x="264" y="206">Контроль: ΔP фильтра (промывка при ΔP ≈ 0.3–0.6 бар), мутность &lt; 1.0 NTU,</text>
+  <text class="node-text" x="264" y="224">Индекс коллоидного загрязнения SDI₁₅ &lt; 5.0 (рекомендуется SDI₁₅ &lt; 3.0)</text>
+
+  <rect class="node-box-warn" x="42" y="276" width="445" height="118"/>
+  <text class="node-title" x="264" y="302">2. Узел дехлорирования (Активированный уголь GAC или SMBS)</text>
+  <text class="node-text" x="264" y="322">Целевой свободный хлор Cl₂ = 0.0 мг/л (запись модели DPD-теста и его LoD!)</text>
+  <text class="node-text" x="264" y="340">Дозирование метабисульфита натрия (SMBS): 1.8–3.0 мг на 1.0 мг Cl₂</text>
+  <text class="node-text" x="264" y="358">Контроль: ORP (уставка зависит от pH/воды/SBS; пример [S16, p. 67]: 175–200 мВ)</text>
+  <text class="node-text" x="264" y="376">и контроль остаточного бисульфита HSO₃⁻ в концентрате (≥ 0.5 мг/л)</text>
+
+  <rect class="node-box-green" x="42" y="424" width="445" height="104"/>
+  <text class="node-title" x="264" y="450">3. Защита от накипи: Умягчитель (IX) или Антискалант + Кислота</text>
+  <text class="node-text" x="264" y="470">Защита от риска осаждения CaCO₃, CaSO₄, BaSO₄, SrSO₄, SiO₂ на хвосте схемы</text>
+  <text class="node-text" x="264" y="488">ВАЖНО: Запрещено смешивать катионные флокулянты с анионным антискалантом!</text>
+  <text class="node-text" x="264" y="506">(Кислота снижает LSI, но переводит HCO₃⁻ в газ CO₂ → выше EC пермеата)</text>
+
+  <rect class="node-box" x="42" y="558" width="445" height="94"/>
+  <text class="node-title" x="264" y="584">4. Барьерный картриджный фильтр тонкой очистки (5 мкм)</text>
+  <text class="node-text" x="264" y="604">Защита насоса высокого давления и мембран от выноса частиц</text>
+  <text class="node-text" x="264" y="622">Контроль: входной/выходной манометры ΔP, T воды (&lt; 45 °C), pH, EC_f, FI_f</text>
+
+  <!-- Zone II Nodes -->
+  <rect class="node-box-red" x="550" y="142" width="560" height="98"/>
+  <text class="node-title" x="830" y="168">5. Насос высокого давления (HPP) с плавным пуском (VFD / Soft Start)</text>
+  <text class="node-text" x="830" y="188">Создает рабочее давление P_f1 для преодоления осмотического давления π и потерь ΔP</text>
+  <text class="node-text" x="830" y="206">Защита: реле низкого давления всаса (LPS) и высокого давления (HPS, макс. 41 бар для BW)</text>
+  <text class="node-text" x="830" y="224">Скорость подъема давления при пуске ≤ 0.7 бар/с (10 psi/s) во избежание гидроудара!</text>
+
+  <!-- Stage 1 -->
+  <rect class="node-box-blue" x="550" y="276" width="560" height="170"/>
+  <text class="node-title" x="830" y="302">6. ПЕРВАЯ СТАДИЯ (Stage 1 — напр., 4 корпуса по 6 элементов)</text>
+  <text class="node-text" x="830" y="324">Вход питания P_f1 → тангенциальное течение вдоль сетки (Feed Spacer) → выход P_f2</text>
+  <text class="node-text" x="830" y="342">Контроль перепада давления 1-й стадии: ΔP₁ = P_f1 − P_f2 (рост ΔP₁ на +15% → признак</text>
+  <text class="node-text" x="830" y="360">забивания головных элементов взвесями, коллоидами, железом или биопленкой!)</text>
+  <text class="node-text" x="830" y="380">Индивидуальные пробоотборники пермеата на каждом корпусе (для Profiling и Probing O-ring)</text>
+  <text class="node-text" x="830" y="398">Манжета рассола (Brine Seal) на входе каждого элемента + шайбы (Shims) на входном адаптере</text>
+  <text class="node-text" x="830" y="416">и упорное кольцо (Thrust Ring) на выходном торце корпуса против телескопирования</text>
+
+  <!-- Stage 2 -->
+  <rect class="node-box-warn" x="550" y="486" width="560" height="166"/>
+  <text class="node-title" x="830" y="512">7. ВТОРАЯ СТАДИЯ (Stage 2 — напр., 2 корпуса на выходе 1-й стадии)</text>
+  <text class="node-text" x="830" y="534">Концентрат 1-й стадии поступает на вход 2-й стадии (P_f2) → выход финального концентрата (P_c)</text>
+  <text class="node-text" x="830" y="552">К выходу 2-й стадии при извлечении Y = 75% объем воды уменьшается в 4 раза,</text>
+  <text class="node-text" x="830" y="570">а концентрация солей (при допущении SR = 100%) растет в CF = 1 / (1 − Y) = 4.0 раза!</text>
+  <text class="node-text" x="830" y="590">Контроль перепада 2-й стадии: ΔP₂ = P_f2 − P_c и проводимости пермеата 2-й стадии EC_p2</text>
+  <text class="node-text" x="830" y="608">(Накипь Scaling обычно начинается с хвоста последней стадии: падение потока, рост EC_p2 и ΔP₂)</text>
+  <text class="node-text" x="830" y="626">Механический предел перепада ΔP: ≤ 1.0 бар (15 psi) на элемент и ≤ 3.5 бар (50 psi) на корпус</text>
+
+  <!-- Zone III Nodes -->
+  <rect class="node-box-green" x="1175" y="142" width="380" height="168"/>
+  <text class="node-title" x="1365" y="166">8. Линия общего пермеата (Очищенная вода)</text>
+  <text class="node-text" x="1365" y="186">Приборы: Расходомер Q_p, Кондуктометр EC_p,</text>
+  <text class="node-text" x="1365" y="204">Манометр P_p, Обратный клапан, Сбросной клапан в дренаж</text>
+  <text class="node-text" x="1365" y="222">(Пермеат первого часа после пуска/мойки — в дренаж!)</text>
+  <text class="node-text" x="1365" y="242">ЗАПРЕТ ПРОТИВОДАВЛЕНИЯ (риск отслоения полотна):</text>
+  <text class="node-text" x="1365" y="260">Давление P_p ни на секунду не должно превышать P_f или P_c</text>
+  <text class="node-text" x="1365" y="278">более чем на 0.3 бар (≈ 4.35 psi) / 5 psi (≈ 0.345 бар)!</text>
+
+  <rect class="node-box-red" x="1175" y="342" width="380" height="145"/>
+  <text class="node-title" x="1365" y="368">9. Линия концентрата и Регулирующий клапан</text>
+  <text class="node-text" x="1365" y="390">Регулирующий клапан концентрата задает степень</text>
+  <text class="node-text" x="1365" y="408">извлечения: Y = Q_p / (Q_p + Q_c)</text>
+  <text class="node-text" x="1365" y="428">Приборы: Расходомер Q_c, Манометр P_c, EC_c, pH_c</text>
+  <text class="node-text" x="1365" y="448">Запрещено зажимать Q_c ниже минимального протока</text>
+  <text class="node-text" x="1365" y="466">или запускать насос при закрытом клапане концентрата!</text>
+
+  <rect class="node-box" x="1175" y="525" width="380" height="127"/>
+  <text class="node-title" x="1365" y="551">10. Контур промывки при останове и CIP</text>
+  <text class="node-text" x="1365" y="571">При каждом останове: вытеснение рассола из корпусов</text>
+  <text class="node-text" x="1365" y="589">пермеатом при низком давлении (~3 бар) без антискаланта</text>
+  <text class="node-text" x="1365" y="609">Критерии оценки CIP (с проверкой приборов и по регламенту):</text>
+  <text class="node-text" x="1365" y="627">NPF −10%, NSP +5…20%, ΔP +10…20% (каждая стадия отдельно!)</text>
+
+  <!-- Summary Box -->
+  <rect class="node-box" x="20" y="706" width="1560" height="172"/>
+  <text class="node-title" x="800" y="732">КЛЮЧЕВЫЕ ФОРМУЛЫ КОНТРОЛЯ, БАЛАНСА ПРИБОРОВ И НОРМАЛИЗАЦИИ РАЗДЕЛА 5 (ОБРАТНЫЙ ОСМОС RO)</text>
+  <text class="node-text" x="800" y="756">1) Индикаторный баланс приборов (DuPont Eq. 79–80): Q_f = Q_p + Q_c;   [ (Q_f · EC_f) / (Q_p · EC_p + Q_c · EC_c) ] = 1.00 ± 0.05 (индикатор сходимости: не заменяет калибровку и не доказывает исправность/поломку сам по себе!).</text>
+  <text class="node-text" x="800" y="780">2) Извлечение и концентрирование (в допущении 100% задержания солей): Y = Q_p / Q_f;   CF = 1 / (1 − Y) (при Y = 75% → CF = 4.0, индикатор риска пересыщения).   |   3) Проскок солей: SP = (EC_p / EC_f)×100%; SR = 100% − SP.</text>
+  <text class="node-text" x="800" y="804">4) Чистая движущая сила давления: NDP = P_f − (ΔP / 2) − P_p − π_fc + π_p.   |   5) Нормализованный поток пермеата (DuPont Eq. 72): Q_s = Q_o · (NDP_s / NDP_o) · (TCF_s / TCF_o).</text>
+  <text class="node-text" x="800" y="828">6) Почему обязательна нормализация: охлаждение воды на каждые −4 °C снижает «сырой» поток пермеата на ~10% из-за роста вязкости воды. Только нормализованные графики (NPF, NSP, ΔP) отличают температуру от фоулинга!</text>
+  <text class="node-text" x="800" y="852">7) Локализация высокой проводимости пермеата: Шаг 1 — Профилирование (замер EC_p из каждого корпуса отдельно); Шаг 2 — Зондирование (Probing трубкой 6 мм внутри пермеатного канала с шагом 20 см для поиска течи O-ring).</text>
+
+  <!-- Pipes & Arrows -->
+  <path class="pipe-blue" d="M 264 246 L 264 274" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 264 394 L 264 422" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 264 528 L 264 556" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-blue" d="M 487 605 L 516 605 L 516 190 L 548 190" marker-end="url(#arrow-blue)"/>
+  <path class="pipe-red" d="M 830 240 L 830 274" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="840" y="262">Питание ВД P_f1</text>
+
+  <!-- Stage 1 concentrate -> Stage 2 feed -->
+  <path class="pipe-orange" d="M 830 446 L 830 484" marker-end="url(#arrow-orange)"/>
+  <text class="flow-label" x="840" y="470">Концентрат 1-й стадии → Вход 2-й стадии (P_f2)</text>
+
+  <!-- Permeate from Stage 1 and Stage 2 -> Node 8 -->
+  <path class="pipe-cyan" d="M 1110 325 L 1142 325 L 1142 205 L 1173 205" marker-end="url(#arrow-cyan)"/>
+  <path class="pipe-cyan" d="M 1110 535 L 1142 535 L 1142 225 L 1173 225" marker-end="url(#arrow-cyan)"/>
+
+  <!-- Concentrate from Stage 2 -> Node 9 -->
+  <path class="pipe-red" d="M 1110 605 L 1158 605 L 1158 415 L 1173 415" marker-end="url(#arrow-red)"/>
+
+  <rect class="footer-bg" x="0" y="896" width="1600" height="64"/>
+  <text class="footer-text" x="36" y="920" font-weight="700">Источники инженерных принципов: [S16] DuPont FilmTec RO Technical Manual (Form No. 45-D01504-en, Rev. 20, Aug 2026, pp. 11–169); [S17] DuPont FilmTec Limiting Conditions (45-D04388-en);</text>
+  <text class="footer-text" x="36" y="942">Продолжение источников: [S18] Hydranautics TSB107.30 (Foulants &amp; Cleaning, Apr 2026, pp. 1–17); [S19] Hydranautics RODataXL Manual (ASTM D4516); [S20] Toray RO O&amp;M Manual.</text>
+</svg>

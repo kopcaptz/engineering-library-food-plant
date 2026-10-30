@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" width="1600" height="960">
+
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .header-bg { fill: #0f172a; }
+      .header-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 20px; font-weight: 700; fill: #ffffff; }
+      .header-sub { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 600; fill: #fbbf24; }
+      .node-box { fill: #ffffff; stroke: #1e293b; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-warn { fill: #fffbeb; stroke: #d97706; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-blue { fill: #eff6ff; stroke: #1d4ed8; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-green { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 8; ry: 8; }
+      .node-box-red { fill: #fef2f2; stroke: #b91c1c; stroke-width: 2; rx: 8; ry: 8; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 700; fill: #0f172a; text-anchor: middle; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10.2px; fill: #334155; text-anchor: middle; }
+      .pipe-red { fill: none; stroke: #dc2626; stroke-width: 3; }
+      .pipe-orange { fill: none; stroke: #ea580c; stroke-width: 2.8; stroke-dasharray: 7,4; }
+      .pipe-blue { fill: none; stroke: #2563eb; stroke-width: 3; }
+      .pipe-cyan { fill: none; stroke: #0891b2; stroke-width: 3; }
+      .pipe-green { fill: none; stroke: #16a34a; stroke-width: 3; }
+      .flow-label { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .zone-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 6,4; rx: 10; ry: 10; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12.5px; font-weight: 700; fill: #334155; }
+      .footer-bg { fill: #e2e8f0; }
+      .footer-text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; fill: #1e293b; }
+    </style>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0891b2"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1600" height="960"/>
+  <rect class="header-bg" x="0" y="0" width="1600" height="72"/>
+  <text class="header-title" x="28" y="32">УЧЕБНАЯ ПРИНЦИПИАЛЬНАЯ СХЕМА 3: ЧИЛЛЕР И ТРИ СОПРЯЖЕННЫХ КОНТУРА (ХОЛОДОНОСИТЕЛЬ, ФРЕОН, ГРАДИРНЯ)</text>
+  <text class="header-sub" x="28" y="54">УЧЕБНАЯ СХЕМА ПОТОКОВ И УЗЛОВ КОНТРОЛЯ (НЕ СХЕМА КОНКРЕТНОГО ПРЕДПРИЯТИЯ) | Раздел 3 Инженерной библиотеки</text>
+
+  <!-- Zones -->
+  <rect class="zone-box" x="20" y="88" width="415" height="600"/>
+  <text class="zone-title" x="38" y="114">КОНТУР I. ХОЛОДОНОСИТЕЛЬ (ВОДА / ГЛИКОЛЬ ЦЕХА)</text>
+
+  <rect class="zone-box" x="455" y="88" width="690" height="600"/>
+  <text class="zone-title" x="473" y="114">КОНТУР II. ПАРОКОМПРЕССИОННЫЙ ХОЛОДИЛЬНЫЙ ЦИКЛ (ЧИЛЛЕР)</text>
+
+  <rect class="zone-box" x="1165" y="88" width="415" height="600"/>
+  <text class="zone-title" x="1183" y="114">КОНТУР III. ОТВОД ТЕПЛА (ГРАДИРНЯ ИЛИ ВОЗДУХ)</text>
+
+  <!-- Loop I: Process Cooling Load -->
+  <rect class="node-box-blue" x="40" y="160" width="355" height="125"/>
+  <text class="node-title" x="217" y="185">1. Технологические потребители холода</text>
+  <text class="node-text" x="217" y="205">(Танки брожения/хранения, пастеризаторы, камеры)</text>
+  <text class="node-text" x="217" y="225">Тепловая нагрузка: Q_evap = m · c_p · (T_вх − T_вых)</text>
+  <text class="node-text" x="217" y="243">Номинальный перепад ΔT воды ≈ 5.0–5.5 °C (12 → 7 °C)</text>
+  <text class="node-text" x="217" y="261">Малый ΔT при полном расходе = малая нагрузка цеха</text>
+
+  <rect class="node-box" x="40" y="385" width="355" height="105"/>
+  <text class="node-title" x="217" y="410">2. Насосная станция холодоносителя и фильтр</text>
+  <text class="node-text" x="217" y="430">Буферный бак + Сетчатый фильтр + Насос + Реле протока</text>
+  <text class="node-text" x="217" y="448">Контроль ΔP воды на испарителе (признак засорения)</text>
+  <text class="node-text" x="217" y="466">Контроль концентрации пропиленгликоля (рефрактометр)</text>
+
+  <!-- Loop II: Chiller 4 Main Nodes -->
+  <!-- Node 3: Evaporator (Left side of Loop II) -->
+  <rect class="node-box-blue" x="480" y="255" width="255" height="195"/>
+  <text class="node-title" x="607" y="280">3. ИСПАРИТЕЛЬ (Evaporator)</text>
+  <text class="node-text" x="607" y="302">Кипение жидкого хладагента</text>
+  <text class="node-text" x="607" y="319">при низком давлении P_evap и T_sat_evap</text>
+  <text class="node-text" x="607" y="341">Подход испарителя (Evap Approach):</text>
+  <text class="node-text" x="607" y="358">ΔT_app_ev = T_воды_вых − T_sat_evap</text>
+  <text class="node-text" x="607" y="375">(Норма чистых трубок: ~1.5–3.5 °C)</text>
+  <text class="node-text" x="607" y="397">Перегрев на всасе (Suction Superheat):</text>
+  <text class="node-text" x="607" y="414">SH = T_всас − T_sat_evap (защита от</text>
+  <text class="node-text" x="607" y="431">попадания жидкого фреона в компрессор!)</text>
+
+  <!-- Node 4: Compressor (Top center of Loop II) -->
+  <rect class="node-box-red" x="645" y="130" width="310" height="96"/>
+  <text class="node-title" x="800" y="155">4. КОМПРЕССОР (Винтовой / Центробежный)</text>
+  <text class="node-text" x="800" y="175">Сжатие сухого пара P_evap → P_cond</text>
+  <text class="node-text" x="800" y="193">Потребляемая мощность W_comp (кВт)</text>
+  <text class="node-text" x="800" y="211">Контроль: T нагнетания, ΔP и уровень масла</text>
+
+  <!-- Node 5: Condenser (Right side of Loop II) -->
+  <rect class="node-box-red" x="865" y="255" width="255" height="195"/>
+  <text class="node-title" x="992" y="280">5. КОНДЕНСАТОР (Condenser)</text>
+  <text class="node-text" x="992" y="302">Конденсация горячего газа в жидкость</text>
+  <text class="node-text" x="992" y="319">при высоком давлении P_cond и T_sat_cond</text>
+  <text class="node-text" x="992" y="341">Подход конденсатора (Cond Approach):</text>
+  <text class="node-text" x="992" y="358">ΔT_app_cd = T_sat_cond − T_охл.воды_вых</text>
+  <text class="node-text" x="992" y="375">(Рост подхода = накипь или воздух!)</text>
+  <text class="node-text" x="992" y="397">Переохлаждение (Subcooling):</text>
+  <text class="node-text" x="992" y="414">SC = T_sat_cond − T_жидк (защита ЭРВ;</text>
+  <text class="node-text" x="992" y="431">норм. SC само не доказывает заряд [S09])</text>
+
+  <!-- Node 6: Expansion Valve EXV (Bottom center of Loop II) -->
+  <rect class="node-box-warn" x="645" y="490" width="310" height="96"/>
+  <text class="node-title" x="800" y="515">6. ДРОССЕЛЬНЫЙ УЗЕЛ (ЭРВ / EXV / ТРВ)</text>
+  <text class="node-text" x="800" y="535">Фильтр-осушитель + Смотровое стекло + ЭРВ</text>
+  <text class="node-text" x="800" y="553">Дросселирование жидкости P_cond → P_evap</text>
+  <text class="node-text" x="800" y="571">Регулирует перегрев (SH) или уровень</text>
+
+  <!-- Loop III: Cooling Tower / Condenser Water -->
+  <rect class="node-box-warn" x="1205" y="160" width="355" height="125"/>
+  <text class="node-title" x="1382" y="185">7. Градирня или воздушный конденсатор</text>
+  <text class="node-text" x="1382" y="205">Отвод полного тепла: Q_cond = Q_evap + W_comp</text>
+  <text class="node-text" x="1382" y="225">Для водяного контура: T_вх (29 °C) → T_вых (35 °C)</text>
+  <text class="node-text" x="1382" y="243">Контроль: вентиляторы градирни, чистота ламелей,</text>
+  <text class="node-text" x="1382" y="261">продувка и химводоподготовка оборотной воды</text>
+
+  <rect class="node-box" x="1205" y="385" width="355" height="105"/>
+  <text class="node-title" x="1382" y="410">8. Насос оборотной воды и сетчатый фильтр</text>
+  <text class="node-text" x="1382" y="430">Контроль ΔP воды на конденсаторе и расхода m_cond</text>
+  <text class="node-text" x="1382" y="448">При падении расхода воды: растет ΔT воды (T_вых − T_вх)</text>
+  <text class="node-text" x="1382" y="466">При накипи в трубках: ΔT воды в норме, но растет Approach!</text>
+
+  <!-- Diagnostic & Efficiency Box at Bottom -->
+  <rect class="node-box" x="20" y="706" width="1560" height="172"/>
+  <text class="node-title" x="800" y="732">КАК РАЗЛИЧИТЬ ПРИЧИНЫ ВЫСОКОГО ДАВЛЕНИЯ КОНДЕНСАЦИИ И КАК ОЦЕНИТЬ ЭНЕРГОЭФФЕКТИВНОСТЬ ЧИЛЛЕРА</text>
+  <text class="node-text" x="800" y="756">1) Малый расход охлаждающей воды (забит фильтр/насос): ΔT воды на конденсаторе (T_w_out − T_w_in) ВЫШЕ нормы, перепад ΔP воды изменен, а температурный подход (T_sat_cond − T_w_out) близок к норме.</text>
+  <text class="node-text" x="800" y="780">2) Накипь или биообрастание трубок конденсатора (Fouling): Расход и ΔT воды в норме, но температурный подход конденсатора (Approach = T_sat_cond − T_w_out) существенно ВЫШЕ нормы (&gt; 3.5–4 °C).</text>
+  <text class="node-text" x="800" y="804">3) Неконденсирующиеся газы (воздух) или перезарядка фреоном: Высокий Approach + проверка в простое: при воздухе в системе манометрическая температура T_sat(P_cond) выше равновесной температуры воды!</text>
+  <text class="node-text" x="800" y="828">4) Энергоэффективность: COP = Q_evap / W_comp; Удельный расход энергии = W_comp / Tons (кВт/ton, где 1 ton = 3.517 кВт). Каждый +1 °C роста T_sat_cond снижает КПД чиллера на ~2–3%!</text>
+  <text class="node-text" x="800" y="852">5) Тепловой баланс проверки приборов (Water-Cooled): Q_evap (испаритель) + W_comp (эл. мощность компрессора) ≈ Q_cond (тепло, отведенное водой конденсатора).</text>
+
+  <!-- Pipes & Arrows -->
+  <!-- Loop I: Chilled water between 1, 2, 3 -->
+  <path class="pipe-blue" d="M 480 295 L 412 295 L 412 220 L 397 220" marker-end="url(#arrow-blue)"/>
+  <text class="flow-label" x="400" y="315">Подача 7 °C</text>
+
+  <path class="pipe-cyan" d="M 217 285 L 217 383" marker-end="url(#arrow-cyan)"/>
+  <path class="pipe-cyan" d="M 395 435 L 478 435" marker-end="url(#arrow-cyan)"/>
+  <text class="flow-label" x="400" y="426">Обратка 12 °C</text>
+
+  <!-- Loop II: Refrigerant Cycle (3 -> 4 -> 5 -> 6 -> 3) -->
+  <!-- 3 -> 4 (Suction gas) -->
+  <path class="pipe-cyan" d="M 555 255 L 555 178 L 643 178" marker-end="url(#arrow-cyan)"/>
+  <text class="flow-label" x="470" y="168">Пар всаса (P_evap, SH)</text>
+
+  <!-- 4 -> 5 (Discharge hot gas) -->
+  <path class="pipe-red" d="M 955 178 L 1045 178 L 1045 253" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="965" y="168">Горячий газ (P_cond)</text>
+
+  <!-- 5 -> 6 (Subcooled liquid) -->
+  <path class="pipe-orange" d="M 1045 450 L 1045 538 L 957 538" marker-end="url(#arrow-orange)"/>
+  <text class="flow-label" x="965" y="558">Жидкость (P_cond, SC)</text>
+
+  <!-- 6 -> 3 (Two-phase after expansion) -->
+  <path class="pipe-blue" d="M 645 538 L 555 538 L 555 452" marker-end="url(#arrow-blue)"/>
+  <text class="flow-label" x="470" y="558">Смесь после ЭРВ (P_evap)</text>
+
+  <!-- Loop III: Condenser water between 5, 7, 8 -->
+  <path class="pipe-red" d="M 1120 295 L 1188 295 L 1188 220 L 1203 220" marker-end="url(#arrow-red)"/>
+  <text class="flow-label" x="1123" y="315">На градирню 35 °C</text>
+
+  <path class="pipe-green" d="M 1382 285 L 1382 383" marker-end="url(#arrow-green)"/>
+  <path class="pipe-green" d="M 1205 435 L 1122 435" marker-end="url(#arrow-green)"/>
+  <text class="flow-label" x="1123" y="426">С градирни 29 °C</text>
+
+  <rect class="footer-bg" x="0" y="896" width="1600" height="64"/>
+  <text class="footer-text" x="36" y="920" font-weight="700">Источники инженерных принципов: [S08] Trane Series R Model RTWD Helical-Rotary Chiller IOM (RLC-SVX09T-EN, Oct 2025, pp. 12–16, 67–88);</text>
+  <text class="footer-text" x="36" y="942">Продолжение источников: [S09] Trane Model RTWS Water-Cooled Chiller IOM (RLC-SVX15A-EN); [S10] Carrier AquaEdge 19DV PIC6 Controls (19DV-CLT-6SS); [S11] Daikin EWAD-TZ Manual.</text>
+</svg>
