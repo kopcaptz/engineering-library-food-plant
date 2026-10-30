@@ -284,6 +284,22 @@
           syncSingleInputFromDOM(t, getUnitSystem());
         }
       });
+      calcSec.addEventListener('keydown', (ev) => {
+        if (ev.key !== 'Enter') return;
+        const t = ev.target;
+        if (!t || (t.tagName !== 'INPUT' && t.tagName !== 'SELECT')) return;
+        if (t.id && root.UnitConverter && root.UnitConverter.FIELD_UNIT_MAP[t.id]) {
+          syncSingleInputFromDOM(t, getUnitSystem());
+        }
+        const mod = t.closest('form, .calc-submodule-block, .calc-panel');
+        if (mod) {
+          const runBtn = mod.querySelector('button[onclick^="runCalc"]');
+          if (runBtn) {
+            ev.preventDefault();
+            runBtn.click();
+          }
+        }
+      });
     }
 
     // 3. Check if user had 'us' or currency saved in localStorage; if so, restore
@@ -1300,11 +1316,31 @@
 
       const warnings2 = [];
       if (r.freezeWarning) {
+        // Фактическая причина срабатывания — те же условия, что в ядре (calculators.js, calcChillerPerformance):
+        // чистая вода и T_evap,out < +4.0 °C и/или T_sat,evap ≤ 0.0 °C. Ядро не меняется; интерфейс показывает,
+        // какое именно условие выполнилось (задание владельца 2026-10-30, п. 1.1).
+        const tOutSiStr = siValOf('c2_tout');
+        const tSatSiStr = siValOf('c2_tsat_ev');
+        const tOutSiNum = parseFloat(tOutSiStr);
+        const tSatSiNum = tSatSiStr === '' ? NaN : parseFloat(tSatSiStr);
+        const fmtFreezeT = (n) => String(Math.round(n * 100) / 100);
+        const freezeReasons = [];
+        if (Number.isFinite(tOutSiNum) && tOutSiNum < 4.0) {
+          freezeReasons.push(`<code dir="ltr">T_evap,out = ${fmtFreezeT(tOutSiNum)} °C &lt; +4.0 °C</code>`);
+        }
+        if (Number.isFinite(tSatSiNum) && tSatSiNum <= 0.0) {
+          freezeReasons.push(`<code dir="ltr">T_sat,evap = ${fmtFreezeT(tSatSiNum)} °C ≤ 0.0 °C</code>`);
+        }
+        const freezeReasonHtml = freezeReasons.length > 0
+          ? freezeReasons.join('; ')
+          : (isHe
+              ? '<code dir="ltr">T_evap,out &lt; +4.0 °C</code> או <code dir="ltr">T_sat,evap ≤ 0.0 °C</code>'
+              : '<code dir="ltr">T_evap,out &lt; +4.0 °C</code> или <code dir="ltr">T_sat,evap ≤ 0.0 °C</code>');
         warnings2.push({
           level: 'danger',
           html: isHe
-            ? `🚨 <strong>סיכון מוגבר לקפיאת המאייד (Freeze Risk):</strong> נבחר מצב "מים נקיים" כאשר <code dir="ltr">T_evap,out = ${siValOf('c2_tout')} °C &lt; +4.0 °C</code>${siValOf('c2_tsat_ev') ? ` (<code dir="ltr">T_sat,evap = ${siValOf('c2_tsat_ev')} °C</code>)` : ''}. גבול טמפרטורת היציאה המינימלית למים תלוי במבנה המאייד ובהגנות המכונה: במדריך Daikin EWAD-TZ <code>[S11, pp. 16–17, 19, 40]</code> התחום המותר ללא גליקול הוא <code dir="ltr">+4.0…+15.5 °C</code> (הגנת Evaporator Water Freeze מוגדרת סביב <code dir="ltr">+2.2 °C / 36 °F</code>); במדריך Trane RTWD <code>[S08, Table 14 p. 41; Table 32 pp. 82–83]</code> למים נקיים (0% גליקול) סף הניתוק המינימלי למים הוא <code dir="ltr">LWTC = +1.7 °C (35.0 °F, 30 °F·s)</code>, ולקרר <code dir="ltr">LRTC = −1.9 °C (28.6 °F)</code> עם אינטגרל <code dir="ltr">1125 °F·s</code> לפי הגבוהה מבין טמפרטורת הקרר הנוזלי במאייד וטמפרטורת הרוויה הפעילה של המעגל. בדקו את דפי היצרן או עברו לתמיסת מים-גליקול!`
-            : `🚨 ${r.freezeWarning}`
+            ? `🚨 <strong>סיכון מוגבר לקפיאת המאייד (Freeze Risk):</strong> נבחר מצב "מים נקיים" כאשר ${freezeReasonHtml}. גבול טמפרטורת היציאה המינימלית למים תלוי במבנה המאייד ובהגנות המכונה: במדריך Daikin EWAD-TZ <code>[S11, pp. 16–17, 19, 40]</code> התחום המותר ללא גליקול הוא <code dir="ltr">+4.0…+15.5 °C</code> (הגנת Evaporator Water Freeze מוגדרת סביב <code dir="ltr">+2.2 °C / 36 °F</code>); במדריך Trane RTWD <code>[S08, Table 14 p. 41; Table 32 pp. 82–83]</code> למים נקיים (0% גליקול) סף הניתוק המינימלי למים הוא <code dir="ltr">LWTC = +1.7 °C (35.0 °F, 30 °F·s)</code>, ולקרר <code dir="ltr">LRTC = −1.9 °C (28.6 °F)</code> עם אינטגרל <code dir="ltr">1125 °F·s</code> לפי הגבוהה מבין טמפרטורת הקרר הנוזלי במאייד וטמפרטורת הרוויה הפעילה של המעגל. בדקו את דפי היצרן או עברו לתמיסת מים-גליקול!`
+            : `🚨 <strong>Причина срабатывания:</strong> ${freezeReasonHtml}.<br>${r.freezeWarning}`
         });
       }
       if (r.glycolPropertyNotice) {
@@ -1997,7 +2033,7 @@
       if (econ5B && econ5B.realismWarning) {
         warningsList.push(
           isHe
-            ? `⚠️ הערת נצילות דוד: ${econ5B.realismWarning}`
+            ? `⚠️ <strong>הערת נצילות דוד:</strong> ${translateRuntimeText(econ5B.realismWarning, 'he')}`
             : `⚠️ ${econ5B.realismWarning}`
         );
       }
@@ -2411,6 +2447,17 @@
           ? document.querySelector(sel)
           : document.getElementById(sel);
         if (el) el.textContent = text;
+      }
+    }
+    // v15.1 (п. 1.4): доступные имена полей без собственной подписи — по языку и системе единиц
+    const CALC_FIELD_ARIA = root.I18N_UI.CALC_FIELD_ARIA;
+    if (CALC_FIELD_ARIA) {
+      for (const [fid, dict] of Object.entries(CALC_FIELD_ARIA)) {
+        const fieldEl = document.getElementById(fid);
+        if (!fieldEl) continue;
+        const usNow = sys === 'us' && isFieldConvertedNow(fid, sys);
+        const ariaText = (usNow && dict[lang + 'Us']) || dict[lang] || dict.ru;
+        if (ariaText) fieldEl.setAttribute('aria-label', ariaText);
       }
     }
     if (CALC_METADATA) {

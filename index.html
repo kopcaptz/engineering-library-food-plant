@@ -19,7 +19,7 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"></path><path d="M8 7h7M8 11h5"></path></svg>
             <span id="site-title-el">Инженерная библиотека завода</span>
           </a>
-          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v14</span>
+          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v15.1</span>
         </h1>
         <p class="site-subtitle" id="site-subtitle-el" style="display:none;">Пар • Конденсат • Чиллеры • Сжатый воздух • Обратный осмос (RO)</p>
       </div>
@@ -410,8 +410,8 @@
               <label for="c3a_rh1">Относит. влажность состояния 1 φ₁ (%) и p_sat1 (бар) *</label>
               <span id="c3a_rh1_hint" class="hint">Для сухого воздуха: φ₁ = 0%, p_sat1 = 0 бар</span>
               <div style="display:flex; gap:0.4rem;">
-                <input type="number" id="c3a_rh1" step="any" min="0" max="100" required value="0" aria-label="Относительная влажность состояния 1 (%)">
-                <input type="number" id="c3a_psat1" step="any" min="0" required value="0" aria-label="Давление насыщенного пара состояния 1 (бар)">
+                <input type="number" id="c3a_rh1" step="any" min="0" max="100" required value="0" aria-label="Относительная влажность состояния 1 φ₁ (%)">
+                <input type="number" id="c3a_psat1" step="any" min="0" required value="0" aria-label="Давление насыщенного пара состояния 1 p_sat1 (бар)">
               </div>
             </div>
             <div class="field">
@@ -428,8 +428,8 @@
               <label for="c3a_rh2">Относит. влажность состояния 2 φ₂ (%) и p_sat2 (бар) *</label>
               <span id="c3a_rh2_hint" class="hint">При +30 °C [S13, printed p. 134 / PDF p. 136]: φ₂ = 60%, p_sat2 = 0.04246 бар</span>
               <div style="display:flex; gap:0.4rem;">
-                <input type="number" id="c3a_rh2" step="any" min="0" max="100" required value="60" aria-label="Относительная влажность состояния 2 (%)">
-                <input type="number" id="c3a_psat2" step="any" min="0" required value="0.04246" aria-label="Давление насыщенного пара состояния 2 (бар)">
+                <input type="number" id="c3a_rh2" step="any" min="0" max="100" required value="60" aria-label="Относительная влажность состояния 2 φ₂ (%)">
+                <input type="number" id="c3a_psat2" step="any" min="0" required value="0.04246" aria-label="Давление насыщенного пара состояния 2 p_sat2 (бар)">
               </div>
             </div>
           </div>
@@ -466,24 +466,24 @@
               <label for="c3b_pstart">Начальное и конечное давление P₁, P₂ (бар изб.) [Метод 1]</label>
               <span id="c3b_pstart_hint" class="hint">Тест 3.2: спад с 7.0 до 6.0 бар изб.</span>
               <div style="display:flex; gap:0.4rem;">
-                <input type="number" id="c3b_pstart" step="any" value="7.0" aria-label="Начальное давление P1 (бар изб.)">
-                <input type="number" id="c3b_pend" step="any" value="6.0" aria-label="Конечное давление P2 (бар изб.)">
+                <input type="number" id="c3b_pstart" step="any" value="7.0" aria-label="Начальное избыточное давление P₁ (бар изб.)">
+                <input type="number" id="c3b_pend" step="any" value="6.0" aria-label="Конечное избыточное давление P₂ (бар изб.)">
               </div>
             </div>
             <div class="field">
               <label for="c3b_tdecay">Время спада t (мин) и P_atm (бар) [Метод 1]</label>
               <span id="c3b_tdecay_hint" class="hint">Тест 3.2: t = 5.0 мин при P_atm = 1.0 бар</span>
               <div style="display:flex; gap:0.4rem;">
-                <input type="number" id="c3b_tdecay" step="any" min="0.1" value="5.0" aria-label="Время спада давления (мин)">
-                <input type="number" id="c3b_patm" step="any" min="0.5" value="1.0" aria-label="Атмосферное давление P_atm (бар)">
+                <input type="number" id="c3b_tdecay" step="any" min="0.1" value="5.0" aria-label="Время спада давления t (мин)">
+                <input type="number" id="c3b_patm" step="any" min="0.5" value="1.0" aria-label="Атмосферное давление P_atm (бар абс.)">
               </div>
             </div>
             <div class="field">
               <label for="c3b_tload">Время под нагрузкой t_load и разгрузки t_unload (мин) [Метод 2]</label>
               <span id="c3b_tload_hint" class="hint">Тест 3.2Б: t_load = 3.0 мин, t_unload = 7.0 мин (→ 30%)</span>
               <div style="display:flex; gap:0.4rem;">
-                <input type="number" id="c3b_tload" step="any" min="0" value="3.0" aria-label="Время работы под нагрузкой t_load (мин)">
-                <input type="number" id="c3b_tunload" step="any" min="0" value="7.0" aria-label="Время холостого хода t_unload (мин)">
+                <input type="number" id="c3b_tload" step="any" min="0" value="3.0" aria-label="Суммарное время нагрузки T_load (мин)">
+                <input type="number" id="c3b_tunload" step="any" min="0" value="7.0" aria-label="Суммарное время холостого хода T_unload (мин)">
               </div>
             </div>
             <div class="field">
@@ -611,7 +611,7 @@
               <label for="c4a_tdsf">Массовое солесодержание TDS_f, TDS_p, TDS_c (мг/л) [Опц.]</label>
               <span id="c4a_tdsf_hint" class="hint">Опционально: для точного массового баланса солей (отдельно от оценки по EC)</span>
               <div style="display:flex; gap:0.35rem;">
-                <input type="number" id="c4a_tdsf" step="any" min="0.1" placeholder="TDS_f" aria-label="Массовая концентрация солей питания TDS_f (мг/л)">
+                <input type="number" id="c4a_tdsf" step="any" min="0.1" placeholder="TDS_f" aria-label="Массовая концентрация солей входа TDS_f (мг/л)">
                 <input type="number" id="c4a_tdsp" step="any" min="0" placeholder="TDS_p" aria-label="Массовая концентрация солей пермеата TDS_p (мг/л)">
                 <input type="number" id="c4a_tdsc" step="any" min="0.1" placeholder="TDS_c" aria-label="Массовая концентрация солей концентрата TDS_c (мг/л)">
               </div>
@@ -771,7 +771,7 @@
               <span id="c5_mp_hint" class="hint">Тест 5.2Б (пастеризатор): 15000 кг/ч, c_p = 3.93 (или 3.95)</span>
               <div style="display:flex; gap:0.4rem;">
                 <input type="number" id="c5_mp" step="any" min="1" value="15000" aria-label="Массовый расход продукта m_p (кг/ч)">
-                <input type="number" id="c5_cp" step="any" min="0.5" value="3.93" aria-label="Теплоёмкость продукта c_p">
+                <input type="number" id="c5_cp" step="any" min="0.5" value="3.93" aria-label="Теплоёмкость продукта c_p (кДж/(кг·°C))">
               </div>
             </div>
             <div class="field">
@@ -786,8 +786,8 @@
               <label for="c5_hg">Энтальпия пара h_g и жидкости h_f (кДж/кг) [Справочно: h_fg = h_g − h_f]</label>
               <span id="c5_hg_hint" class="hint">При 4.0 бар изб. (CoolProp 8.0.0): h_g = 2748.2, h_f = 640.5 → h_fg = 2107.7 кДж/кг</span>
               <div style="display:flex; gap:0.4rem;">
-                <input type="number" id="c5_hg" step="any" value="2748.2" aria-label="Полная энтальпия сухого пара h_g (кДж/кг)">
-                <input type="number" id="c5_hf" step="any" value="640.5" aria-label="Энтальпия насыщенной жидкости h_f (кДж/кг)">
+                <input type="number" id="c5_hg" step="any" value="2748.2" aria-label="Энтальпия сухого насыщенного пара h_g (кДж/кг)">
+                <input type="number" id="c5_hf" step="any" value="640.5" aria-label="Энтальпия жидкого конденсата h_f (кДж/кг)">
               </div>
             </div>
             <div class="field">
@@ -809,8 +809,8 @@
               <label for="c5_tdsfw">TDS / EC питательной воды и макс. котловой воды [Опц.]</label>
               <span id="c5_tdsfw_hint" class="hint">В паре (напр., 180 и 3000 ppm) — относится только к котлу в целом!</span>
               <div style="display:flex; gap:0.4rem;">
-                <input type="number" id="c5_tdsfw" step="any" min="1" value="180" placeholder="TDS_fw" aria-label="TDS питательной воды">
-                <input type="number" id="c5_tdsmax" step="any" min="10" value="3000" placeholder="TDS_max" aria-label="Максимальный TDS котловой воды">
+                <input type="number" id="c5_tdsfw" step="any" min="1" value="180" placeholder="TDS_fw" aria-label="Проводимость/TDS питательной воды (мг/л или ppm)">
+                <input type="number" id="c5_tdsmax" step="any" min="10" value="3000" placeholder="TDS_max" aria-label="Макс. допустимый TDS/проводимость котловой воды (мг/л или ppm)">
               </div>
             </div>
             <div class="field">
@@ -904,7 +904,7 @@
   </dialog>
 
   <footer class="site-footer no-print" id="site-footer-el">
-    Инженерная библиотека пищевого предприятия (RU / HE, редакция v14, расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
+    Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.1 (2026-10-30), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
   </footer>
 
   <!-- МОБИЛЬНАЯ НИЖНЯЯ НАВИГАЦИЯ (< 768px: 5 КНОПОК С ИКОНКОЙ И КОРОТКОЙ ПОДПИСЬЮ) -->

@@ -2324,16 +2324,18 @@
 
   root.exportShiftLogCsv = function (logId) {
     const lang = AppState.lang;
+    const isHe = lang === 'he';
     const logs = root.SHIFT_LOGS_DATA || [];
     const activeLog = logs.find((l) => l.id === logId) || logs[0];
-    if (!activeLog) return;
+    if (!activeLog) return '';
     const draft = AppState.shiftLogDrafts[activeLog.id] || { meta: {}, cells: {} };
     const rows = AppState.showExtendedLog
       ? [...activeLog.mainRows, ...(activeLog.extendedRows || [])]
       : activeLog.mainRows;
-    const csvLines = [
-      ['Parameter', 'Instrument/Point', 'Unit', 'Norm', '08:00', '12:00', '16:00', '20:00', 'Note'].join(',')
-    ];
+    const headerRow = isHe
+      ? ['פרמטר מבוקר', 'נקודת מדידה / מכשיר', 'יחידות', 'נורמה מקומית', '08:00', '12:00', '16:00', '20:00', 'הערה']
+      : ['Контролируемый параметр', 'Точка замера / прибор', 'Ед. изм.', 'Норма цеха', '08:00', '12:00', '16:00', '20:00', 'Прим.'];
+    const csvLines = [headerRow.map((h) => `"${h}"`).join(',')];
     rows.forEach((r, idx) => {
       const unitStr = typeof r.unit === 'object' ? (r.unit[lang] || r.unit.ru) : r.unit;
       const defaultNorm = typeof r.norm === 'object' ? (r.norm[lang] || r.norm.ru) : r.norm;
@@ -2350,7 +2352,9 @@
       ];
       csvLines.push(line.join(','));
     });
-    const blob = new Blob(['\uFEFF' + csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const fullCsv = '\uFEFF' + csvLines.join('\n');
+    root.__lastExportedShiftLogCsv = fullCsv;
+    const blob = new Blob([fullCsv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -2359,6 +2363,7 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+    return fullCsv;
   };
 
   root.printShiftLog = function (logId) {
@@ -2688,7 +2693,7 @@
     };
     setTxt('skip-link-el', 'Перейти к основному содержанию', 'דלג לתוכן הראשי');
     syncHeaderTitleByViewport();
-    setTxt('site-badge-el', 'RU / HE • v14', 'עברית / RU • v14');
+    setTxt('site-badge-el', 'RU / HE • v15.1', 'עברית / RU • v15.1');
     setTxt('site-subtitle-el',
       'Пар • Конденсат • Чиллеры • Сжатый воздух • Обратный осмос (RO) — эксплуатация, диагностика, расчёты, сменные журналы и первоисточники S01–S23',
       'קיטור • עיבוי • צ\'ילרים • אוויר דחוס • אוסמוזה הפוכה (RO) — תפעול, אבחון תקלות, חישובים, יומני משמרת ומקורות S01–S23');
@@ -2713,6 +2718,11 @@
     if (sToggleBtn) sToggleBtn.setAttribute('aria-label', isHe ? 'חיפוש' : 'Поиск');
     const sCloseBtn = document.getElementById('search-drawer-close-btn');
     if (sCloseBtn) sCloseBtn.setAttribute('aria-label', isHe ? 'סגירת חיפוש' : 'Закрыть поиск');
+    // v15.1 (п. 1.4): поле поиска и панель вкладок калькуляторов — доступное имя по языку
+    const gSearchInput = document.getElementById('global-search');
+    if (gSearchInput) gSearchInput.setAttribute('aria-label', isHe ? 'חיפוש בספרייה ההנדסית' : 'Поиск по инженерной библиотеке');
+    const calcTabsBar = document.getElementById('calc-tabs-bar');
+    if (calcTabsBar) calcTabsBar.setAttribute('aria-label', isHe ? 'בחירת מחשבון' : 'Выбор калькулятора');
     setTxt('btn-clear-search', 'Сбросить фильтр ✕', 'ניקוי חיפוש ✕');
     setTxt('calc-section-title',
       'Инженерные калькуляторы (прозрачный расчёт и расчётная карточка)',
@@ -2736,8 +2746,8 @@
       '5. Пар (5А: Перевод давления • 5Б: Расход пара по нагрузке)',
       '5. קיטור (5א: המרת לחץ • 5ב: ספיקת קיטור לפי עומס)');
     setTxt('site-footer-el',
-      'Инженерная библиотека пищевого предприятия (RU / HE, редакция v14, расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.',
-      'ספריית ההנדסה למפעל מזון (עברית / RU, מהדורה v14, ליבת חישוב v10.0) • כל הנתונים והנוסחאות מאומתים מול המקורות הראשוניים S01–S23.');
+      'Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.1 (2026-10-30), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.',
+      'ספריית ההנדסה למפעל מזון (עברית / RU, מהדורה v15.1 (2026-10-30), ליבת חישוב v10.0) • כל הנתונים והנוסחאות מאומתים מול המקורות הראשוניים S01–S23.');
     const gSearch = document.getElementById('global-search');
     if (gSearch) {
       gSearch.placeholder = isHe
@@ -2870,6 +2880,22 @@
     }
   };
 
+  root.closeHelpPopovers = function () {
+    const pairs = [
+      { btn: 'help-btn-units', pop: 'help-popover-units' },
+      { btn: 'help-btn-currency', pop: 'help-popover-currency' },
+      { btn: 'help-btn-sec-terms', pop: 'help-popover-sec-terms' }
+    ];
+    for (const p of pairs) {
+      const popEl = document.getElementById(p.pop);
+      const btnEl = document.getElementById(p.btn);
+      if (popEl && !popEl.hasAttribute('hidden')) {
+        popEl.setAttribute('hidden', '');
+      }
+      if (btnEl) btnEl.setAttribute('aria-expanded', 'false');
+    }
+  };
+
   function renderToolsSubnavAndSettingsAndAbout() {
     const lang = AppState.lang;
     const isHe = lang === 'he';
@@ -2934,8 +2960,8 @@
         </div>
         <div class="metadata-disclaimer-card" id="project-metadata-disclaimer" style="margin-block-start:0;">
           <div class="metadata-disclaimer-header">
-            <strong>${isHe ? 'מהדורה v14 · ליבת חישוב v10.0' : 'Редакция v14 · расчётное ядро v10.0'}</strong>
-            <span class="badge-sub" dir="ltr">${isHe ? 'Rev. v14 • Core v10.0 • 2026-10-30 • RU / HE' : 'Ред. v14 • Ядро v10.0 • 2026-10-30 • RU / HE'}</span>
+            <strong>${isHe ? 'מהדורה v15.1 · ליבת חישוב v10.0' : 'Редакция v15.1 · расчётное ядро v10.0'}</strong>
+            <span class="badge-sub" dir="ltr">${isHe ? 'Rev. v15.1 • Core v10.0 • 2026-10-30 • RU / HE' : 'Ред. v15.1 • Ядро v10.0 • 2026-10-30 • RU / HE'}</span>
           </div>
           <ul class="metadata-disclaimer-list">
             <li><strong>${isHe ? 'אופי לימודי-הנדסי:' : 'Учебно-расчётный характер:'}</strong> ${isHe ? 'החומרים באתר מיועדים להדרכת מפעילים ומהנדסים, אבחון תקלות וחישובי בקרה הנדסיים במפעל מזון.' : 'материалы сайта предназначены для инженерно-технического обучения, оперативной диагностики и проверочных расчётов персонала пищевого предприятия.'}</li>
@@ -4388,6 +4414,20 @@
 
     root.setAppLanguage(AppState.lang);
     initGlobalSearch();
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (typeof root.closeHelpPopovers === 'function') root.closeHelpPopovers();
+        const dlg = document.getElementById('diagram-node-dialog');
+        if (dlg && (dlg.open || dlg.hasAttribute('open'))) {
+          if (typeof dlg.close === 'function') dlg.close();
+          else dlg.removeAttribute('open');
+        }
+        const drawer = document.getElementById('header-search-drawer');
+        if (drawer && !drawer.hasAttribute('hidden') && typeof root.toggleHeaderSearch === 'function') {
+          root.toggleHeaderSearch(false);
+        }
+      }
+    });
     window.addEventListener('resize', syncHeaderTitleByViewport);
     window.addEventListener('resize', () => {
       if (AppState.activeView === 'learn') setupGuideTocObserver();

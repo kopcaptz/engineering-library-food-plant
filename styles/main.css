@@ -1636,6 +1636,10 @@
     background: #dc2626;
     transform: scale(1.18);
   }
+  .diagram-node-pin:focus-visible > span {
+    outline: 3px solid var(--brand-accent);
+    outline-offset: 2px;
+  }
   .diagram-nodes-seq-box {
     margin-block-start: 0.85rem;
     padding: 0.75rem;
@@ -2015,7 +2019,10 @@
   .search-preview-item:focus-visible {
     background: #eff6ff;
     border-color: var(--primary, #0f4c81);
-    outline: none;
+  }
+  .search-preview-item:focus-visible {
+    outline: 3px solid var(--brand-accent);
+    outline-offset: 2px;
   }
   .search-preview-item span,
   .search-item-snippet {

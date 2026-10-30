@@ -550,7 +550,7 @@
         costTotalYear: null,
         realismWarning,
         formulaRu: 'E_load [ГДж/год] = Q_load [кВт] · t_year [ч/год] · 0.0036; E_fuel [ГДж/год] = E_load / (η_b / 100); Cost = E_fuel · Тариф_ГДж',
-        formulaHe: 'E_load [GJ/yr] = Q_load [kW] · t_year [h/yr] · 0.0036; E_fuel [GJ/yr] = E_load / (η_b / 100); Cost = E_load · Tariff_GJ',
+        formulaHe: 'E_load [GJ/yr] = Q_load [kW] · t_year [h/yr] · 0.0036; E_fuel [GJ/yr] = E_load / (η_b / 100); Cost = E_fuel · Tariff_GJ',
         sourceRu: '[S01, PDF p. 12, 36; S21, PDF pp. 1–2; S22, PDF p. 1] [инженерная оценка]',
         sourceHe: '[S01, PDF p. 12, 36; S21, PDF pp. 1–2; S22, PDF p. 1] [הערכה הנדסית]'
       };
@@ -579,7 +579,7 @@
       costTotalYear,
       realismWarning,
       formulaRu: 'E_load [ГДж/год] = Q_load [кВт] · t_year [ч/год] · 0.0036; E_fuel [ГДж/год] = E_load / (η_b / 100); Cost = E_fuel · Тариф_ГДж',
-      formulaHe: 'E_load [GJ/yr] = Q_load [kW] · t_year [h/yr] · 0.0036; E_fuel [GJ/yr] = E_load / (η_b / 100); Cost = E_load · Tariff_GJ',
+      formulaHe: 'E_load [GJ/yr] = Q_load [kW] · t_year [h/yr] · 0.0036; E_fuel [GJ/yr] = E_load / (η_b / 100); Cost = E_fuel · Tariff_GJ',
       sourceRu: '[S01, PDF p. 12, 36; S21, PDF pp. 1–2; S22, PDF p. 1] [инженерная оценка]',
       sourceHe: '[S01, PDF p. 12, 36; S21, PDF pp. 1–2; S22, PDF p. 1] [הערכה הנדסית]'
     };
