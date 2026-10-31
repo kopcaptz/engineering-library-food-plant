@@ -5,7 +5,7 @@
   'use strict';
 
   const APP_VERSION = root.APP_VERSION = {
-    edition: 'v15.7',
+    edition: 'v15.8',
     date: '2026-10-31',
     core: 'v10.0'
   };
@@ -88,6 +88,7 @@
     showExtendedLog: false,
     diagramZoom: 100,
     diagramRoutes: {},
+    offlineReadyState: { status: 'no', buildId: '' },
     trainerProgress: loadJson(STORAGE_KEY_TRAINER, {}),
     shiftLogDrafts: loadJson(STORAGE_KEY_LOGS, {})
   };
@@ -3797,6 +3798,8 @@
     renderShiftLogsSection();
     renderGlossaryAndSources();
     renderToolsSubnavAndSettingsAndAbout();
+    syncOfflineBar();
+    syncSwUpdateBarText();
     if (typeof root.renderCalcOverview === 'function') {
       root.renderCalcOverview();
     }
@@ -4117,10 +4120,240 @@
             <li><strong>${isHe ? 'גבולות ישימות המחשבונים:' : 'Границы применимости калькуляторов:'}</strong> ${isHe ? 'מודולי החישוב מבוססים על נוסחאות מאומתות ממקורות S01–S23 בתחומי הלחץ, הטמפרטורה ומצבי הצבירה המצוינים בכל כרטיס, ואינם מחליפים תכנון הנדסי מפורט או מדידה מסחרית מכוילת.' : 'расчётные модули работают в явно указанных диапазонах давлений, температур и фазовых состояний (согласно S01–S23) и не заменяют проектный теплогидравлический расчёт или коммерческий учёт.'}</li>
             <li><strong>${isHe ? 'קדימות נהלי מפעל, ספרות יצרן (OEM) ונוהל LOTO:' : 'Приоритет заводских регламентов, OEM и LOTO:'}</strong> ${isHe ? 'בכל מקרה של סתירה, קדימות מוחלטת ניתנת לנהלי המפעל המחייבים, לספרות היצרן של הציוד המותקן בפועל (OEM) ולנוהל נעילה ותיוג LOTO.' : 'при любых расхождениях безусловный приоритет имеют действующие производственные инструкции предприятия, паспорта установленного оборудования (OEM) и процедура блокировки/маркировки LOTO.'}</li>
             <li><strong>${isHe ? 'אחסון מקומי בלבד בדפדפן (localStorage):' : 'Локальное хранение данных (localStorage):'}</strong> ${isHe ? 'טיוטות יומני המשמרת, שפת הממשק וההתקדמות בסימולטור נשמרים מקומית בלבד בדפדפן המכשיר שלכם ואינם נשלחים לשרת חיצוני.' : 'черновики сменных журналов, выбранный язык и прогресс прохождения тренажёра сохраняются только локально в браузере вашего устройства и не передаются на внешние серверы.'}</li>
+            <li id="about-offline-status-row"><strong>${escapeHtml(uiStr('offlineReadyLabel'))}</strong> <span id="about-offline-status-val">${escapeHtml(getOfflineReadyStatusText())}</span></li>
           </ul>
         </div>
       `;
     }
+  }
+
+  // =========================================================================
+  // v15.8: ОФЛАЙН-РЕЖИМ И SERVICE WORKER (п. 2.3)
+  // =========================================================================
+  let swRegistration = null;
+  let pendingSwWorker = null;
+  let swUpdateRequested = false;
+  let swUpdateDismissed = false;
+  let swRefreshing = false;
+
+  function uiStr(key, lang = AppState.lang) {
+    const dict = (root.I18N_UI && root.I18N_UI.UI_STRINGS && (root.I18N_UI.UI_STRINGS[lang] || root.I18N_UI.UI_STRINGS.ru)) || {};
+    return dict[key] || '';
+  }
+
+  function isHttpProtocol() {
+    return typeof window !== 'undefined' &&
+      Boolean(window.location) &&
+      (window.location.protocol === 'http:' || window.location.protocol === 'https:');
+  }
+
+  function getOfflineReadyStatusText() {
+    if (!isHttpProtocol() || typeof navigator === 'undefined' || !('serviceWorker' in navigator)) {
+      return uiStr('offlineReadyFile');
+    }
+    const st = AppState.offlineReadyState;
+    if (st && st.status === 'yes' && st.buildId) {
+      return uiStr('offlineReadyYes').replace('{BUILD_ID}', st.buildId);
+    }
+    return uiStr('offlineReadyNo');
+  }
+
+  function updateAboutOfflineStatusDom() {
+    if (typeof document === 'undefined') return;
+    const rowEl = document.getElementById('about-offline-status-row');
+    if (rowEl) {
+      rowEl.innerHTML = `<strong>${escapeHtml(uiStr('offlineReadyLabel'))}</strong> <span id="about-offline-status-val">${escapeHtml(getOfflineReadyStatusText())}</span>`;
+    }
+  }
+
+  function syncOfflineBar() {
+    if (typeof document === 'undefined') return;
+    const barEl = document.getElementById('offline-bar');
+    const txtEl = document.getElementById('offline-bar-text');
+    if (txtEl) {
+      txtEl.textContent = uiStr('offlineBarText');
+    }
+    if (barEl) {
+      const isOffline = typeof navigator !== 'undefined' && navigator.onLine === false;
+      if (isOffline) {
+        barEl.removeAttribute('hidden');
+      } else {
+        barEl.setAttribute('hidden', '');
+      }
+    }
+  }
+
+  function syncSwUpdateBarText() {
+    if (typeof document === 'undefined') return;
+    const txtEl = document.getElementById('sw-update-bar-text');
+    const updBtn = document.getElementById('sw-update-btn');
+    const laterBtn = document.getElementById('sw-later-btn');
+    if (txtEl) txtEl.textContent = uiStr('swUpdateText');
+    if (updBtn) updBtn.textContent = uiStr('swUpdateBtn');
+    if (laterBtn) laterBtn.textContent = uiStr('swLaterBtn');
+  }
+
+  function showSwUpdateBar(waitingWorker) {
+    if (waitingWorker) {
+      pendingSwWorker = waitingWorker;
+    }
+    if (swUpdateDismissed || typeof document === 'undefined') return;
+    syncSwUpdateBarText();
+    const barEl = document.getElementById('sw-update-bar');
+    if (barEl) {
+      barEl.removeAttribute('hidden');
+    }
+  }
+
+  root.applySwUpdate = function () {
+    const worker = pendingSwWorker || (swRegistration && swRegistration.waiting);
+    if (!worker) return;
+    swUpdateRequested = true;
+    try {
+      worker.postMessage({ type: 'SKIP_WAITING' });
+    } catch (err) {
+      console.warn('Service worker SKIP_WAITING postMessage failed:', err);
+    }
+  };
+
+  root.dismissSwUpdateBar = function () {
+    swUpdateDismissed = true;
+    if (typeof document === 'undefined') return;
+    const barEl = document.getElementById('sw-update-bar');
+    if (barEl) {
+      barEl.setAttribute('hidden', '');
+    }
+  };
+
+  function querySwBuildId(sw) {
+    return new Promise((resolve) => {
+      if (!sw || typeof MessageChannel === 'undefined') {
+        resolve('');
+        return;
+      }
+      const mc = new MessageChannel();
+      const timer = setTimeout(() => {
+        resolve('');
+      }, 3000);
+      mc.port1.onmessage = function (ev) {
+        clearTimeout(timer);
+        const data = ev && ev.data;
+        resolve(data && data.buildId ? String(data.buildId) : '');
+      };
+      try {
+        sw.postMessage({ type: 'GET_BUILD_ID' }, [mc.port2]);
+      } catch (_) {
+        clearTimeout(timer);
+        resolve('');
+      }
+    });
+  }
+
+  async function refreshOfflineReadyStatus() {
+    if (!isHttpProtocol() || typeof navigator === 'undefined' || !('serviceWorker' in navigator)) {
+      AppState.offlineReadyState = { status: 'file', buildId: '' };
+      updateAboutOfflineStatusDom();
+      return AppState.offlineReadyState;
+    }
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const activeSw = (reg && reg.active) || navigator.serviceWorker.controller;
+      const buildId = await querySwBuildId(activeSw);
+      let hasCache = false;
+      if (buildId && typeof caches !== 'undefined' && typeof caches.has === 'function') {
+        hasCache = await caches.has('eng-lib-' + buildId);
+      }
+      if (buildId && hasCache) {
+        AppState.offlineReadyState = { status: 'yes', buildId: buildId };
+      } else {
+        AppState.offlineReadyState = { status: 'no', buildId: '' };
+      }
+    } catch (_) {
+      AppState.offlineReadyState = { status: 'no', buildId: '' };
+    }
+    updateAboutOfflineStatusDom();
+    return AppState.offlineReadyState;
+  }
+  root.refreshOfflineReadyStatus = refreshOfflineReadyStatus;
+
+  function initServiceWorkerAndOffline() {
+    syncOfflineBar();
+    syncSwUpdateBarText();
+
+    const updBtn = document.getElementById('sw-update-btn');
+    if (updBtn) {
+      updBtn.addEventListener('click', () => {
+        root.applySwUpdate();
+      });
+    }
+    const laterBtn = document.getElementById('sw-later-btn');
+    if (laterBtn) {
+      laterBtn.addEventListener('click', () => {
+        root.dismissSwUpdateBar();
+      });
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('offline', () => {
+        syncOfflineBar();
+      });
+      window.addEventListener('online', () => {
+        syncOfflineBar();
+      });
+    }
+
+    if (!isHttpProtocol() || typeof navigator === 'undefined' || !('serviceWorker' in navigator)) {
+      AppState.offlineReadyState = { status: 'file', buildId: '' };
+      updateAboutOfflineStatusDom();
+      return;
+    }
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (swUpdateRequested && !swRefreshing) {
+        swRefreshing = true;
+        window.location.reload();
+        return;
+      }
+      refreshOfflineReadyStatus();
+    });
+
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then((reg) => {
+      swRegistration = reg;
+      const hadInitialController = Boolean(navigator.serviceWorker.controller);
+
+      function trackInstalling(worker) {
+        if (!worker) return;
+        worker.addEventListener('statechange', () => {
+          if (worker.state === 'installed') {
+            if (navigator.serviceWorker.controller || hadInitialController) {
+              showSwUpdateBar(worker);
+            } else {
+              refreshOfflineReadyStatus();
+            }
+          } else if (worker.state === 'activated') {
+            refreshOfflineReadyStatus();
+          }
+        });
+      }
+
+      if (reg.waiting && navigator.serviceWorker.controller) {
+        showSwUpdateBar(reg.waiting);
+      }
+      if (reg.installing) {
+        trackInstalling(reg.installing);
+      }
+      reg.addEventListener('updatefound', () => {
+        if (reg.installing) {
+          trackInstalling(reg.installing);
+        }
+      });
+
+      refreshOfflineReadyStatus();
+    }).catch((err) => {
+      console.warn('Service worker registration warning:', err);
+      AppState.offlineReadyState = { status: 'no', buildId: '' };
+      updateAboutOfflineStatusDom();
+    });
   }
 
   root.switchView = function (viewName, options = {}) {
@@ -6115,6 +6348,7 @@
     } else {
       root.switchView('home', { scrollTop: false, focusHeading: false });
     }
+    initServiceWorkerAndOffline();
   }
 
   if (document.readyState === 'loading') {

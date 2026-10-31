@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f2f52">
   <title>Инженерная библиотека пищевого предприятия | ספריית ההנדסה למפעל מזון</title>
-  <link rel="icon" href="data:,">
+  <link rel="manifest" href="app.webmanifest">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
@@ -19,7 +21,7 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"></path><path d="M8 7h7M8 11h5"></path></svg>
             <span id="site-title-el">Инженерная библиотека завода</span>
           </a>
-          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v15.7</span>
+          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v15.8</span>
         </h1>
         <p class="site-subtitle" id="site-subtitle-el" style="display:none;">Пар • Конденсат • Чиллеры • Сжатый воздух • Обратный осмос (RO)</p>
       </div>
@@ -58,7 +60,23 @@
     </div>
   </header>
 
-  <main id="main-content" class="app-shell">
+  <div id="offline-bar" class="offline-bar no-print" role="status" aria-live="polite" hidden>
+    <div class="offline-bar-inner">
+      <span id="offline-bar-text" class="offline-bar-text">Нет связи с сетью — открыта сохранённая копия сайта (редакция v15.8). Расчёты, учебник, схемы и тренажёр работают; внешние ссылки на источники недоступны.</span>
+    </div>
+  </div>
+
+  <div id="sw-update-bar" class="sw-update-bar no-print" role="status" aria-live="polite" hidden>
+    <div class="sw-update-bar-inner">
+      <span id="sw-update-bar-text" class="sw-update-bar-text">Доступна новая версия сайта</span>
+      <div class="sw-update-bar-actions">
+        <button type="button" id="sw-update-btn" class="btn btn-sm btn-primary sw-update-btn">Обновить</button>
+        <button type="button" id="sw-later-btn" class="btn btn-sm btn-outline sw-later-btn">Позже</button>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content" class="app-shell app-main">
     <!-- Неблокирующее уведомление, если localStorage недоступен -->
     <div id="storage-fallback-banner" class="storage-fallback-banner no-print" role="status" aria-live="polite" style="display:none;"></div>
 
@@ -907,7 +925,7 @@
   <div id="search-live-region" class="sr-only no-print" aria-live="polite" aria-atomic="true"></div>
 
   <footer class="site-footer no-print" id="site-footer-el">
-    Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.7 (2026-10-31), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
+    Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.8 (2026-10-31), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
   </footer>
 
   <!-- МОБИЛЬНАЯ НИЖНЯЯ НАВИГАЦИЯ (< 768px: 5 КНОПОК С ИКОНКОЙ И КОРОТКОЙ ПОДПИСЬЮ) -->

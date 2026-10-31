@@ -172,7 +172,15 @@
       searchEmptyTitle: 'Ничего не нашлось',
       searchEmptyHintsLabel: 'Попробуйте один из терминов:',
       searchEmptyProblemBtn: 'Описать признак',
-      guideRuOnlyNotice: 'Учебный материал этого раздела сейчас доступен на русском языке. Перевод на иврит — в редакции v14.1.'
+      guideRuOnlyNotice: 'Учебный материал этого раздела сейчас доступен на русском языке. Перевод на иврит — в редакции v14.1.',
+      offlineBarText: 'Нет связи с сетью — открыта сохранённая копия сайта (редакция v15.8). Расчёты, учебник, схемы и тренажёр работают; внешние ссылки на источники недоступны.',
+      offlineReadyLabel: 'Офлайн-копия:',
+      offlineReadyYes: 'сохранена (сборка {BUILD_ID})',
+      offlineReadyNo: 'не сохранена',
+      offlineReadyFile: 'недоступна (открыто из папки)',
+      swUpdateText: 'Доступна новая версия сайта',
+      swUpdateBtn: 'Обновить',
+      swLaterBtn: 'Позже'
     },
     he: {
       langCode: 'he',
@@ -336,7 +344,15 @@
       searchEmptyTitle: 'לא נמצאו תוצאות',
       searchEmptyHintsLabel: 'נסו אחד מהמונחים:',
       searchEmptyProblemBtn: 'תיאור תסמין',
-      guideRuOnlyNotice: 'חומר הלימוד של הפרק הזה זמין כעת ברוסית. התרגום לעברית — בגרסה v14.1.'
+      guideRuOnlyNotice: 'חומר הלימוד של הפרק הזה זמין כעת ברוסית. התרגום לעברית — בגרסה v14.1.',
+      offlineBarText: 'אין חיבור לרשת — מוצג עותק שמור של האתר (מהדורה v15.8). המחשבונים, ספר הלימוד, התרשימים והסימולטור פועלים; קישורים חיצוניים למקורות אינם זמינים.',
+      offlineReadyLabel: 'עותק לא-מקוון:',
+      offlineReadyYes: 'שמור (גרסת בנייה {BUILD_ID})',
+      offlineReadyNo: 'לא נשמר',
+      offlineReadyFile: 'לא זמין (נפתח מתיקייה)',
+      swUpdateText: 'גרסה חדשה של האתר זמינה',
+      swUpdateBtn: 'עדכון',
+      swLaterBtn: 'אחר כך'
     }
   };
 

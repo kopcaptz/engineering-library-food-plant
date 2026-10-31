@@ -1,0 +1,19 @@
+{
+  "name": "Engineering Library - Food Plant (RU / HE)",
+  "short_name": "EngLib",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#0f2f52",
+  "background_color": "#f1f5f9",
+  "lang": "ru",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -5687,6 +5687,111 @@
       inline-size: 100%;
     }
   }
+
+  /* =========================================================================
+     v15.8: Офлайн-полоса (#offline-bar) и полоса обновления (#sw-update-bar)
+     Только логические CSS-свойства, кнопки >= 44 px, сдвиг контента без перекрытия
+     ========================================================================= */
+  .offline-bar[hidden],
+  .sw-update-bar[hidden] {
+    display: none !important;
+  }
+
+  .offline-bar {
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    background: #fffbeb;
+    color: #78350f;
+    border-block-end: 2px solid #f59e0b;
+    padding-block: 0.65rem;
+    padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  .offline-bar-inner {
+    box-sizing: border-box;
+    max-inline-size: 1440px;
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+  }
+
+  .offline-bar-text {
+    border-inline-start: 4px solid #d97706;
+    padding-inline-start: 0.65rem;
+  }
+
+  .sw-update-bar {
+    box-sizing: border-box;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    background: #eff6ff;
+    color: #0f2f52;
+    border-block-end: 2px solid #0f4c81;
+    padding-block: 0.6rem;
+    padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  .sw-update-bar-inner {
+    box-sizing: border-box;
+    max-inline-size: 1440px;
+    margin-inline: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem 1rem;
+    font-size: 0.94rem;
+    line-height: 1.4;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .sw-update-bar-text {
+    border-inline-start: 4px solid #0f4c81;
+    padding-inline-start: 0.65rem;
+  }
+
+  .sw-update-bar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .sw-update-btn,
+  .sw-later-btn {
+    box-sizing: border-box;
+    min-block-size: 44px;
+    min-inline-size: 44px;
+    padding-block: 0.45rem;
+    padding-inline: 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .sw-update-btn:focus-visible,
+  .sw-later-btn:focus-visible {
+    outline: 3px solid #0f4c81;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .offline-bar,
+    .sw-update-bar,
+    .sw-update-btn,
+    .sw-later-btn {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
 }
 
 @layer print {
