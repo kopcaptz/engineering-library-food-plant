@@ -5,7 +5,7 @@
   'use strict';
 
   const APP_VERSION = root.APP_VERSION = {
-    edition: 'v15.6',
+    edition: 'v15.7',
     date: '2026-10-31',
     core: 'v10.0'
   };
@@ -87,7 +87,7 @@
     activeShiftLogId: 'shift-log-chillers',
     showExtendedLog: false,
     diagramZoom: 100,
-    diagramFlowAnim: !prefersReducedMotion,
+    diagramRoutes: {},
     trainerProgress: loadJson(STORAGE_KEY_TRAINER, {}),
     shiftLogDrafts: loadJson(STORAGE_KEY_LOGS, {})
   };
@@ -1761,11 +1761,6 @@
                   <button type="button" class="btn btn-outline btn-sm" onclick="window.adjustDiagramZoom('${sys.id}', -15)" aria-label="${isHe ? 'הקטנת תרשים' : 'Уменьшить схему'}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> −</button>
                   <button type="button" class="btn btn-outline btn-sm" onclick="window.adjustDiagramZoom('${sys.id}', 0)">100%</button>
                   <button type="button" class="btn btn-outline btn-sm" onclick="window.adjustDiagramZoom('${sys.id}', 15)" aria-label="${isHe ? 'הגדלת תרשים' : 'Увеличить схему'}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg> +</button>
-                  <button type="button" class="btn btn-outline btn-sm" onclick="window.toggleDiagramFlow('${sys.id}')">
-                    ${AppState.diagramFlowAnim
-                      ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg> ${isHe ? 'עצירת אנימציית זרימה' : 'Стоп анимации потока'}`
-                      : `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align:-2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> ${isHe ? 'הפעלת אנימציית זרימה' : 'Анимация потока'}`}
-                  </button>
                   <button type="button" class="btn btn-primary btn-sm" onclick="window.openFullscreenDiagram('${sys.id}', this)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg> ${isHe ? 'מסך מלא' : 'На весь экран'}
                   </button>
@@ -1784,20 +1779,26 @@
                 }).join('')}
               </div>
 
-              <div class="diagram-viewport ${AppState.diagramFlowAnim ? 'flow-anim-on' : ''}" id="diag-viewport-${sys.id}">
-                <div class="diagram-canvas-inner" id="diag-inner-${sys.id}" style="width:${AppState.diagramZoom}%;" dir="ltr">
+              ${renderDiagramRoutesPanel(sys)}
+
+              <div class="diagram-viewport" id="diag-viewport-${sys.id}">
+                <div class="diagram-canvas-inner" id="diag-inner-${sys.id}" data-sys="${sys.id}" style="width:${AppState.diagramZoom}%;" dir="ltr">
                   <img src="${svgSrc}" alt="${diagCap}" class="diagram-svg-img" loading="lazy" />
-                  <div class="diagram-hotspots-layer" dir="ltr">
+                  ${renderDiagramRouteOverlay(sys.id)}
+                  <div class="diagram-hotspots-layer" dir="ltr" role="group" aria-label="${escapeAttr(diagramFlowsUi('pinsGroup', lang).replace('{sys}', getDiagramSystemName(sys, lang)))}">
                     ${nodes.map((n) => {
                       const rawPinTitle = (n.title[lang] || n.title.ru);
                       const cleanPinTitle = (isHe ? rawPinTitle.replace(/\s*\/\s*[А-Яа-яЁё][^)]*/g, '') : rawPinTitle).replace(/"/g, '&quot;');
+                      const pinLabel = `${cleanPinTitle}, ${escapeAttr(diagramFlowsUi('nodeOfTotal', lang).replace('{n}', n.num).replace('{m}', nodes.length))}`;
+                      const pinState = getDiagramPinRouteState(sys.id, n.id);
                       return `
-                      <button type="button" class="diagram-node-pin"
+                      <button type="button" class="diagram-node-pin${pinState.cls}"
                         id="${n.id}"
                         data-node-id="${n.id}"
+                        data-node-num="${n.num}"
                         style="left:${n.xPct}%; top:${n.yPct}%;"
                         onclick="window.openDiagramNodeModal('${sys.id}', '${n.id}', this)"
-                        aria-label="${cleanPinTitle}"
+                        aria-label="${pinLabel}"${pinState.current ? ' aria-current="step"' : ''}
                         title="${cleanPinTitle}">
                         <span>${n.num}</span>
                       </button>
@@ -2013,10 +2014,474 @@
     if (inner) inner.style.width = `${AppState.diagramZoom}%`;
   };
 
-  root.toggleDiagramFlow = function (sysId) {
-    AppState.diagramFlowAnim = !AppState.diagramFlowAnim;
-    renderSystemsSection();
+  // =========================================================================
+  // v15.7: СХЕМЫ КАК УРОКИ — потоки узлов, соседи, маршруты сред (data/diagram_flows.js)
+  // =========================================================================
+  function getDiagramFlows() {
+    return (typeof window !== 'undefined' && window.DIAGRAM_FLOWS) || null;
+  }
+
+  function escapeHtml(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function escapeAttr(str) {
+    return escapeHtml(str);
+  }
+
+  function diagramFlowsUi(key, lang) {
+    const df = getDiagramFlows();
+    const entry = df && df.UI && df.UI[key];
+    return entry ? (entry[lang] || entry.ru || '') : '';
+  }
+
+  function getDiagramSystemName(sys, lang) {
+    const raw = (sys && sys.title && (sys.title[lang] || sys.title.ru)) || '';
+    return raw.replace(/^[^.]*\.\s*/, '').split(':')[0].trim();
+  }
+
+  function getDiagramNode(sysId, nodeId) {
+    const sys = getSystemsMap()[sysId];
+    const nodes = (sys && sys.diagram && sys.diagram.nodes) || [];
+    return nodes.find((n) => n.id === nodeId) || null;
+  }
+
+  function getDiagramNodeLabel(node, lang) {
+    if (!node) return '';
+    const raw = ((node.title && (node.title[lang] || node.title.ru)) || '').replace(/^\d+\.\s*/, '');
+    const clean = lang === 'he' ? raw.replace(/\s*\/\s*[А-Яа-яЁё][^)]*/g, '').replace(/\(\s*\)/g, '').trim() : raw;
+    return `${node.num}. ${clean}`;
+  }
+
+  function getDiagramRoutes(sysId) {
+    const df = getDiagramFlows();
+    return ((df && df.ROUTES) || []).filter((r) => r.sysId === sysId);
+  }
+
+  function getDiagramRouteById(routeId) {
+    const df = getDiagramFlows();
+    return ((df && df.ROUTES) || []).find((r) => r.id === routeId) || null;
+  }
+
+  function getActiveDiagramRoute(sysId) {
+    const st = AppState.diagramRoutes && AppState.diagramRoutes[sysId];
+    if (!st) return null;
+    const route = getDiagramRouteById(st.routeId);
+    if (!route || route.sysId !== sysId) return null;
+    const step = Math.min(Math.max(1, Number(st.step) || 1), route.steps.length);
+    return { route, step };
+  }
+
+  function getDiagramPinRouteState(sysId, nodeId) {
+    const active = getActiveDiagramRoute(sysId);
+    if (!active) return { cls: '', current: false };
+    const steps = active.route.steps;
+    const current = steps[active.step - 1].nodeId === nodeId;
+    const visited = !current && steps.slice(0, active.step - 1).some((s) => s.nodeId === nodeId);
+    return {
+      cls: current ? ' diagram-node-pin--current' : (visited ? ' diagram-node-pin--visited' : ''),
+      current
+    };
+  }
+
+  function formatDiagramSource(src, lang) {
+    const tl = typeof window !== 'undefined' ? window.TRUST_LABELS : null;
+    return tl && typeof tl.formatSourceForLang === 'function' ? tl.formatSourceForLang(src, lang) : String(src || '');
+  }
+
+  /** Источник: каждый фрагмент через «;» — ссылка a[href="#source-Sxx"] с текстом фрагмента. */
+  function renderDiagramSourceHtml(src, lang) {
+    if (!src) return '';
+    const text = formatDiagramSource(src, lang);
+    let lastCode = '';
+    const parts = text.split(/;\s*/).map((seg) => {
+      const m = seg.match(/S\d{2}/);
+      if (m) lastCode = m[0];
+      return lastCode
+        ? `<a href="#source-${lastCode}" class="diagram-source-link"><bdi dir="ltr">${escapeHtml(seg)}</bdi></a>`
+        : escapeHtml(seg);
+    });
+    return `<p class="diagram-flow-source">${escapeHtml(diagramFlowsUi('source', lang))}: ${parts.join('; ')}</p>`;
+  }
+
+  function renderDiagramMediumBadge(medium, lang) {
+    const df = getDiagramFlows();
+    const m = df && df.MEDIA && df.MEDIA[medium];
+    if (!m) return '';
+    return `<span class="diagram-medium-badge" style="--medium-color:${m.color};"><span class="diagram-medium-symbol" aria-hidden="true">${m.symbol}</span> ${escapeHtml(m.label[lang] || m.label.ru)}</span>`;
+  }
+
+  function renderDiagramFlowList(list, lang) {
+    if (!list || list.length === 0) return `<p class="diagram-flow-none">${escapeHtml(diagramFlowsUi('flowsNone', lang))}</p>`;
+    return `<ul class="diagram-flow-list">${list.map((f) => `
+      <li class="diagram-flow-item">
+        ${renderDiagramMediumBadge(f.medium, lang)}
+        <span class="diagram-flow-text">${escapeHtml(f[lang] || f.ru)}</span>
+        ${f.params ? `<em class="diagram-flow-params"><bdi dir="ltr">${escapeHtml(f.params[lang] || f.params.ru)}</bdi></em>` : ''}
+      </li>`).join('')}</ul>`;
+  }
+
+  /** Поля 6–9 окна узла (п. 2.2a). */
+  function renderDiagramNodeFlowsHtml(sysId, nodeId, lang) {
+    const df = getDiagramFlows();
+    const nf = df && df.NODE_FLOWS && df.NODE_FLOWS[nodeId];
+    if (!nf) return '';
+    const pick = (o) => (o && (o[lang] || o.ru)) || '';
+    const terminalHtml = nf.terminal
+      ? `<p class="diagram-flow-terminal"><strong>${escapeHtml(diagramFlowsUi(nf.terminal === 'source' ? 'terminalSource' : 'terminalSink', lang))}:</strong> ${escapeHtml(pick(nf.terminalNote))}</p>`
+      : '';
+    const sourceHtml = nf.source
+      ? renderDiagramSourceHtml(nf.source, lang)
+      : `<p class="diagram-flow-source diagram-flow-source--missing">${escapeHtml(diagramFlowsUi('sourceMissing', lang))}</p>`;
+    const heatHtml = nf.heatTransfer ? `
+      <div class="node-field-box node-heat-box" data-node-field="7">
+        <strong>7. ${escapeHtml(diagramFlowsUi('heatTitle', lang))}:</strong>
+        <p><span class="diagram-medium-symbol" aria-hidden="true">≈</span> ${escapeHtml(pick(nf.heatTransfer))}</p>
+        <p class="diagram-heat-direction">${escapeHtml(diagramFlowsUi('heatFrom', lang))}: ${escapeHtml(pick(nf.heatTransfer.from))} · ${escapeHtml(diagramFlowsUi('heatTo', lang))}: ${escapeHtml(pick(nf.heatTransfer.to))}</p>
+      </div>` : '';
+    const neighborsHtml = (nf.neighbors || []).map((nb) => {
+      const nbNode = getDiagramNode(sysId, nb.nodeId);
+      return `
+        <li>
+          <button type="button" class="node-neighbor-btn" data-node-id="${escapeAttr(nb.nodeId)}" data-sys="${escapeAttr(sysId)}">
+            <span class="node-badge-num">${nbNode ? nbNode.num : ''}</span>
+            <span class="node-neighbor-text"><strong>${escapeHtml(getDiagramNodeLabel(nbNode, lang).replace(/^\d+\.\s*/, ''))}</strong> — ${escapeHtml(pick(nb.relation))}</span>
+          </button>
+        </li>`;
+    }).join('');
+    const routesThrough = getDiagramRoutes(sysId)
+      .map((r) => ({ r, idx: r.steps.findIndex((s) => s.nodeId === nodeId) }))
+      .filter((x) => x.idx >= 0);
+    const routesHtml = routesThrough.map(({ r, idx }) => `
+        <li>
+          <button type="button" class="node-route-btn" data-route-id="${escapeAttr(r.id)}" data-route-step="${idx + 1}" data-sys="${escapeAttr(sysId)}">
+            ${renderDiagramMediumBadge(r.medium, lang)}
+            <span><strong>${escapeHtml(pick(r.title))}</strong> — ${escapeHtml(diagramFlowsUi('openRouteAtStep', lang).replace('{n}', idx + 1).replace('{m}', r.steps.length))}</span>
+          </button>
+        </li>`).join('');
+    return `
+      <div class="node-field-box node-flows-box" data-node-field="6">
+        <strong>6. ${escapeHtml(diagramFlowsUi('flowsTitle', lang))}:</strong>
+        ${terminalHtml}
+        <div class="diagram-flows-columns">
+          <div class="diagram-flows-col">
+            <h4 class="diagram-flows-subtitle">${escapeHtml(diagramFlowsUi('flowsIn', lang))}</h4>
+            ${renderDiagramFlowList(nf.flowsIn, lang)}
+          </div>
+          <div class="diagram-flows-col">
+            <h4 class="diagram-flows-subtitle">${escapeHtml(diagramFlowsUi('flowsOut', lang))}</h4>
+            ${renderDiagramFlowList(nf.flowsOut, lang)}
+          </div>
+        </div>
+      </div>
+      ${heatHtml}
+      <div class="node-field-box node-neighbors-box" data-node-field="8">
+        <strong>${nf.heatTransfer ? '8' : '7'}. ${escapeHtml(diagramFlowsUi('neighborsTitle', lang))}:</strong>
+        <ul class="node-neighbor-list">${neighborsHtml}</ul>
+        ${sourceHtml}
+      </div>
+      <div class="node-field-box node-routes-box" data-node-field="9">
+        <strong>${nf.heatTransfer ? '9' : '8'}. ${escapeHtml(diagramFlowsUi('routesThroughTitle', lang))}:</strong>
+        <ul class="node-route-list">${routesHtml}</ul>
+      </div>`;
+  }
+
+  /** Оверлей маршрута над картинкой схемы (п. 2.3b): polyline по xPct/yPct пройденных шагов. */
+  function buildDiagramRouteOverlayInner(sysId) {
+    const active = getActiveDiagramRoute(sysId);
+    if (!active) return '';
+    const df = getDiagramFlows();
+    const medium = df && df.MEDIA && df.MEDIA[active.route.medium];
+    const color = medium ? medium.color : '#dc2626';
+    const pts = [];
+    const gaps = [];
+    for (let i = 0; i < active.step; i++) {
+      const st = active.route.steps[i];
+      const node = getDiagramNode(sysId, st.nodeId);
+      if (!node) continue;
+      pts.push(`${node.xPct},${node.yPct}`);
+      if (i > 0 && st.gap) {
+        const prevNode = getDiagramNode(sysId, active.route.steps[i - 1].nodeId);
+        if (prevNode) gaps.push(`<line class="diagram-route-gap" x1="${prevNode.xPct}" y1="${prevNode.yPct}" x2="${node.xPct}" y2="${node.yPct}" />`);
+      }
+    }
+    return `<polyline class="diagram-route-path" points="${pts.join(' ')}" style="stroke:${color};" />${gaps.join('')}`;
+  }
+
+  function renderDiagramRouteOverlay(sysId) {
+    return `<svg class="diagram-route-overlay no-print" data-sys="${sysId}" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">${buildDiagramRouteOverlayInner(sysId)}</svg>`;
+  }
+
+  function renderDiagramRouteBodyHtml(sysId, lang) {
+    const active = getActiveDiagramRoute(sysId);
+    if (!active) return '';
+    const { route, step } = active;
+    const pick = (o) => (o && (o[lang] || o.ru)) || '';
+    const total = route.steps.length;
+    const cur = route.steps[step - 1];
+    const curNode = getDiagramNode(sysId, cur.nodeId);
+    const stepsHtml = route.steps.map((st, i) => {
+      const node = getDiagramNode(sysId, st.nodeId);
+      const isCur = i + 1 === step;
+      return `
+        <li class="diagram-route-step${isCur ? ' diagram-route-step--current' : ''}${i + 1 < step ? ' diagram-route-step--visited' : ''}" data-step="${i + 1}" data-node-id="${escapeAttr(st.nodeId)}"${isCur ? ' aria-current="step"' : ''}>
+          ${st.gap ? `<span class="route-step-gap">${escapeHtml(diagramFlowsUi('gapLabel', lang))}: ${escapeHtml(pick(st.gap))}</span>` : ''}
+          <span class="route-step-node"><strong>${escapeHtml(getDiagramNodeLabel(node, lang))}</strong></span>
+          — <span class="route-step-text">${escapeHtml(pick(st))}</span>
+          ${st.params ? `<em class="route-step-params"><bdi dir="ltr">${escapeHtml(pick(st.params))}</bdi></em>` : ''}
+        </li>`;
+    }).join('');
+    return `
+      <p class="diagram-route-summary">${renderDiagramMediumBadge(route.medium, lang)} <strong>${escapeHtml(pick(route.title))}.</strong> ${escapeHtml(pick(route.summary))}</p>
+      <div class="diagram-route-stepper no-print">
+        <p class="diagram-route-stepline">
+          <strong class="diagram-route-stepof" data-route-stepof>${escapeHtml(diagramFlowsUi('stepOf', lang).replace('{n}', step).replace('{m}', total))}</strong>
+          <span class="diagram-route-steptext" data-route-steptext><strong>${escapeHtml(getDiagramNodeLabel(curNode, lang))}</strong> — ${escapeHtml(pick(cur))}</span>
+        </p>
+        <div class="diagram-route-nav">
+          <button type="button" class="btn btn-outline btn-sm diagram-route-nav-btn" data-route-action="prev" aria-label="${escapeAttr(diagramFlowsUi('prev', lang))}"${step <= 1 ? ' disabled' : ''}>${lang === 'he' ? '→' : '←'} ${escapeHtml(diagramFlowsUi('prev', lang))}</button>
+          <button type="button" class="btn btn-primary btn-sm diagram-route-nav-btn" data-route-action="next" aria-label="${escapeAttr(diagramFlowsUi('next', lang))}"${step >= total ? ' disabled' : ''}>${escapeHtml(diagramFlowsUi('next', lang))} ${lang === 'he' ? '←' : '→'}</button>
+          <button type="button" class="btn btn-outline btn-sm diagram-route-nav-btn" data-route-action="stop" aria-label="${escapeAttr(diagramFlowsUi('stop', lang))}">■ ${escapeHtml(diagramFlowsUi('stop', lang))}</button>
+        </div>
+        <p class="diagram-route-kbd-hint">${escapeHtml(diagramFlowsUi('keyboardHint', lang))}</p>
+      </div>
+      <h4 class="diagram-route-steps-title">${escapeHtml(diagramFlowsUi('stepsListTitle', lang))}</h4>
+      <ol class="diagram-route-steps">${stepsHtml}</ol>
+      ${renderDiagramSourceHtml(route.source, lang)}`;
+  }
+
+  /** Панель маршрутов в блоке «nodes» темы (п. 2.3a). */
+  function renderDiagramRoutesPanel(sys) {
+    const routes = getDiagramRoutes(sys.id);
+    if (routes.length === 0) return '';
+    const lang = AppState.lang;
+    const active = getActiveDiagramRoute(sys.id);
+    const pick = (o) => (o && (o[lang] || o.ru)) || '';
+    return `
+      <div class="diagram-routes" data-sys="${sys.id}" id="diagram-routes-${sys.id}" role="region" aria-labelledby="diagram-routes-title-${sys.id}">
+        <h3 class="diagram-routes-title" id="diagram-routes-title-${sys.id}" tabindex="-1">${escapeHtml(diagramFlowsUi('routesTitle', lang))}</h3>
+        <p class="diagram-routes-intro no-print">${escapeHtml(diagramFlowsUi('routesIntro', lang))}</p>
+        <div class="diagram-route-picker no-print" role="group" aria-label="${escapeAttr(diagramFlowsUi('routesChoose', lang))}">
+          ${routes.map((r) => `
+            <button type="button" class="diagram-route-btn" data-route-id="${r.id}" aria-pressed="${active && active.route.id === r.id ? 'true' : 'false'}">
+              ${renderDiagramMediumBadge(r.medium, lang)}
+              <span class="diagram-route-btn-title">${escapeHtml(pick(r.title))}</span>
+            </button>`).join('')}
+        </div>
+        <div class="diagram-route-body" data-route-body data-active-route="${active ? active.route.id : ''}">${renderDiagramRouteBodyHtml(sys.id, lang)}</div>
+        <div class="sr-only no-print" aria-live="polite" aria-atomic="true" data-route-live></div>
+      </div>`;
+  }
+
+  function announceDiagramRoute(panel, text) {
+    const live = panel && panel.querySelector('[data-route-live]');
+    if (!live) return;
+    live.textContent = text;
+  }
+
+  /** Обновляет панель, пины и оверлеи схемы по AppState.diagramRoutes (без полной перерисовки темы). */
+  function applyDiagramRouteState(sysId, opts) {
+    const options = opts || {};
+    const lang = AppState.lang;
+    const active = getActiveDiagramRoute(sysId);
+    const panel = document.getElementById(`diagram-routes-${sysId}`);
+    if (panel) {
+      panel.querySelectorAll('.diagram-route-btn').forEach((b) => {
+        b.setAttribute('aria-pressed', active && active.route.id === b.getAttribute('data-route-id') ? 'true' : 'false');
+      });
+      const body = panel.querySelector('[data-route-body]');
+      if (body) {
+        const focusedAction = document.activeElement && body.contains(document.activeElement)
+          ? document.activeElement.getAttribute('data-route-action')
+          : null;
+        body.innerHTML = renderDiagramRouteBodyHtml(sysId, lang);
+        body.setAttribute('data-active-route', active ? active.route.id : '');
+        if (focusedAction) {
+          let target = body.querySelector(`[data-route-action="${focusedAction}"]`);
+          if (target && target.disabled) {
+            target = body.querySelector('[data-route-action]:not([disabled])');
+          }
+          if (target) target.focus({ preventScroll: true });
+        }
+      }
+    }
+    document.querySelectorAll(`.diagram-canvas-inner[data-sys="${sysId}"]`).forEach((inner) => {
+      inner.querySelectorAll('.diagram-node-pin').forEach((pin) => {
+        const st = getDiagramPinRouteState(sysId, pin.getAttribute('data-node-id'));
+        pin.classList.toggle('diagram-node-pin--current', st.cls.indexOf('--current') >= 0);
+        pin.classList.toggle('diagram-node-pin--visited', st.cls.indexOf('--visited') >= 0);
+        if (st.current) pin.setAttribute('aria-current', 'step');
+        else pin.removeAttribute('aria-current');
+      });
+      const ov = inner.querySelector('.diagram-route-overlay');
+      if (ov) ov.innerHTML = buildDiagramRouteOverlayInner(sysId);
+    });
+    if (options.announce && panel) {
+      if (active) {
+        const cur = active.route.steps[active.step - 1];
+        const node = getDiagramNode(sysId, cur.nodeId);
+        announceDiagramRoute(panel, diagramFlowsUi('announce', lang)
+          .replace('{n}', active.step)
+          .replace('{m}', active.route.steps.length)
+          .replace('{node}', getDiagramNodeLabel(node, lang))
+          .replace('{text}', cur[lang] || cur.ru));
+      } else {
+        announceDiagramRoute(panel, diagramFlowsUi('stopped', lang));
+      }
+    }
+  }
+
+  root.selectDiagramRoute = function (sysId, routeId, step, opts) {
+    const route = getDiagramRouteById(routeId);
+    if (!route || route.sysId !== sysId) return false;
+    if (!AppState.diagramRoutes) AppState.diagramRoutes = {};
+    AppState.diagramRoutes[sysId] = { routeId, step: Math.min(Math.max(1, Number(step) || 1), route.steps.length) };
+    applyDiagramRouteState(sysId, { announce: !(opts && opts.silent) });
+    return true;
   };
+
+  root.diagramRouteStep = function (sysId, action) {
+    const active = getActiveDiagramRoute(sysId);
+    if (!active) return false;
+    const total = active.route.steps.length;
+    let step = active.step;
+    if (action === 'next') step = Math.min(total, step + 1);
+    else if (action === 'prev') step = Math.max(1, step - 1);
+    else if (action === 'first') step = 1;
+    else if (action === 'last') step = total;
+    if (step === active.step) return false;
+    AppState.diagramRoutes[sysId] = { routeId: active.route.id, step };
+    applyDiagramRouteState(sysId, { announce: true });
+    return true;
+  };
+
+  root.stopDiagramRoute = function (sysId) {
+    if (AppState.diagramRoutes && AppState.diagramRoutes[sysId]) {
+      delete AppState.diagramRoutes[sysId];
+    }
+    applyDiagramRouteState(sysId, { announce: true });
+  };
+
+  root.getDiagramRouteState = function (sysId) {
+    const active = getActiveDiagramRoute(sysId);
+    return active ? { routeId: active.route.id, step: active.step, total: active.route.steps.length } : null;
+  };
+
+  /** Открывает тему, блок «nodes» и маршрут на заданном шаге; фокус — на заголовок панели. */
+  root.openDiagramRoute = function (routeId, step) {
+    const route = getDiagramRouteById(routeId);
+    if (!route) return false;
+    root.selectSystem(route.sysId, false);
+    root.selectDiagramRoute(route.sysId, routeId, step || 1);
+    const panel = document.getElementById(`diagram-routes-${route.sysId}`);
+    if (panel) {
+      const heading = panel.querySelector('.diagram-routes-title');
+      root.scrollAndFocusBlock(panel, heading);
+    }
+    return true;
+  };
+
+  function handleDiagramRouteClick(e) {
+    const t = e.target && typeof e.target.closest === 'function' ? e.target : null;
+    if (!t) return false;
+    const routeBtn = t.closest('.diagram-route-btn');
+    if (routeBtn) {
+      const panel = routeBtn.closest('.diagram-routes');
+      if (panel) root.selectDiagramRoute(panel.getAttribute('data-sys'), routeBtn.getAttribute('data-route-id'), 1);
+      return true;
+    }
+    const actionBtn = t.closest('[data-route-action]');
+    if (actionBtn) {
+      const panel = actionBtn.closest('.diagram-routes');
+      if (!panel) return false;
+      const sysId = panel.getAttribute('data-sys');
+      const action = actionBtn.getAttribute('data-route-action');
+      if (action === 'stop') {
+        root.stopDiagramRoute(sysId);
+        const firstBtn = panel.querySelector('.diagram-route-btn');
+        if (firstBtn) firstBtn.focus({ preventScroll: true });
+      } else {
+        root.diagramRouteStep(sysId, action);
+      }
+      return true;
+    }
+    const nbBtn = t.closest('.node-neighbor-btn');
+    if (nbBtn) {
+      const dlg = document.getElementById('diagram-node-dialog');
+      const fromFs = Boolean(dlg && dlg.dataset.fromFullscreen === 'true');
+      root.openDiagramNodeModal(nbBtn.getAttribute('data-sys'), nbBtn.getAttribute('data-node-id'), nbBtn, fromFs);
+      const titleEl = document.getElementById('node-dialog-title');
+      if (titleEl) titleEl.focus({ preventScroll: true });
+      return true;
+    }
+    const nodeRouteBtn = t.closest('.node-route-btn');
+    if (nodeRouteBtn) {
+      const dlg = document.getElementById('diagram-node-dialog');
+      if (dlg && (dlg.open || dlg.hasAttribute('open'))) {
+        if (typeof dlg.close === 'function') dlg.close();
+        else dlg.removeAttribute('open');
+      }
+      root.openDiagramRoute(nodeRouteBtn.getAttribute('data-route-id'), Number(nodeRouteBtn.getAttribute('data-route-step')) || 1);
+      return true;
+    }
+    const srcLink = t.closest('#diagram-node-dialog a.diagram-source-link');
+    if (srcLink) {
+      const dlg = document.getElementById('diagram-node-dialog');
+      if (dlg && (dlg.open || dlg.hasAttribute('open')) && typeof dlg.close === 'function') dlg.close();
+      return false;
+    }
+    return false;
+  }
+
+  function handleDiagramKeydown(e) {
+    const t = e.target && typeof e.target.closest === 'function' ? e.target : null;
+    if (!t) return false;
+    // Стрелки между пинами одной схемы (п. 2.4a)
+    const pin = t.closest('.diagram-node-pin');
+    if (pin && ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(e.key)) {
+      const layer = pin.closest('.diagram-hotspots-layer');
+      const pins = layer ? Array.from(layer.querySelectorAll('.diagram-node-pin')) : [];
+      pins.sort((a, b) => Number(a.getAttribute('data-node-num')) - Number(b.getAttribute('data-node-num')));
+      const idx = pins.indexOf(pin);
+      if (idx < 0 || pins.length === 0) return false;
+      let next = idx;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (idx + 1) % pins.length;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (idx - 1 + pins.length) % pins.length;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = pins.length - 1;
+      e.preventDefault();
+      pins[next].focus();
+      return true;
+    }
+    // Клавиатура панели маршрутов (п. 2.3d)
+    const panel = t.closest('.diagram-routes');
+    if (panel && ['ArrowRight', 'ArrowLeft', 'Home', 'End', 'Escape'].includes(e.key)) {
+      const sysId = panel.getAttribute('data-sys');
+      if (!getActiveDiagramRoute(sysId)) return false;
+      const isRtl = getComputedStyle(panel).direction === 'rtl';
+      let action = null;
+      if (e.key === 'ArrowRight') action = isRtl ? 'prev' : 'next';
+      else if (e.key === 'ArrowLeft') action = isRtl ? 'next' : 'prev';
+      else if (e.key === 'Home') action = 'first';
+      else if (e.key === 'End') action = 'last';
+      e.preventDefault();
+      if (e.key === 'Escape') {
+        e.stopImmediatePropagation();
+        root.stopDiagramRoute(sysId);
+        const firstBtn = panel.querySelector('.diagram-route-btn');
+        if (firstBtn) firstBtn.focus({ preventScroll: true });
+      } else {
+        root.diagramRouteStep(sysId, action);
+      }
+      return true;
+    }
+    return false;
+  }
 
   root.openDiagramNodeModal = function (sysId, nodeId, triggerEl, fromFullscreen) {
     const lang = AppState.lang;
@@ -2069,6 +2534,7 @@
           <strong>5. ${isHe ? 'בטיחות ונוהל LOTO:' : 'Безопасность и процедура LOTO:'}</strong>
           <p>${pick(node.safetyLoto)}</p>
         </div>
+        ${renderDiagramNodeFlowsHtml(sysId, nodeId, lang)}
       </div>
       <div class="node-modal-actions">
         ${fromFullscreen ? `<button type="button" class="btn btn-outline btn-sm" onclick="window.openFullscreenDiagram('${sys.id}')">⛶ ${isHe ? 'חזרה לתרשים מסך מלא' : 'Назад к полноэкранной схеме'}</button>` : ''}
@@ -2116,19 +2582,27 @@
 
     content.innerHTML = `
       <div class="diagram-viewport" style="max-block-size:74vh;">
-        <div class="diagram-canvas-inner" id="diag-fullscreen-inner-${sys.id}" style="width:100%;" dir="ltr">
+        <div class="diagram-canvas-inner" id="diag-fullscreen-inner-${sys.id}" data-sys="${sys.id}" style="width:100%;" dir="ltr">
           <img src="${svgSrc}" alt="${cap}" class="diagram-svg-img" />
-          <div class="diagram-hotspots-layer" dir="ltr">
-            ${nodes.map((n) => `
-              <button type="button" class="diagram-node-pin"
+          ${renderDiagramRouteOverlay(sys.id)}
+          <div class="diagram-hotspots-layer" dir="ltr" role="group" aria-label="${escapeAttr(diagramFlowsUi('pinsGroup', lang).replace('{sys}', getDiagramSystemName(sys, lang)))}">
+            ${nodes.map((n) => {
+              const rawFsTitle = (n.title[lang] || n.title.ru);
+              const cleanFsTitle = (isHe ? rawFsTitle.replace(/\s*\/\s*[А-Яа-яЁё][^)]*/g, '') : rawFsTitle).replace(/"/g, '&quot;');
+              const fsLabel = `${cleanFsTitle}, ${escapeAttr(diagramFlowsUi('nodeOfTotal', lang).replace('{n}', n.num).replace('{m}', nodes.length))}`;
+              const fsState = getDiagramPinRouteState(sys.id, n.id);
+              return `
+              <button type="button" class="diagram-node-pin${fsState.cls}"
                 data-node-id="${n.id}"
+                data-node-num="${n.num}"
                 style="left:${n.xPct}%; top:${n.yPct}%;"
                 onclick="window.openDiagramNodeModal('${sys.id}', '${n.id}', this, true)"
-                aria-label="${(n.title[lang] || n.title.ru).replace(/"/g, '&quot;')}"
-                title="${(n.title[lang] || n.title.ru).replace(/"/g, '&quot;')}">
+                aria-label="${fsLabel}"${fsState.current ? ' aria-current="step"' : ''}
+                title="${cleanFsTitle}">
                 <span>${n.num}</span>
               </button>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         </div>
       </div>
@@ -3194,6 +3668,7 @@
         : (AppState.glossaryFilterQuery || ''),
       nodeModal,
       termPopover,
+      diagramRoutes: JSON.parse(JSON.stringify(AppState.diagramRoutes || {})),
       scrollAnchor
     };
   }
@@ -3237,6 +3712,11 @@
 
     if (st.activeView === 'learn' && st.activeSystemId && st.activeTocKey) {
       root.setActiveGuideTocKey(st.activeSystemId, st.activeTocKey);
+    }
+
+    if (st.diagramRoutes) {
+      AppState.diagramRoutes = JSON.parse(JSON.stringify(st.diagramRoutes));
+      Object.keys(AppState.diagramRoutes).forEach((sid) => applyDiagramRouteState(sid, { announce: false }));
     }
 
     if (st.nodeModal && st.nodeModal.open) {
@@ -4415,6 +4895,12 @@
       return;
     }
 
+    // v15.7: Diagram route (#route-<routeId>) — тема, блок «nodes», маршрут на шаге 1
+    if (rawHash.startsWith('route-')) {
+      const routeId = rawHash.replace(/^route-/, '');
+      if (root.openDiagramRoute(routeId, 1)) return;
+    }
+
     // Diagram node route (#node-<nodeId>)
     if (rawHash.startsWith('node-')) {
       const nodeId = rawHash.replace(/^node-/, '');
@@ -5494,6 +5980,14 @@
         }
       });
     }
+
+    // v15.7: делегированные обработчики панели маршрутов, соседей и маршрутов в окне узла, стрелок по пинам
+    document.addEventListener('click', (e) => {
+      handleDiagramRouteClick(e);
+    });
+    document.addEventListener('keydown', (e) => {
+      handleDiagramKeydown(e);
+    });
 
     // Delegated click handler for a.term-link and #term-popover (v15.5 Task 2.3c + v15.6 Task 2.0h)
     document.addEventListener('click', (e) => {
