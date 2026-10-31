@@ -5,7 +5,7 @@
   'use strict';
 
   const APP_VERSION = root.APP_VERSION = {
-    edition: 'v15.2',
+    edition: 'v15.4',
     date: '2026-10-30',
     core: 'v10.0'
   };

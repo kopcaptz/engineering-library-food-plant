@@ -40,11 +40,16 @@
         { id: 'c1a_tariff_water', quantity: 'none', decSi: 2, decUs: 2, label: { ru: 'Тариф на воду', he: 'תעריף מים' } }
       ],
       outputs: [
-        { key: 'mLossKgH', quantity: 'mass_flow', decSi: 2, decUs: 1, label: { ru: 'Массовый поток потерь конденсата', he: 'ספיקת מסה של הפסדי קונדנסט' } },
-        { key: 'vLossM3H', quantity: 'water_flow_m3h', decSi: 3, decUs: 2, label: { ru: 'Объёмный поток потерь воды', he: 'ספיקת נפח של הפסדי מים' } },
-        { key: 'qLossKw', quantity: 'power', decSi: 2, decUs: 0, label: { ru: 'Тепловая мощность потерь Q_loss', he: 'הספק תרמי של הפסדים Q_loss' } },
-        { key: 'vYearM3', quantity: 'volume', decSi: 1, decUs: 0, label: { ru: 'Потери воды за год', he: 'הפסדי מים בשנה' } },
-        { key: 'eFuelYearGJ', quantity: 'energy_gj', decSi: 2, decUs: 2, label: { ru: 'Эквивалент топлива котла за год', he: 'שווה-ערך דלק בדוד בשנה' } },
+        { key: 'mTargetKgH', legacyKey: 'mLossKgH', quantity: 'mass_flow', decSi: 2, decUs: 1, label: { ru: 'Массовый поток потерь конденсата m_target', he: 'ספיקת מסה של הפסדי קונדנסט m_target' } },
+        { key: 'vTargetM3H', legacyKey: 'vLossM3H', quantity: 'water_flow_m3h', decSi: 3, decUs: 2, label: { ru: 'Объёмный поток потерь воды V_target', he: 'ספיקת נפח של הפסדי מים V_target' } },
+        { key: 'qThermalKw', legacyKey: 'qLossKw', quantity: 'power', decSi: 2, decUs: 0, label: { ru: 'Тепловая мощность потерь Q_therm', he: 'הספק תרמי של הפסדים Q_therm' } },
+        { key: 'vShiftM3', quantity: 'volume', decSi: 2, decUs: 1, label: { ru: 'Потери воды за смену V_shift', he: 'אובדן מים למשמרת V_shift' } },
+        { key: 'eShiftKwh', quantity: 'energy_kwh', decSi: 2, decUs: 1, label: { ru: 'Потери тепла за смену E_shift', he: 'אובדן חום למשמרת E_shift' } },
+        { key: 'mReturnKgH', quantity: 'mass_flow', decSi: 2, decUs: 1, label: { ru: 'Массовый поток возврата m_ret', he: 'ספיקת מסה מוחזרת m_ret' } },
+        { key: 'vReturnM3H', quantity: 'water_flow_m3h', decSi: 3, decUs: 2, label: { ru: 'Объёмный поток возврата V_ret', he: 'ספיקה נפחית מוחזרת V_ret' } },
+        { key: 'vYearM3', quantity: 'volume', decSi: 1, decUs: 0, label: { ru: 'Потери воды за год V_year', he: 'הפסדי מים בשנה V_year' } },
+        { key: 'eYearGJ', quantity: 'energy_gj', decSi: 2, decUs: 2, label: { ru: 'Потери тепла конденсата за год E_year', he: 'אובדן חום עיבוי בשנה E_year' } },
+        { key: 'eFuelYearGJ', quantity: 'energy_gj', decSi: 2, decUs: 2, label: { ru: 'Эквивалент топлива котла за год E_fuel', he: 'שווה-ערך דלק בדוד בשנה E_fuel' } },
         { key: 'costTotalYear', quantity: 'money', decSi: 2, decUs: 2, label: { ru: 'Итоговая стоимость потерь за год', he: 'עלות שנתית כוללת של הפסדים' } }
       ]
     },
@@ -69,7 +74,7 @@
         { key: 'xFlashPct', quantity: 'none', decSi: 2, decUs: 2, unitSuffix: '%', label: { ru: 'Доля вторичного пара x_flash (%)', he: 'אחוז קיטור משני x_flash (%)' } },
         { key: 'mFlashKgH', quantity: 'mass_flow', decSi: 2, decUs: 1, label: { ru: 'Массовый выход вторичного пара m_flash', he: 'ספיקת קיטור משני m_flash' } },
         { key: 'dReceiverMm', quantity: 'diameter', decSi: 0, decUs: 2, label: { ru: 'Диаметр ресивера TLV D_cr', he: 'קוטר מכל איסוף TLV D_cr' } },
-        { key: 'dVentMm', quantity: 'diameter', decSi: 0, decUs: 2, label: { ru: 'Диаметр выхлопной трубы D_vp', he: 'קוטר צינור פליטה D_vp' } },
+        { key: 'ventLineMm', legacyKey: 'dVentMm', quantity: 'diameter', decSi: 0, decUs: 2, label: { ru: 'Диаметр выхлопной трубы D_vp', he: 'קוטר צינור פליטה D_vp' } },
         { key: 'qFlashKw', quantity: 'power', decSi: 2, decUs: 0, label: { ru: 'Тепловая мощность вторичного пара Q_flash', he: 'הספק תרמי של קיטור משני Q_flash' } },
         { key: 'costTotalYear', quantity: 'money', decSi: 2, decUs: 2, label: { ru: 'Годовая стоимость уносимого вторичного пара', he: 'עלות שנתית של קיטור משני הנפלט' } }
       ]
@@ -96,7 +101,7 @@
       outputs: [
         { key: 'qEvapKw', quantity: 'power', decSi: 2, decUs: 0, label: { ru: 'Холодопроизводительность Q_evap', he: 'תפוקת קירור Q_evap' } },
         { key: 'qEvapTr', quantity: 'none', decSi: 2, decUs: 2, unitSuffix: ' TR', label: { ru: 'Холодопроизводительность (TR)', he: 'תפוקת קירור (TR)' } },
-        { key: 'dtEvapC', quantity: 'delta_temp', decSi: 2, decUs: 2, label: { ru: 'Перепад температур ΔT_evap', he: 'מפל טמפרטורות ΔT_evap' } },
+        { key: 'dTevapC', legacyKey: 'dtEvapC', quantity: 'delta_temp', decSi: 2, decUs: 2, label: { ru: 'Перепад температур ΔT_evap', he: 'מפל טמפרטורות ΔT_evap' } },
         { key: 'cop', quantity: 'none', decSi: 2, decUs: 2, label: { ru: 'Холодильный коэффициент COP', he: 'מקדם יעילות COP' } },
         { key: 'kwPerTr', quantity: 'none', decSi: 3, decUs: 3, unitSuffix: ' kW/TR', label: { ru: 'Удельная мощность кВт/TR', he: 'הספק סגולי kW/TR' } },
         { key: 'appEvapC', quantity: 'delta_temp', decSi: 2, decUs: 2, label: { ru: 'Approach испарителя ΔT_app,evap', he: 'הפרש גישה במאייד ΔT_app,evap' } },
@@ -121,8 +126,9 @@
         { id: 'c3a_psat2', quantity: 'pressure_a', decSi: 5, decUs: 3, label: { ru: 'Давление пара p_sat2', he: 'לחץ אדים p_sat2' } }
       ],
       outputs: [
-        { key: 'q2', quantity: 'air_flow_ls', decSi: 2, decUs: 2, label: { ru: 'Приведённый расход Q₂ (FAD)', he: 'ספיקה מומרת Q₂ (FAD)' } },
-        { key: 'q2M3Min', quantity: 'air_flow_m3min', decSi: 3, decUs: 2, label: { ru: 'Приведённый расход Q₂ (м³/мин)', he: 'ספיקה מומרת Q₂ (m³/min)' } }
+        { key: 'q2LS', legacyKey: 'q2', quantity: 'air_flow_ls', decSi: 2, decUs: 2, label: { ru: 'Приведённый расход Q₂ (FAD)', he: 'ספיקה מומרת Q₂ (FAD)' } },
+        { key: 'q2M3Min', quantity: 'air_flow_m3min', decSi: 3, decUs: 2, label: { ru: 'Приведённый расход Q₂ (м³/мин)', he: 'ספיקה מומרת Q₂ (m³/min)' } },
+        { key: 'q2M3H', quantity: 'water_flow_m3h', decSi: 2, decUs: 1, label: { ru: 'Приведённый расход Q₂ (м³/ч)', he: 'ספיקה מומרת Q₂ (m³/h)' } }
       ]
     },
     '3B': {
@@ -182,14 +188,21 @@
         { id: 'c4a_qf_meas', quantity: 'water_flow_m3h', decSi: 2, decUs: 1, label: { ru: 'Замеренный вход Q_f,meas', he: 'ספיקת הזנה נמדדת Q_f,meas' } },
         { id: 'c4a_ecf', quantity: 'none', decSi: 1, decUs: 1, label: { ru: 'Проводимость входа EC_f (мкСм/см)', he: 'מוליכות הזנה EC_f (µS/cm)' } },
         { id: 'c4a_ecp', quantity: 'none', decSi: 1, decUs: 1, label: { ru: 'Проводимость пермеата EC_p (мкСм/см)', he: 'מוליכות תוצר EC_p (µS/cm)' } },
-        { id: 'c4a_ecc', quantity: 'none', decSi: 1, decUs: 1, label: { ru: 'Проводимость концентрата EC_c (мкСм/см)', he: 'מוליכות רכז EC_c (µS/cm)' } }
+        { id: 'c4a_ecc', quantity: 'none', decSi: 1, decUs: 1, label: { ru: 'Проводимость концентрата EC_c (мкСм/см)', he: 'מוליכות רכז EC_c (µS/cm)' } },
+        { id: 'c4a_tdsf', quantity: 'none', decSi: 1, decUs: 1, label: { ru: 'Солесодержание входа TDS_f (мг/л)', he: 'ריכוז מלחים בהזנה TDS_f (mg/L)' } },
+        { id: 'c4a_tdsp', quantity: 'none', decSi: 1, decUs: 1, label: { ru: 'Солесодержание пермеата TDS_p (мг/л)', he: 'ריכוז מלחים בפרמיאט TDS_p (mg/L)' } },
+        { id: 'c4a_tdsc', quantity: 'none', decSi: 1, decUs: 1, label: { ru: 'Солесодержание концентрата TDS_c (мг/л)', he: 'ריכוז מלחים ברכז TDS_c (mg/L)' } }
       ],
       outputs: [
         { key: 'qfCalc', quantity: 'water_flow_m3h', decSi: 2, decUs: 1, label: { ru: 'Расчётный расход питания Q_f', he: 'ספיקת הזנה מחושבת Q_f' } },
         { key: 'recoveryPct', quantity: 'none', decSi: 2, decUs: 2, unitSuffix: '%', label: { ru: 'Степень извлечения Recovery Y (%)', he: 'אחוז השבה Recovery Y (%)' } },
         { key: 'srEcPct', quantity: 'none', decSi: 2, decUs: 2, unitSuffix: '%', label: { ru: 'Наблюдаемая селективность SR_EC (%)', he: 'דחיית מלחים נצפית SR_EC (%)' } },
         { key: 'cfApproxEc', quantity: 'none', decSi: 2, decUs: 2, label: { ru: 'Фактор концентрирования CF_EC', he: 'פקטור ריכוז CF_EC' } },
-        { key: 'bEc', quantity: 'none', decSi: 4, decUs: 4, label: { ru: 'Баланс проводимости B_EC', he: 'מאזן מוליכות B_EC' } }
+        { key: 'bEc', quantity: 'none', decSi: 4, decUs: 4, label: { ru: 'Баланс проводимости B_EC', he: 'מאזן מוליכות B_EC' } },
+        { key: 'spMassPct', quantity: 'none', decSi: 2, decUs: 2, unitSuffix: '%', label: { ru: 'Массовый проскок солей SP_TDS (%)', he: 'מעבר מלחים מסתי SP_TDS (%)' } },
+        { key: 'srMassPct', quantity: 'none', decSi: 2, decUs: 2, unitSuffix: '%', label: { ru: 'Массовая селективность SR_TDS (%)', he: 'דחיית מלחים מסתית SR_TDS (%)' } },
+        { key: 'cfMass', quantity: 'none', decSi: 2, decUs: 2, label: { ru: 'Массовый фактор концентрирования CF_TDS', he: 'פקטור ריכוז מסתי CF_TDS' } },
+        { key: 'bMass', quantity: 'none', decSi: 4, decUs: 4, label: { ru: 'Массовый солевой баланс B_TDS', he: 'מאזן מלחים מסתי B_TDS' } }
       ]
     },
     '4B': {
@@ -290,18 +303,24 @@
       btnSelectA: 'А',
       btnSelectB: 'Б',
       btnDelete: 'Удалить',
-      compareTitle: 'Таблица сравнения двух расчётов одного модуля',
-      compareHint: 'Выберите два сохранённых расчёта одного и того же модуля кнопками «А» и «Б» в списке выше (или в выпадающих списках ниже). Значения и разница отображаются в текущих выбранных единицах (SI / US).',
-      lblCompareA: 'Расчёт А (базовый):',
-      lblCompareB: 'Расчёт Б (сравниваемый):',
-      colParam: 'Параметр / результат',
-      colValA: 'Расчёт А',
-      colValB: 'Расчёт Б',
+      compareTitle: 'Сравнение двух наборов (А / Б)',
+      compareHint: 'Выберите два сохранённых расчёта одного и того же модуля в выпадающих списках «Набор А» и «Набор Б» ниже (или кнопками «А» и «Б» в таблице выше). Значения и разница отображаются в текущих выбранных единицах (SI / US).',
+      lblCompareA: 'Набор А (базовый):',
+      lblCompareB: 'Набор Б (сравниваемый):',
+      colParam: 'Параметр',
+      colValA: 'Набор А',
+      colValB: 'Набор Б',
       colDiffAbs: 'Разница Δ (Б − А)',
       colDiffPct: 'Разница Δ%',
-      grpInputs: 'Входные данные',
-      grpOutputs: 'Результаты расчёта',
+      grpInputs: 'Исходные данные',
+      grpOutputs: 'Результаты',
       mismatchModuleWarning: 'Для сравнения выберите две записи одного и того же расчётного модуля.',
+      diffUnitSystemNotice: 'ℹ️ Наборы сохранены в разных системах единиц — значения показаны в текущей системе',
+      diffCurrencyWarning: '⚠️ Разные валюты — денежные строки не сравниваются',
+      doeCompareBlocked: '⚠️ Сравнение недоступно: запись Модуля 1А сохранена в неметрическом режиме DOE S21 (lb/hr, Btu/lb, $/MMBtu), где поле inputsSi хранит имперские значения и не приводится к СИ.',
+      kpaCompareBlocked: '⚠️ Сравнение недоступно: запись Модуля 5А сохранена с входной единицей кПа (kPa), где поле inputsSi хранит кПа вместо бар.',
+      saveErrorPrefix: '❌ Ошибка сохранения расчёта:',
+      compareNeedSaveHint: 'ℹ️ Чтобы сравнить текущий расчёт с сохранённым, сначала нажмите «💾 Сохранить расчёт».',
       promptNote: 'Введите заметку к сохраняемому расчёту (необязательно):',
       defaultNotePrefix: 'Расчёт модуля '
     },
@@ -330,18 +349,24 @@
       btnSelectA: 'א׳',
       btnSelectB: 'ב׳',
       btnDelete: 'מחיקה',
-      compareTitle: 'טבלת השוואה בין שני חישובים מאותו מודול',
-      compareHint: 'בחרו שני חישובים שמורים מאותו מודול באמצעות כפתורי "א׳" ו-"ב׳" ברשימה למעלה (או בתיבות הבחירה למטה). הערכים וההפרשים מוצגים ביחידות המידה הפעילות כעת (SI / US).',
-      lblCompareA: 'חישוב א׳ (ייחוס):',
-      lblCompareB: 'חישוב ב׳ (מושוה):',
-      colParam: 'פרמטר / תוצאה',
-      colValA: 'חישוב א׳',
-      colValB: 'חישוב ב׳',
+      compareTitle: 'השוואת שתי ערכות (א׳ / ב׳)',
+      compareHint: 'בחרו שני חישובים שמורים מאותו מודול בתיבות הבחירה "ערכה א׳" ו-"ערכה ב׳" למטה (או באמצעות כפתורי "א׳" ו-"ב׳" בטבלה למעלה). הערכים וההפרשים מוצגים ביחידות המידה הפעילות כעת (SI / US).',
+      lblCompareA: 'ערכה א׳ (ייחוס):',
+      lblCompareB: 'ערכה ב׳ (מושוה):',
+      colParam: 'פרמטר',
+      colValA: 'ערכה א׳',
+      colValB: 'ערכה ב׳',
       colDiffAbs: 'הפרש Δ (ב׳ − א׳)',
       colDiffPct: 'הפרש Δ%',
       grpInputs: 'נתוני קלט',
-      grpOutputs: 'תוצאות החישוב',
+      grpOutputs: 'תוצאות',
       mismatchModuleWarning: 'להשוואה יש לבחור שתי רשומות של אותו מודול חישוב.',
+      diffUnitSystemNotice: 'ℹ️ הערכות נשמרו במערכות יחידות שונות — הערכים מוצגים במערכת היחידות הפעילה כעת',
+      diffCurrencyWarning: '⚠️ מטבעות שונים — שורות כספיות אינן מושוות',
+      doeCompareBlocked: '⚠️ ההשוואה אינה זמינה: רשומת מודול 1א נשמרה במצב האימפריאלי DOE S21 (lb/hr, Btu/lb, $/MMBtu), שבו השדה inputsSi שומר ערכים אימפריאליים שאינם מומרים ל-SI.',
+      kpaCompareBlocked: '⚠️ ההשוואה אינה זמינה: רשומת מודול 5א נשמרה עם יחידת קלט kPa, שבה השדה inputsSi שומר kPa במקום bar.',
+      saveErrorPrefix: '❌ שגיאה בשמירת החישוב:',
+      compareNeedSaveHint: 'ℹ️ כדי להשוות את החישוב הנוכחי עם חישוב שמור, לחצו תחילה על "💾 שמירת חישוב".',
       promptNote: 'הזינו הערה לחישוב הנשמר (אופציונלי):',
       defaultNotePrefix: 'חישוב מודול '
     }
@@ -386,88 +411,157 @@
     }
   }
 
+  function pickVal(inputsSi, domId, engineKey) {
+    if (!inputsSi) return '';
+    if (inputsSi[domId] !== undefined && inputsSi[domId] !== '') return inputsSi[domId];
+    if (engineKey && inputsSi[engineKey] !== undefined && inputsSi[engineKey] !== '') return inputsSi[engineKey];
+    if (inputsSi[domId] !== undefined) return inputsSi[domId];
+    if (engineKey && inputsSi[engineKey] !== undefined) return inputsSi[engineKey];
+    return '';
+  }
+
   // Вычисление точных результатов СИ (resultsSi) из точных входов СИ (inputsSi) через EngineeringCalculators + EconomicsEngine
   function computeResultsSiFromInputs(moduleCode, inputsSi, currency) {
     const EC = root.EngineeringCalculators;
     const EE = root.EconomicsEngine;
     if (!EC) return {};
     const cur = currency || '$';
-    const g = (id) => (inputsSi && inputsSi[id] !== undefined ? inputsSi[id] : '');
+    const code = String(moduleCode || '').toUpperCase().replace(/-DOE$/, '');
+    const p = (domId, engKey) => pickVal(inputsSi, domId, engKey);
 
-    if (moduleCode === '1A') {
-      const r = EC.calcCondensateFromFlow({
-        mode: g('c1a_mode') || 'direct_l_min',
-        q_l_min: g('c1a_q_l_min'),
-        m_kg_h: g('c1a_m_kg_h'),
-        return_pct: g('c1a_ret_pct'),
-        t_cond_c: g('c1a_t_cond'),
-        t_make_c: g('c1a_t_make'),
-        rho_kg_l: g('c1a_rho'),
-        cp_kj_kgc: g('c1a_cp'),
-        t_shift_h: g('c1a_t_shift'),
-        t_year_h: g('c1a_t_year'),
-        eta_boiler_pct: g('c1a_eta'),
-        lhv_mj_per_unit: g('c1a_lhv'),
-        tariff_per_gj: g('c1a_tariff_gj'),
-        tariff_per_m3: g('c1a_tariff_water')
+    if (code === '1A') {
+      const mode = p('c1a_mode', 'mode') || 'direct_l_min';
+      if (mode === 'doe_s21_imperial') {
+        const r = EC.calcCondensatePrimary({
+          mode: 'doe_s21_imperial',
+          m_lb_hr: p('c1a_m_kg_h', 'm_lb_hr'),
+          hf_cond_btu_lb: p('c1a_t_cond', 'hf_cond_btu_lb'),
+          hf_mk_btu_lb: p('c1a_t_make', 'hf_mk_btu_lb'),
+          t_year_h: p('c1a_t_year', 't_year_h'),
+          eta_boiler_pct: p('c1a_eta', 'eta_boiler_pct'),
+          tariff_per_mmbtu: p('c1a_tariff_gj', 'tariff_per_mmbtu')
+        });
+        const econ = EE ? EE.calcModule1AEconomics(r, {
+          eta_boiler_pct: p('c1a_eta', 'eta_boiler_pct'),
+          tariff_per_mmbtu: p('c1a_tariff_gj', 'tariff_per_mmbtu')
+        }) : null;
+        return {
+          mode: 'doe_s21_imperial',
+          mLbHr: r.mLbHr,
+          heatRateKw: r.heatRateKw,
+          annualCondMMBtu: r.annualCondMMBtu,
+          annualFuelMMBtuExact: r.annualFuelMMBtuExact,
+          annualFuelMMBtuRoundedDOE: r.annualFuelMMBtuRoundedDOE,
+          annualCostExact: r.annualCostExact,
+          annualCostRoundedDOE: r.annualCostRoundedDOE,
+          mTargetKgH: null,
+          vTargetM3H: null,
+          qThermalKw: r.heatRateKw,
+          vShiftM3: null,
+          eShiftKwh: null,
+          mReturnKgH: null,
+          vReturnM3H: null,
+          vYearM3: null,
+          eYearGJ: null,
+          eFuelYearGJ: null,
+          costTotalYear: r.annualCostExact
+        };
+      }
+
+      const mVal = p('c1a_m_kg_h', 'm_kg_h') !== '' ? p('c1a_m_kg_h', 'm_kg_h') : p('c1a_m_kg_h', 'm_steam_kg_h');
+      const r = EC.calcCondensatePrimary({
+        mode,
+        q_l_min: p('c1a_q_l_min', 'q_l_min'),
+        m_kg_h: mVal,
+        m_steam_kg_h: p('m_steam_kg_h', 'c1a_m_kg_h') !== '' ? p('m_steam_kg_h', 'c1a_m_kg_h') : mVal,
+        return_pct: p('c1a_ret_pct', 'return_pct'),
+        t_cond_c: p('c1a_t_cond', 't_cond_c'),
+        t_makeup_c: p('c1a_t_make', 't_makeup_c'),
+        rho_kg_l: p('c1a_rho', 'rho_kg_l'),
+        cp_kj_kgc: p('c1a_cp', 'cp_kj_kgc'),
+        t_shift_h: p('c1a_t_shift', 't_shift_h'),
+        t_year_h: p('c1a_t_year', 't_year_h'),
+        eta_boiler_pct: p('c1a_eta', 'eta_boiler_pct'),
+        fuel_lhv_kwh: p('c1a_lhv', 'fuel_lhv_kwh'),
+        tariff_per_gj: p('c1a_tariff_gj', 'tariff_per_gj'),
+        tariff_water_m3: p('c1a_tariff_water', 'tariff_water_m3')
       });
+      const econ = EE ? EE.calcModule1AEconomics(r, {
+        currency: cur,
+        t_year_h: p('c1a_t_year', 't_year_h'),
+        eta_boiler_pct: p('c1a_eta', 'eta_boiler_pct'),
+        tariff_per_gj: p('c1a_tariff_gj', 'tariff_per_gj'),
+        tariff_water_m3: p('c1a_tariff_water', 'tariff_water_m3')
+      }) : null;
       return {
-        mLossKgH: r.mLossKgH,
-        vLossM3H: r.vLossM3H,
-        qLossKw: r.qLossKw,
+        mTargetKgH: r.mTargetKgH,
+        vTargetM3H: r.vTargetM3H,
+        qThermalKw: r.qThermalKw,
+        vShiftM3: r.vShiftM3,
+        eShiftKwh: r.eShiftKwh,
+        eShiftGJ: r.eShiftGJ,
+        mReturnKgH: r.mReturnKgH,
+        vReturnM3H: r.vReturnM3H,
+        qReturnKw: r.qReturnKw,
         vYearM3: r.vYearM3,
+        eYearKwh: r.eYearKwh,
+        eYearGJ: r.eYearGJ,
         eFuelYearGJ: r.eFuelYearGJ,
-        costTotalYear: r.costTotalYear
+        costEnergyYear: r.costEnergyYear,
+        costWaterYear: r.costWaterYear,
+        costTotalYear: econ && econ.hasCost ? econ.costTotalYear : r.costTotalYear
       };
     }
 
-    if (moduleCode === '1B') {
+    if (code === '1B') {
       const r = EC.calcCondensateFlashAndTLV({
-        mc_kg_h: g('c1_mc'),
-        p1_barg: g('c1_p1'),
-        p2_barg: g('c1_p2'),
-        hf1_kj_kg: g('c1_hf1'),
-        hf2_kj_kg: g('c1_hf2'),
-        hfg2_kj_kg: g('c1_hfg2'),
-        dop_mm: g('c1_dop')
+        mc_kg_h: p('c1_mc', 'mc_kg_h'),
+        p1_barg: p('c1_p1', 'p1_barg'),
+        p2_barg: p('c1_p2', 'p2_barg'),
+        hf1_kj_kg: p('c1_hf1', 'hf1_kj_kg'),
+        hf2_kj_kg: p('c1_hf2', 'hf2_kj_kg'),
+        hfg2_kj_kg: p('c1_hfg2', 'hfg2_kj_kg'),
+        dop_mm: p('c1_dop', 'dop_mm')
       });
       const econ = EE ? EE.calcModule1BEconomics(r, {
         currency: cur,
-        t_year_h: g('c1b_t_year'),
-        eta_boiler_pct: g('c1b_eta'),
-        tariff_per_gj: g('c1b_tariff_gj')
+        t_year_h: p('c1b_t_year', 't_year_h'),
+        eta_boiler_pct: p('c1b_eta', 'eta_boiler_pct'),
+        tariff_per_gj: p('c1b_tariff_gj', 'tariff_per_gj')
       }) : null;
+      const hfg2Num = Number(p('c1_hfg2', 'hfg2_kj_kg'));
       return {
         xFlashPct: r.xFlashPct,
         mFlashKgH: r.mFlashKgH,
         dReceiverMm: r.dReceiverMm,
-        dVentMm: r.dVentMm,
-        qFlashKw: econ ? econ.qFlashKw : (r.mFlashKgH * Number(g('c1_hfg2'))) / 3600,
+        ventLineMm: r.table1Row ? r.table1Row.ventLineMm : null,
+        qFlashKw: econ ? econ.qFlashKw : (r.mFlashKgH * hfg2Num) / 3600,
         costTotalYear: econ ? econ.costTotalYear : null
       };
     }
 
-    if (moduleCode === '2') {
+    if (code === '2') {
       const r = EC.calcChillerPerformance({
-        fluid_type: g('c2_fluid') || 'water',
-        vw_m3_h: g('c2_vw'),
-        rho_kg_m3: g('c2_rho'),
-        cp_kj_kgc: g('c2_cp'),
-        t_evap_in_c: g('c2_tin'),
-        t_evap_out_c: g('c2_tout'),
-        p_el_kw: g('c2_pel'),
-        t_sat_evap_c: g('c2_tsat_ev'),
-        t_cond_out_c: g('c2_tcond_out'),
-        t_sat_cond_c: g('c2_tsat_cd')
+        fluid_type: p('c2_fluid', 'fluid_type') || 'water',
+        vw_m3_h: p('c2_vw', 'vw_m3_h'),
+        rho_kg_m3: p('c2_rho', 'rho_kg_m3'),
+        cp_kj_kgc: p('c2_cp', 'cp_kj_kgc'),
+        t_evap_in_c: p('c2_tin', 't_evap_in_c'),
+        t_evap_out_c: p('c2_tout', 't_evap_out_c'),
+        p_el_kw: p('c2_pel', 'p_el_kw'),
+        t_sat_evap_c: p('c2_tsat_ev', 't_sat_evap_c'),
+        t_cond_out_c: p('c2_tcond_out', 't_cond_out_c'),
+        t_sat_cond_c: p('c2_tsat_cd', 't_sat_cond_c')
       });
       const econ = EE ? EE.calcModule2Economics(r, {
         currency: cur,
-        t_year_h: g('c2_t_year'),
-        tariff_per_kwh: g('c2_tariff_kwh')
+        t_year_h: p('c2_t_year', 't_year_h'),
+        tariff_per_kwh: p('c2_tariff_kwh', 'tariff_per_kwh')
       }) : null;
       return {
         qEvapKw: r.qKw !== undefined ? r.qKw : r.qEvapKw,
         qEvapTr: r.qTr !== undefined ? r.qTr : r.qEvapTr,
+        dTevapC: r.dTevapC !== undefined ? r.dTevapC : (r.dtEvap !== undefined ? r.dtEvap : r.dtEvapC),
         dtEvapC: r.dTevapC !== undefined ? r.dTevapC : (r.dtEvap !== undefined ? r.dtEvap : r.dtEvapC),
         cop: r.cop,
         kwPerTr: r.kwPerTr,
@@ -477,41 +571,42 @@
       };
     }
 
-    if (moduleCode === '3A') {
+    if (code === '3A') {
       const r = EC.calcAirFlowConversion({
-        q1: g('c3a_q1'),
-        p1_abs_bar: g('c3a_p1'),
-        t1_c: g('c3a_t1'),
-        rh1_pct: g('c3a_rh1'),
-        psat1_bar: g('c3a_psat1'),
-        p2_abs_bar: g('c3a_p2'),
-        t2_c: g('c3a_t2'),
-        rh2_pct: g('c3a_rh2'),
-        psat2_bar: g('c3a_psat2')
+        q1_l_s: p('c3a_q1', 'q1_l_s'),
+        p1_abs_bar: p('c3a_p1', 'p1_abs_bar'),
+        t1_c: p('c3a_t1', 't1_c'),
+        rh1_pct: p('c3a_rh1', 'rh1_pct'),
+        psat1_bar: p('c3a_psat1', 'psat1_bar'),
+        p2_abs_bar: p('c3a_p2', 'p2_abs_bar'),
+        t2_c: p('c3a_t2', 't2_c'),
+        rh2_pct: p('c3a_rh2', 'rh2_pct'),
+        psat2_bar: p('c3a_psat2', 'psat2_bar')
       });
       return {
-        q2: r.q2,
-        q2M3Min: (r.q2 * 60) / 1000
+        q2LS: r.q2LS,
+        q2M3Min: r.q2M3Min,
+        q2M3H: r.q2M3H
       };
     }
 
-    if (moduleCode === '3B') {
+    if (code === '3B') {
       const r = EC.calcAirLeaks({
-        method: g('c3b_method') || 'receiver_drop',
-        v_rec_m3: g('c3b_vr'),
-        p1_g_bar: g('c3b_pstart'),
-        p2_g_bar: g('c3b_pend'),
-        t_min: g('c3b_tdecay'),
-        p_atm_bar: g('c3b_patm'),
-        q_comp_m3_min: g('c3b_qcomp'),
-        t_load_min: g('c3b_tload'),
-        t_unload_min: g('c3b_tunload')
+        method: p('c3b_method', 'method') || 'receiver_drop',
+        v_rec_m3: p('c3b_vr', 'v_rec_m3'),
+        p1_g_bar: p('c3b_pstart', 'p1_g_bar'),
+        p2_g_bar: p('c3b_pend', 'p2_g_bar'),
+        t_min: p('c3b_tdecay', 't_min'),
+        p_atm_bar: p('c3b_patm', 'p_atm_bar'),
+        q_comp_m3_min: p('c3b_qcomp', 'q_comp_m3_min'),
+        t_load_min: p('c3b_tload', 't_load_min'),
+        t_unload_min: p('c3b_tunload', 't_unload_min')
       });
       const econ = EE ? EE.calcModule3BEconomics(r, {
         currency: cur,
-        spec_power_kw_m3min: g('c3b_spec_power'),
-        t_year_h: g('c3b_t_year'),
-        tariff_per_kwh: g('c3b_tariff_kwh')
+        spec_power_kw_m3min: p('c3b_spec_power', 'spec_power_kw_m3min'),
+        t_year_h: p('c3b_t_year', 't_year_h'),
+        tariff_per_kwh: p('c3b_tariff_kwh', 'tariff_per_kwh')
       }) : null;
       return {
         qLeakM3Min: r.qLeakM3Min,
@@ -522,15 +617,15 @@
       };
     }
 
-    if (moduleCode === '3C') {
+    if (code === '3C') {
       const r = EC.calcAirMoistureCondensation({
-        qc_l_s: g('c3_qc'),
-        rh_fraction: g('c3_rh'),
-        rho_in_g_m3: g('c3_rho_in'),
-        t_amb_k: g('c3_tamb'),
-        p_after_abs_bar: g('c3_pafter'),
-        t_after_k: g('c3_tafter'),
-        rho_out_g_m3: g('c3_rho_out')
+        qc_l_s: p('c3_qc', 'qc_l_s'),
+        rh_fraction: p('c3_rh', 'rh_fraction'),
+        rho_in_g_m3: p('c3_rho_in', 'rho_in_g_m3'),
+        t_amb_k: p('c3_tamb', 't_amb_k'),
+        p_after_abs_bar: p('c3_pafter', 'p_after_abs_bar'),
+        t_after_k: p('c3_tafter', 't_after_k'),
+        rho_out_g_m3: p('c3_rho_out', 'rho_out_g_m3')
       });
       return {
         mCondTempKgH: r.mCondTempKgH,
@@ -538,34 +633,45 @@
       };
     }
 
-    if (moduleCode === '4A') {
+    if (code === '4A') {
       const r = EC.calcROBalance({
-        qp_m3_h: g('c4a_qp'),
-        qc_m3_h: g('c4a_qc'),
-        qf_meas_m3_h: g('c4a_qf_meas'),
-        ec_f_us_cm: g('c4a_ecf'),
-        ec_p_us_cm: g('c4a_ecp'),
-        ec_c_us_cm: g('c4a_ecc')
+        qp_m3_h: p('c4a_qp', 'qp_m3_h'),
+        qc_m3_h: p('c4a_qc', 'qc_m3_h'),
+        qf_meas_m3_h: p('c4a_qf_meas', 'qf_meas_m3_h'),
+        ec_f_us_cm: p('c4a_ecf', 'ec_f_us_cm'),
+        ec_p_us_cm: p('c4a_ecp', 'ec_p_us_cm'),
+        ec_c_us_cm: p('c4a_ecc', 'ec_c_us_cm'),
+        tds_f_mg_l: p('c4a_tdsf', 'tds_f_mg_l'),
+        tds_p_mg_l: p('c4a_tdsp', 'tds_p_mg_l'),
+        tds_c_mg_l: p('c4a_tdsc', 'tds_c_mg_l')
       });
       return {
         qfCalc: r.qfCalc,
         recoveryPct: r.recoveryPct,
         srEcPct: r.srEcPct,
         cfApproxEc: r.cfApproxEc,
-        bEc: r.bEc
+        bEc: r.bEc,
+        spMassPct: r.massSaltBalance ? r.massSaltBalance.spMassPct : null,
+        srMassPct: r.massSaltBalance ? r.massSaltBalance.srMassPct : null,
+        cfMass: r.massSaltBalance ? r.massSaltBalance.cfMass : null,
+        bMass: r.massSaltBalance ? r.massSaltBalance.bMass : null,
+        spTdsPct: r.spTdsPct,
+        srTdsPct: r.srTdsPct,
+        cfMassTds: r.cfMassTds,
+        bTds: r.bTds
       };
     }
 
-    if (moduleCode === '4B') {
+    if (code === '4B') {
       const r = EC.calcRONormalization({
-        qp_o_m3_h: g('c4_qp'),
-        qc_o_m3_h: g('c4_qc'),
-        qp_s_m3_h: g('c4_qbase'),
-        ndp_s_bar: g('c4_ndps'),
-        ndp_o_bar: g('c4_ndpo'),
-        tcf_s: g('c4_tcfs'),
-        tcf_o: g('c4_tcfo'),
-        dp_back_bar: g('c4_pp')
+        qp_o_m3_h: p('c4_qp', 'qp_o_m3_h'),
+        qc_o_m3_h: p('c4_qc', 'qc_o_m3_h'),
+        qp_s_m3_h: p('c4_qbase', 'qp_s_m3_h'),
+        ndp_s_bar: p('c4_ndps', 'ndp_s_bar'),
+        ndp_o_bar: p('c4_ndpo', 'ndp_o_bar'),
+        tcf_s: p('c4_tcfs', 'tcf_s'),
+        tcf_o: p('c4_tcfo', 'tcf_o'),
+        dp_back_bar: p('c4_pp', 'dp_back_bar')
       });
       return {
         qsNorm: r.qsNorm,
@@ -575,14 +681,14 @@
       };
     }
 
-    if (moduleCode === '5A') {
-      const unitSel = g('c5a_unit') || 'bar';
+    if (code === '5A') {
+      const unitSel = p('c5a_unit', 'unit') || 'bar';
       const engineUnit = unitSel === 'kpa' ? 'kpa' : 'bar';
       const r = EC.calcSteamPressureConversion({
-        mode: g('c5a_mode') || 'gauge_to_abs',
+        mode: p('c5a_mode', 'mode') || 'gauge_to_abs',
         unit: engineUnit,
-        p_val: g('c5a_pval'),
-        p_atm_bar: g('c5a_patm')
+        p_val: p('c5a_pval', 'p_val'),
+        p_atm_bar: p('c5a_patm', 'p_atm_bar')
       });
       return {
         pAbsBar: r.pAbsBar,
@@ -590,28 +696,28 @@
       };
     }
 
-    if (moduleCode === '5B') {
+    if (code === '5B') {
       const r = EC.calcSteamLoad({
-        load_mode: g('c5_load_mode') || 'direct_kw',
-        q_load_kw: g('c5_qkw'),
-        mp_kg_h: g('c5_mp'),
-        cp_kj_kgc: g('c5_cp'),
-        t_in_c: g('c5_tin'),
-        t_out_c: g('c5_tout'),
-        p_barg_preset: g('c5_steam_preset'),
-        hg_kj_kg: g('c5_hg'),
-        hf_kj_kg: g('c5_hf'),
-        hfg_kj_kg: g('c5_hfg'),
-        x_dryness: g('c5_x'),
-        sf: g('c5_sf'),
-        tds_fw_ppm: g('c5_tdsfw'),
-        tds_max_ppm: g('c5_tdsmax')
+        load_mode: p('c5_load_mode', 'load_mode') || 'direct_kw',
+        q_load_kw: p('c5_qkw', 'q_load_kw'),
+        mp_kg_h: p('c5_mp', 'mp_kg_h'),
+        cp_kj_kgc: p('c5_cp', 'cp_kj_kgc'),
+        t_in_c: p('c5_tin', 't_in_c'),
+        t_out_c: p('c5_tout', 't_out_c'),
+        p_barg_preset: p('c5_steam_preset', 'p_barg_preset'),
+        hg_kj_kg: p('c5_hg', 'hg_kj_kg'),
+        hf_kj_kg: p('c5_hf', 'hf_kj_kg'),
+        hfg_kj_kg: p('c5_hfg', 'hfg_kj_kg'),
+        x_dryness: p('c5_x', 'x_dryness'),
+        sf: p('c5_sf', 'sf'),
+        tds_fw_ppm: p('c5_tdsfw', 'tds_fw_ppm'),
+        tds_max_ppm: p('c5_tdsmax', 'tds_max_ppm')
       });
       const econ = EE ? EE.calcModule5BEconomics(r, {
         currency: cur,
-        t_year_h: g('c5_t_year'),
-        eta_boiler_pct: g('c5_eta'),
-        tariff_per_gj: g('c5_tariff_gj')
+        t_year_h: p('c5_t_year', 't_year_h'),
+        eta_boiler_pct: p('c5_eta', 'eta_boiler_pct'),
+        tariff_per_gj: p('c5_tariff_gj', 'tariff_per_gj')
       }) : null;
       return {
         qLoadKw: r.qLoadKw,
@@ -627,7 +733,8 @@
 
   // Чтение точных метрических входных значений модуля из DOM
   function readModuleInputsSiFromDom(moduleCode) {
-    const def = MODULE_DEFS[moduleCode];
+    const code = String(moduleCode || '').toUpperCase().replace(/-DOE$/, '');
+    const def = MODULE_DEFS[code];
     if (!def) return {};
     const out = {};
     for (const inp of def.inputs) {
@@ -654,7 +761,7 @@
       return { ok: false, reason: 'limit_exceeded', max: MAX_SAVED_CALCS };
     }
     limitWarningActive = false;
-    const moduleCode = String(recordData.module || '2').toUpperCase();
+    const moduleCode = String(recordData.module || '2').toUpperCase().replace(/-DOE$/, '');
     const cur = recordData.currency || (typeof root.getCalculatorCurrency === 'function' ? root.getCalculatorCurrency() : '$');
     const sys = recordData.savedInUnitSystem || (typeof root.getCalculatorUnitSystem === 'function' ? root.getCalculatorUnitSystem() : 'si');
     const inputsSi = { ...(recordData.inputsSi || {}) };
@@ -690,36 +797,65 @@
     return { ok: true, record: newRec };
   }
 
+  function showCardSaveFeedbackError(btnEl, moduleCode, errMsg) {
+    if (typeof document === 'undefined') return;
+    const wrapper = btnEl && typeof btnEl.closest === 'function' ? btnEl.closest('.calc-card-wrapper') : null;
+    const targetBox = wrapper || document.getElementById(`out-calc-${String(moduleCode || '').toLowerCase()}`);
+    if (!targetBox) return;
+    let errEl = targetBox.querySelector('.calc-save-error-banner');
+    if (!errEl) {
+      errEl = document.createElement('div');
+      errEl.className = 'warning-box calc-save-error-banner';
+      errEl.setAttribute('role', 'alert');
+      errEl.style.marginTop = '0.5rem';
+      targetBox.appendChild(errEl);
+    }
+    errEl.textContent = errMsg;
+  }
+
   // Сохранение текущего расчёта модуля из карточки калькулятора
   function saveCalculationFromCard(moduleCode, btnEl, optionalNote) {
     const lang = (root.AppState && root.AppState.lang === 'he') ? 'he' : 'ru';
     const t = I18N[lang];
-    const code = String(moduleCode || '2').toUpperCase();
-    const inputsSi = readModuleInputsSiFromDom(code);
-    const cur = typeof root.getCalculatorCurrency === 'function' ? root.getCalculatorCurrency() : '$';
-    const resultsSi = computeResultsSiFromInputs(code, inputsSi, cur);
+    const code = String(moduleCode || '2').toUpperCase().replace(/-DOE$/, '');
+    try {
+      const inputsSi = readModuleInputsSiFromDom(code);
+      const cur = typeof root.getCalculatorCurrency === 'function' ? root.getCalculatorCurrency() : '$';
+      const resultsSi = computeResultsSiFromInputs(code, inputsSi, cur);
 
-    let note = optionalNote;
-    if (note === undefined) {
-      note = `${t.defaultNotePrefix}${code}`;
+      let note = optionalNote;
+      if (note === undefined) {
+        note = `${t.defaultNotePrefix}${code}`;
+      }
+
+      const res = addSavedRecord({
+        module: code,
+        note,
+        currency: cur,
+        inputsSi,
+        resultsSi
+      });
+
+      if (btnEl && typeof btnEl.closest === 'function') {
+        const wrapper = btnEl.closest('.calc-card-wrapper');
+        const oldErr = wrapper && wrapper.querySelector('.calc-save-error-banner');
+        if (oldErr) oldErr.remove();
+      }
+
+      if (btnEl && res.ok) {
+        const orig = btnEl.textContent;
+        btnEl.textContent = lang === 'he' ? '✓ נשמר ב"החישובים שלי"!' : '✓ Сохранено в «Мои расчёты»!';
+        setTimeout(() => {
+          btnEl.textContent = orig;
+        }, 1600);
+      }
+      return res;
+    } catch (err) {
+      const rawMsg = err && err.message ? err.message : String(err);
+      const fullMsg = `${t.saveErrorPrefix} ${rawMsg}`;
+      showCardSaveFeedbackError(btnEl, code, fullMsg);
+      return { ok: false, reason: 'compute_error', error: rawMsg };
     }
-
-    const res = addSavedRecord({
-      module: code,
-      note,
-      currency: cur,
-      inputsSi,
-      resultsSi
-    });
-
-    if (btnEl && res.ok) {
-      const orig = btnEl.textContent;
-      btnEl.textContent = lang === 'he' ? '✓ נשמר ב"החישובים שלי"!' : '✓ Сохранено в «Мои расчёты»!';
-      setTimeout(() => {
-        btnEl.textContent = orig;
-      }, 1600);
-    }
-    return res;
   }
 
   // Открытие сохранённого расчёта обратно в калькуляторе
@@ -888,12 +1024,64 @@
     return `${UC.formatWithSpaces(dispNum, dec)}${unitSym ? ' ' + unitSym : ''}`;
   }
 
+  function getRecordOutputVal(rec, out) {
+    if (!rec || !rec.resultsSi || !out) return undefined;
+    if (rec.resultsSi[out.key] !== undefined) return rec.resultsSi[out.key];
+    if (out.legacyKey && rec.resultsSi[out.legacyKey] !== undefined) return rec.resultsSi[out.legacyKey];
+    return undefined;
+  }
+
+  function isRecordDoeImperial(rec) {
+    if (!rec || rec.module !== '1A') return false;
+    const mode = rec.inputsSi && (rec.inputsSi.c1a_mode || rec.inputsSi.mode);
+    return mode === 'doe_s21_imperial' || (rec.resultsSi && rec.resultsSi.mode === 'doe_s21_imperial');
+  }
+
+  function isRecord5AKpa(rec) {
+    if (!rec || rec.module !== '5A') return false;
+    const unit = rec.inputsSi && (rec.inputsSi.c5a_unit || rec.inputsSi.unit);
+    return unit === 'kpa';
+  }
+
+  function isMoneyOrTariffField(fieldCfg) {
+    if (!fieldCfg) return false;
+    const q = fieldCfg.quantity || 'none';
+    if (q === 'money' || q === 'tariff_energy') return true;
+    const id = String(fieldCfg.id || fieldCfg.key || '');
+    return id.includes('tariff');
+  }
+
   function computeComparisonRows(recA, recB, lang, sys) {
     if (!recA || !recB || recA.module !== recB.module) return null;
     const def = MODULE_DEFS[recA.module];
     if (!def) return null;
+    const t = I18N[lang === 'he' ? 'he' : 'ru'];
+
+    if (isRecordDoeImperial(recA) || isRecordDoeImperial(recB)) {
+      return {
+        module: recA.module,
+        blocked: true,
+        blockedReason: 'doe_s21_imperial',
+        blockedMessage: t.doeCompareBlocked,
+        inputRows: [],
+        outputRows: []
+      };
+    }
+    if (isRecord5AKpa(recA) || isRecord5AKpa(recB)) {
+      return {
+        module: recA.module,
+        blocked: true,
+        blockedReason: '5a_kpa',
+        blockedMessage: t.kpaCompareBlocked,
+        inputRows: [],
+        outputRows: []
+      };
+    }
+
     const UC = root.UnitConverter;
     const EE = root.EconomicsEngine;
+    const diffCurrencies = (recA.currency || '$') !== (recB.currency || '$');
+    const diffUnitSystems = (recA.savedInUnitSystem || 'si') !== (recB.savedInUnitSystem || 'si');
 
     const buildRow = (fieldCfg, rawA, rawB, curA, curB) => {
       const label = (fieldCfg.label && (fieldCfg.label[lang] || fieldCfg.label.ru)) || fieldCfg.id || fieldCfg.key;
@@ -901,6 +1089,9 @@
       const strB = formatValueInActiveUnits(rawB, fieldCfg, lang, sys, curB);
 
       if (fieldCfg.isSelect || rawA === '' || rawA === null || rawA === undefined || rawB === '' || rawB === null || rawB === undefined) {
+        return { key: fieldCfg.id || fieldCfg.key, label, strA, strB, diffAbsStr: '—', diffPctStr: '—', diffSi: null, diffActive: null };
+      }
+      if (diffCurrencies && isMoneyOrTariffField(fieldCfg)) {
         return { key: fieldCfg.id || fieldCfg.key, label, strA, strB, diffAbsStr: '—', diffPctStr: '—', diffSi: null, diffActive: null };
       }
       const numA = Number(rawA);
@@ -954,10 +1145,17 @@
       };
     };
 
-    const inputRows = def.inputs.map((inp) => buildRow(inp, recA.inputsSi[inp.id], recB.inputsSi[inp.id], recA.currency, recB.currency));
-    const outputRows = def.outputs.map((out) => buildRow(out, recA.resultsSi[out.key], recB.resultsSi[out.key], recA.currency, recB.currency));
+    const inputRows = def.inputs.map((inp) => buildRow(inp, recA.inputsSi ? recA.inputsSi[inp.id] : undefined, recB.inputsSi ? recB.inputsSi[inp.id] : undefined, recA.currency, recB.currency));
+    const outputRows = def.outputs.map((out) => buildRow(out, getRecordOutputVal(recA, out), getRecordOutputVal(recB, out), recA.currency, recB.currency));
 
-    return { module: recA.module, inputRows, outputRows };
+    return {
+      module: recA.module,
+      blocked: false,
+      diffCurrencies,
+      diffUnitSystems,
+      inputRows,
+      outputRows
+    };
   }
 
   function exportSavedCalcsToJsonString() {
@@ -986,7 +1184,7 @@
     }
     limitWarningActive = false;
     const normalized = list.map((r, idx) => {
-      const mod = String(r.module || '2').toUpperCase();
+      const mod = String(r.module || '2').toUpperCase().replace(/-DOE$/, '');
       const cur = r.currency || '$';
       const inputsSi = r.inputsSi || {};
       const resultsSi = r.resultsSi || computeResultsSiFromInputs(mod, inputsSi, cur);
@@ -1017,6 +1215,25 @@
       .replace(/"/g, '&quot;');
   }
 
+  function formatOptionSummary(rec, lang, sys) {
+    if (!rec) return '';
+    const def = MODULE_DEFS[rec.module];
+    const dateShort = String(rec.savedAt || '').replace('T', ' ').slice(0, 16);
+    const note = (lang === 'he' && rec.noteHe) ? rec.noteHe : ((lang !== 'he' && rec.noteRu) ? rec.noteRu : (rec.note || rec.id || ''));
+    const keyNums = [];
+    if (def && Array.isArray(def.outputs)) {
+      for (const out of def.outputs) {
+        const val = getRecordOutputVal(rec, out);
+        if (val !== null && val !== undefined && val !== '') {
+          keyNums.push(`${out.key}: ${formatValueInActiveUnits(val, out, lang, sys, rec.currency)}`);
+          if (keyNums.length >= 2) break;
+        }
+      }
+    }
+    const numsPart = keyNums.length > 0 ? ` — [${keyNums.join('; ')}]` : '';
+    return `[${rec.module}] ${dateShort} · ${note}${numsPart}`;
+  }
+
   function renderSavedCalcsSection() {
     if (typeof document === 'undefined') return;
     const box = document.getElementById('dynamic-saved-calcs-container');
@@ -1035,7 +1252,8 @@
       compareIdA = filtered[0].id;
     }
     if ((!compareIdB || !records.some((r) => r.id === compareIdB)) && filtered.length >= 2) {
-      const second = filtered.find((r) => r.id !== compareIdA && r.module === (records.find((x) => x.id === compareIdA) || {}).module);
+      const baseMod = (records.find((x) => x.id === compareIdA) || {}).module;
+      const second = filtered.find((r) => r.id !== compareIdA && r.module === baseMod) || filtered.find((r) => r.id !== compareIdA);
       if (second) compareIdB = second.id;
     }
 
@@ -1061,9 +1279,13 @@
       ? `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">${t.emptyList}</td></tr>`
       : filtered.map((rec) => {
           const def = MODULE_DEFS[rec.module];
-          const primaryOut = def && def.outputs && def.outputs[0];
-          const primaryStr = primaryOut
-            ? `${primaryOut.label[lang]}: <code dir="ltr"><strong>${formatValueInActiveUnits(rec.resultsSi[primaryOut.key], primaryOut, lang, sys, rec.currency)}</strong></code>`
+          let primaryOut = def && def.outputs && def.outputs[0];
+          if (rec.module === '1A' && isRecordDoeImperial(rec) && def && def.outputs) {
+            primaryOut = def.outputs.find((o) => o.key === 'qThermalKw') || primaryOut;
+          }
+          const outVal = primaryOut ? getRecordOutputVal(rec, primaryOut) : undefined;
+          const primaryStr = (primaryOut && outVal !== undefined && outVal !== null)
+            ? `${primaryOut.label[lang]}: <code dir="ltr"><strong>${formatValueInActiveUnits(outVal, primaryOut, lang, sys, rec.currency)}</strong></code>`
             : '—';
           const dateShort = String(rec.savedAt || '').replace('T', ' ').slice(0, 16);
           return `
@@ -1084,21 +1306,54 @@
           `;
         }).join('');
 
+    const compareCandidates = filtered.length > 0 ? filtered : records;
+    const selectOptionsA = compareCandidates.map((r) =>
+      `<option value="${escapeHtml(r.id)}" ${compareIdA === r.id ? 'selected' : ''}>${escapeHtml(formatOptionSummary(r, lang, sys))}</option>`
+    ).join('');
+    const selectOptionsB = compareCandidates.map((r) =>
+      `<option value="${escapeHtml(r.id)}" ${compareIdB === r.id ? 'selected' : ''}>${escapeHtml(formatOptionSummary(r, lang, sys))}</option>`
+    ).join('');
+
+    const selectsBarHtml = compareCandidates.length > 0 ? `
+      <div class="saved-compare-selects-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:0.75rem; margin-block-bottom:0.75rem;">
+        <div class="field" style="margin:0; min-inline-size:0;">
+          <label for="saved-select-compare-a"><strong>${t.lblCompareA}</strong></label>
+          <select id="saved-select-compare-a" style="inline-size:100%; max-inline-size:100%;" onchange="window.setSavedCompareSlot('A', this.value)">
+            ${selectOptionsA}
+          </select>
+        </div>
+        <div class="field" style="margin:0; min-inline-size:0;">
+          <label for="saved-select-compare-b"><strong>${t.lblCompareB}</strong></label>
+          <select id="saved-select-compare-b" style="inline-size:100%; max-inline-size:100%;" onchange="window.setSavedCompareSlot('B', this.value)">
+            ${selectOptionsB}
+          </select>
+        </div>
+      </div>
+    ` : '';
+
     let compareHtml = '';
-    if (compData) {
+    if (compData && compData.blocked) {
+      compareHtml = `<div class="warning-box" id="saved-compare-blocked-warning" role="alert" style="margin-block-top:0.65rem;">${escapeHtml(compData.blockedMessage)}</div>`;
+    } else if (compData) {
       const renderCompRows = (arr) => arr.map((r) => `
         <tr data-comp-key="${escapeHtml(r.key)}">
-          <td>${escapeHtml(r.label)}</td>
-          <td dir="ltr">${escapeHtml(r.strA)}</td>
-          <td dir="ltr">${escapeHtml(r.strB)}</td>
-          <td dir="ltr"><strong>${escapeHtml(r.diffAbsStr)}</strong></td>
-          <td dir="ltr">${escapeHtml(r.diffPctStr)}</td>
+          <td data-label="${escapeHtml(t.colParam)}">${escapeHtml(r.label)}</td>
+          <td data-label="${escapeHtml(t.colValA)}" dir="ltr">${escapeHtml(r.strA)}</td>
+          <td data-label="${escapeHtml(t.colValB)}" dir="ltr">${escapeHtml(r.strB)}</td>
+          <td data-label="${escapeHtml(t.colDiffAbs)}" dir="ltr"><strong>${escapeHtml(r.diffAbsStr)}</strong></td>
+          <td data-label="${escapeHtml(t.colDiffPct)}" dir="ltr">${escapeHtml(r.diffPctStr)}</td>
         </tr>
       `).join('');
 
+      const noticesHtml = [
+        compData.diffUnitSystems ? `<div class="notice-box" id="saved-compare-units-notice" role="status" style="margin-block-top:0.5rem;">${escapeHtml(t.diffUnitSystemNotice)}</div>` : '',
+        compData.diffCurrencies ? `<div class="warning-box" id="saved-compare-currency-warning" role="alert" style="margin-block-top:0.5rem;">${escapeHtml(t.diffCurrencyWarning)}</div>` : ''
+      ].filter(Boolean).join('');
+
       compareHtml = `
-        <div class="table-wrapper" tabindex="0" role="region" aria-label="${escapeHtml(t.compareTitle)}" style="margin-block-top:0.75rem;">
-          <table id="saved-comparison-table">
+        ${noticesHtml}
+        <div class="table-wrapper saved-comparison-table-wrapper" tabindex="0" role="region" aria-label="${escapeHtml(t.compareTitle)}" style="margin-block-top:0.75rem;">
+          <table id="saved-comparison-table" class="responsive-card-table">
             <thead>
               <tr>
                 <th>${t.colParam}</th>
@@ -1109,9 +1364,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr><th colspan="5" style="background:var(--bg-subtle); text-align:start;">${t.grpOutputs}</th></tr>
+              <tr class="comp-group-header-row"><th colspan="5" style="background:var(--bg-subtle); text-align:start;">${t.grpOutputs}</th></tr>
               ${renderCompRows(compData.outputRows)}
-              <tr><th colspan="5" style="background:var(--bg-subtle); text-align:start;">${t.grpInputs}</th></tr>
+              <tr class="comp-group-header-row"><th colspan="5" style="background:var(--bg-subtle); text-align:start;">${t.grpInputs}</th></tr>
               ${renderCompRows(compData.inputRows)}
             </tbody>
           </table>
@@ -1182,9 +1437,51 @@
       <div style="margin-block-top:1.25rem; border-block-start:1px solid var(--border-color); padding-block-start:1rem;">
         <h3 style="margin:0 0 0.4rem;">${t.compareTitle}</h3>
         <p style="margin:0 0 0.65rem; font-size:0.9rem; color:var(--text-muted);">${t.compareHint}</p>
+        ${selectsBarHtml}
         ${compareHtml}
       </div>
     `;
+  }
+
+  function compareCurrentCardWithSaved(moduleCode, btnEl) {
+    const lang = (root.AppState && root.AppState.lang === 'he') ? 'he' : 'ru';
+    const t = I18N[lang];
+    const code = String(moduleCode || '2').toUpperCase().replace(/-DOE$/, '');
+    const records = loadSavedRecords();
+    const sameMod = records.filter((r) => r.module === code);
+
+    if (sameMod.length === 0) {
+      if (typeof document !== 'undefined') {
+        const wrapper = btnEl && typeof btnEl.closest === 'function' ? btnEl.closest('.calc-card-wrapper') : null;
+        const targetBox = wrapper || document.getElementById(`out-calc-${code.toLowerCase()}`);
+        if (targetBox) {
+          let hintEl = targetBox.querySelector('.calc-compare-hint-banner');
+          if (!hintEl) {
+            hintEl = document.createElement('div');
+            hintEl.className = 'notice-box calc-compare-hint-banner';
+            hintEl.setAttribute('role', 'status');
+            hintEl.style.marginTop = '0.5rem';
+            targetBox.appendChild(hintEl);
+          }
+          hintEl.textContent = t.compareNeedSaveHint;
+        }
+      }
+      return { ok: false, reason: 'no_saved_record', module: code };
+    }
+
+    filterModule = code;
+    const latestRec = sameMod[sameMod.length - 1];
+    compareIdA = latestRec.id;
+    if (sameMod.length >= 2) {
+      compareIdB = sameMod[sameMod.length - 2].id;
+    }
+    renderSavedCalcsSection();
+    if (typeof root.showToolSubview === 'function') {
+      root.showToolSubview('sec-saved', { scrollTop: true, focusHeading: false });
+    } else if (typeof root.navigateToHash === 'function') {
+      root.navigateToHash('#sec-saved');
+    }
+    return { ok: true, module: code, compareIdA, compareIdB };
   }
 
   if (typeof root !== 'undefined') {
@@ -1193,6 +1490,7 @@
     root.openSavedCalculation = openSavedCalculation;
     root.deleteSavedCalculation = deleteSavedCalculation;
     root.loadSampleComparisonModule2 = loadSampleComparisonModule2;
+    root.compareCurrentCardWithSaved = compareCurrentCardWithSaved;
 
     root.setSavedCalcsModuleFilter = function (mod) {
       filterModule = mod || 'ALL';
@@ -1261,6 +1559,7 @@
     deleteSavedCalculation,
     loadSampleComparisonModule2,
     computeComparisonRows,
+    compareCurrentCardWithSaved,
     exportSavedCalcsToJsonString,
     importSavedCalcsFromJsonString,
     renderSavedCalcsSection

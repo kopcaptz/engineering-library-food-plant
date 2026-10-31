@@ -4475,6 +4475,435 @@
   details.guide-depth-details > .system-engineer-layer {
     padding: 12px 14px;
   }
+
+  /* =========================================================================
+   * v15.4: Field origin tags («измерено» / «принято» / «справочно»)
+   * ========================================================================= */
+  .field-origin-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-block: 2px 3px;
+  }
+
+  .field-origin-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    cursor: help;
+    max-inline-size: 100%;
+  }
+
+  .field-origin-tag[data-origin="measured"] {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+  }
+
+  .field-origin-tag[data-origin="assumed"] {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fde68a;
+  }
+
+  .field-origin-tag[data-origin="reference"] {
+    background: #eff6ff;
+    color: #1e40af;
+    border-color: #bfdbfe;
+  }
+
+  /* =========================================================================
+   * v15.4: «Что это значит» и «Границы применимости» в карточке результата
+   * ========================================================================= */
+  .calc-card-meaning,
+  .calc-card-limits {
+    margin-block-start: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .calc-card-meaning {
+    background: #f0f9ff;
+    border-inline-start: 4px solid #0284c7;
+    color: #0c4a6e;
+  }
+
+  .calc-card-limits {
+    background: #f8fafc;
+    border-inline-start: 4px solid #64748b;
+    color: #334155;
+  }
+
+  .calc-save-error-banner {
+    margin-block-top: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  /* =========================================================================
+   * v15.4: Учебные опыты в калькуляторах (details.calc-experiments)
+   * ========================================================================= */
+  details.calc-experiments {
+    margin-block-start: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background: #ffffff;
+    overflow: hidden;
+    max-inline-size: 100%;
+    box-sizing: border-box;
+  }
+
+  details.calc-experiments > summary.calc-experiments-summary {
+    padding: 11px 16px;
+    min-block-size: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: #f1f5f9;
+    color: #0f172a;
+    font-size: 0.96rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  details.calc-experiments > summary.calc-experiments-summary:hover {
+    background: #e2e8f0;
+  }
+
+  details.calc-experiments[open] > summary.calc-experiments-summary {
+    border-block-end: 1px solid #cbd5e1;
+    background: #e0f2fe;
+    color: #0f4c81;
+  }
+
+  .calc-experiments-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-inline-size: 100%;
+    box-sizing: border-box;
+  }
+
+  .calc-experiments-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block-end: 8px;
+    border-block-end: 1px dashed #cbd5e1;
+  }
+
+  .calc-experiments-subtitle {
+    font-size: 0.86rem;
+    color: #475569;
+    font-weight: 600;
+  }
+
+  .calc-experiments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .exp-item {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-inline-size: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+  }
+
+  .exp-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
+  .exp-item-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: #e0f2fe;
+    color: #075985;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .exp-question {
+    margin: 0;
+    font-size: 0.93rem;
+    line-height: 1.45;
+    color: #0f172a;
+  }
+
+  .exp-hypothesis-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #475569;
+  }
+
+  .exp-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .exp-option-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+  }
+
+  .exp-option-row input[type="radio"] {
+    margin-block-start: 3px;
+    flex-shrink: 0;
+    inline-size: 18px;
+    block-size: 18px;
+    cursor: pointer;
+  }
+
+  .exp-option-row label {
+    font-size: 0.88rem;
+    line-height: 1.38;
+    color: #1e293b;
+    cursor: pointer;
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .exp-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-block-start: 2px;
+  }
+
+  .exp-hint-warning {
+    padding: 7px 10px;
+    border-radius: 7px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    font-size: 0.84rem;
+    font-weight: 600;
+  }
+
+  .exp-result-box {
+    margin-block-start: 4px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    font-size: 0.87rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+  }
+
+  .exp-verdict {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.83rem;
+    font-weight: 700;
+  }
+
+  .exp-verdict.is-correct {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+  }
+
+  .exp-verdict.is-wrong {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+  }
+
+  .exp-delta {
+    padding: 6px 9px;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .exp-explain,
+  .exp-formula {
+    color: #1e293b;
+  }
+
+  .exp-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-block-start: 4px;
+    border-block-start: 1px dashed #e2e8f0;
+    font-size: 0.83rem;
+  }
+
+  /* =========================================================================
+   * v15.4: Сравнение двух наборов А / Б (#sec-saved, table#saved-comparison-table)
+   * ========================================================================= */
+  .saved-compare-selectors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+    margin-block-end: 10px;
+  }
+
+  .saved-compare-select-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .saved-compare-select-field label {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .saved-compare-select-field select {
+    inline-size: 100%;
+    max-inline-size: 100%;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    font-size: 0.85rem;
+    color: #0f172a;
+  }
+
+  .saved-compare-notice-banner,
+  .saved-compare-warning-banner,
+  .saved-compare-blocked-banner {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-block-end: 8px;
+  }
+
+  .saved-compare-notice-banner {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e3a8a;
+  }
+
+  .saved-compare-warning-banner {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+
+  .saved-compare-blocked-banner {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    font-weight: 600;
+  }
+
+  @media (max-width: 600px) {
+    .calc-experiments-body {
+      padding: 10px;
+    }
+
+    .exp-item {
+      padding: 10px;
+    }
+
+    table#saved-comparison-table,
+    table#saved-comparison-table tbody {
+      display: block;
+      inline-size: 100%;
+    }
+
+    table#saved-comparison-table thead {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    table#saved-comparison-table tbody tr {
+      display: block;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-block-end: 8px;
+      padding: 8px 10px;
+      background: #ffffff;
+    }
+
+    table#saved-comparison-table tbody tr.saved-compare-group-row {
+      background: #e2e8f0;
+      padding: 6px 10px;
+    }
+
+    table#saved-comparison-table tbody td {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      padding: 4px 0;
+      border: none;
+      border-block-end: 1px dashed #f1f5f9;
+      text-align: end;
+      font-size: 0.84rem;
+      overflow-wrap: anywhere;
+    }
+
+    table#saved-comparison-table tbody td:last-child {
+      border-block-end: none;
+    }
+
+    table#saved-comparison-table tbody td[data-label]::before {
+      content: attr(data-label);
+      font-weight: 700;
+      color: #475569;
+      text-align: start;
+      flex: 0 0 42%;
+    }
+  }
 }
 
 @layer print {
@@ -4709,7 +5138,8 @@
     .guide-toc-bar,
     .guide-steps-strip,
     .guide-depth-toggle,
-    .selfcheck-toolbar {
+    .selfcheck-toolbar,
+    details.calc-experiments {
       display: none !important;
     }
 

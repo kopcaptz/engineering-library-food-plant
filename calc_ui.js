@@ -212,9 +212,10 @@
     }
   }
 
-  function setFieldFromSiValue(id, siStr) {
+  function setFieldFromSiValue(id, siStrInput) {
     const el = document.getElementById(id);
     if (!el) return;
+    const siStr = siStrInput === null || siStrInput === undefined ? '' : String(siStrInput);
     const UC = root.UnitConverter;
     const sys = getUnitSystem();
     const cfg = UC && UC.FIELD_UNIT_MAP ? UC.FIELD_UNIT_MAP[id] : null;
@@ -282,6 +283,16 @@
           root.runCalc5A();
         } else if (root.UnitConverter && root.UnitConverter.FIELD_UNIT_MAP[t.id]) {
           syncSingleInputFromDOM(t, getUnitSystem());
+        }
+      });
+      calcSec.addEventListener('click', (ev) => {
+        const cmpBtn = ev.target && ev.target.closest && ev.target.closest('.compare-calc-card-btn');
+        if (cmpBtn) {
+          ev.preventDefault();
+          const mod = cmpBtn.getAttribute('data-compare-module');
+          if (typeof root.compareCurrentCardWithSaved === 'function') {
+            root.compareCurrentCardWithSaved(mod, cmpBtn);
+          }
         }
       });
       calcSec.addEventListener('keydown', (ev) => {
@@ -427,6 +438,52 @@
     if (typeof root.renderSteamTableSection === 'function') root.renderSteamTableSection();
   };
 
+  function getExpData() {
+    return root.LEARNING_EXPERIMENTS || null;
+  }
+
+  function getExpUi(lang) {
+    const expData = getExpData();
+    if (!expData || !expData.UI) return null;
+    return expData.UI[lang === 'he' ? 'he' : 'ru'] || expData.UI.ru;
+  }
+
+  function getFieldOriginLabel(id, lang) {
+    const expData = getExpData();
+    const ui = getExpUi(lang);
+    if (!expData || !expData.FIELD_ORIGIN || !ui) return '';
+    const origin = expData.FIELD_ORIGIN[id];
+    if (origin === 'measured') return ui.originTagMeasured;
+    if (origin === 'assumed') return ui.originTagAssumed;
+    if (origin === 'reference') return ui.originTagReference;
+    return '';
+  }
+
+  function getFieldOriginTooltip(id, lang) {
+    const expData = getExpData();
+    const ui = getExpUi(lang);
+    if (!expData || !ui) return '';
+    const meta = expData.FIELD_ORIGIN_META && expData.FIELD_ORIGIN_META[id];
+    const origin = expData.FIELD_ORIGIN && expData.FIELD_ORIGIN[id];
+    const baseTip = origin === 'measured'
+      ? ui.originTooltipMeasured
+      : origin === 'assumed'
+      ? ui.originTooltipAssumed
+      : origin === 'reference'
+      ? ui.originTooltipReference
+      : '';
+    if (meta) {
+      const reason = lang === 'he' ? (meta.he || meta.ru) : meta.ru;
+      return reason ? `${baseTip} — ${reason}` : baseTip;
+    }
+    return baseTip;
+  }
+
+  function originParen(id) {
+    const lbl = getFieldOriginLabel(id, getLang());
+    return lbl ? ` (${lbl})` : '';
+  }
+
   function fmtFieldSummary(id, fallbackUnitSiRu, fallbackUnitSiHe) {
     const raw = valOf(id);
     if (raw === '' || raw === null || raw === undefined) return '—';
@@ -434,12 +491,13 @@
     const lang = getLang();
     const sys = getUnitSystem();
     const cfg = UC && UC.FIELD_UNIT_MAP && UC.FIELD_UNIT_MAP[id];
+    const origSuffix = originParen(id);
     if (!cfg || cfg.quantity === 'none' || cfg.quantity === 'si_only' || !isFieldConvertedNow(id, sys)) {
       const u = (lang === 'he' ? fallbackUnitSiHe : fallbackUnitSiRu) || (UC ? UC.getUnitSymbol(cfg ? cfg.quantity : 'none', lang, 'si') : '');
-      return u ? `${raw} ${u}` : `${raw}`;
+      return (u ? `${raw} ${u}` : `${raw}`) + origSuffix;
     }
     const u = UC.getUnitSymbol(cfg.quantity, lang, sys);
-    return u ? `${raw} ${u}` : `${raw}`;
+    return (u ? `${raw} ${u}` : `${raw}`) + origSuffix;
   }
 
   function translateRuntimeText(text, lang) {
@@ -567,6 +625,15 @@
   function buildCalcCardHtml(moduleCode, titleText, inputsSummary, resultsHtml, assumptionsText, warningsList = []) {
     const lang = getLang();
     const isHe = lang === 'he';
+    const normMod = String(moduleCode || '').toUpperCase().replace(/-DOE$/i, '');
+    const expData = getExpData();
+    const expUi = getExpUi(lang);
+    const meaningObj = expData && expData.MODULE_MEANING && expData.MODULE_MEANING[normMod];
+    const meaningText = meaningObj ? (meaningObj[lang] || meaningObj.ru) : '';
+    const lblMeaning = (expUi && expUi.whatItMeansTitle) || (isHe ? 'מה משמעות התוצאה' : 'Что это значит');
+    const lblLimits = (expUi && expUi.applicabilityLimitsTitle) || (isHe ? 'גבולות גזרה ותחום תקפות' : 'Границы применимости');
+    const btnCompare = (expUi && expUi.btnCompareWithSaved) || (isHe ? '⚖️ השוואה עם חישוב שמור ←' : '⚖️ Сравнить с сохранённым →');
+
     const lblDate = isHe ? 'תאריך וגרסה:' : 'Дата и редакция:';
     const lblInputs = isHe ? 'נתוני קלט שהוזנו:' : 'Введённые исходные данные:';
     const lblAssump = isHe ? 'הנחות יסוד ותחום תקפות:' : 'Допущения и область применимости:';
@@ -587,6 +654,8 @@
         <div class="calc-card-body">
           ${resultsHtml}
           ${warningsHtml}
+          ${meaningText ? `<div class="calc-card-meaning"><strong>${lblMeaning}:</strong> ${meaningText}</div>` : ''}
+          ${assumptionsText ? `<div class="calc-card-limits"><strong>${lblLimits}:</strong> ${assumptionsText}</div>` : ''}
         </div>
         <details class="calc-how-it-works-details calc-card-how-details">
           <summary>${lblHow}</summary>
@@ -597,6 +666,7 @@
         </details>
         <div class="calc-card-actions no-print">
           <button type="button" class="btn btn-primary btn-sm save-calc-card-btn" data-save-module="${moduleCode}" onclick="window.saveCalculationFromCard('${moduleCode}', this)">${btnSave}</button>
+          <button type="button" class="btn btn-outline btn-sm compare-calc-card-btn" data-compare-module="${normMod}">${btnCompare}</button>
           <button type="button" class="btn btn-outline btn-sm" onclick="window.copyCalculationCard(this)">${btnCopy}</button>
           <button type="button" class="btn btn-outline btn-sm" onclick="window.printCalculationCard(this)">${btnPrint}</button>
         </div>
@@ -842,7 +912,7 @@
         const card = buildCalcCardHtml(
           '1A-DOE',
           isHe ? 'תוצאות חישוב ייחוס DOE S21 ([S21, Steam Tip Sheet #8, PDF p. 1])' : 'Результаты расчёта по эталону DOE S21 ([S21, Steam Tip Sheet #8, PDF p. 1])',
-          `m=${r.mLbHr} lb/hr, hf_cond=${valOf('c1a_t_cond')} Btu/lb, hf_mk=${valOf('c1a_t_make')} Btu/lb, t_yr=${valOf('c1a_t_year')} h`,
+          `m=${r.mLbHr} lb/hr${originParen('c1a_m_kg_h')}, hf_cond=${valOf('c1a_t_cond')} Btu/lb${originParen('c1a_t_cond')}, hf_mk=${valOf('c1a_t_make')} Btu/lb${originParen('c1a_t_make')}, t_yr=${valOf('c1a_t_year')} h${originParen('c1a_t_year')}`,
           html,
           isHe ? 'חישוב אנתלפיית נוזל לפי DOE Tip Sheet #8 (S21).' : 'Расчёт по энтальпиям жидкого конденсата и подпитки согласно DOE Tip Sheet #8 (S21).',
           warnings1ADoe
@@ -994,7 +1064,7 @@
       const card = buildCalcCardHtml(
         '1A',
         isHe ? 'תוצאות חישוב קונדנסט ראשי (מודול 1א, [S01, PDF p. 37])' : 'Результаты основного расчёта конденсата (Модуль 1А, [S01, PDF p. 37])',
-        `T_cond=${fmtFieldSummary('c1a_t_cond')}, T_make=${fmtFieldSummary('c1a_t_make')}, ρ=${fmtFieldSummary('c1a_rho')}, cp=${fmtFieldSummary('c1a_cp')}, t_shift=${r.tShiftH} h`,
+        `T_cond=${fmtFieldSummary('c1a_t_cond')}, T_make=${fmtFieldSummary('c1a_t_make')}, ρ=${fmtFieldSummary('c1a_rho')}, cp=${fmtFieldSummary('c1a_cp')}, t_shift=${r.tShiftH} h${originParen('c1a_t_shift')}`,
         bodyHtml,
         isHe ? 'חום מורגש של מים נוזליים בלבד (Q = m·cp·ΔT / 3600). לקיטור משני ראו מודול 1ב.' : 'Учитывается только чувствительное тепло жидкой фазы (Q = m·cp·ΔT / 3600). Для вторичного пара см. Модуль 1Б.',
         warnings1A
@@ -1455,7 +1525,7 @@
       const card = buildCalcCardHtml(
         '3A',
         isHe ? 'תוצאות המרת ספיקת אוויר (מודול 3א, [S13, PDF p. 16, 50])' : 'Результаты пересчёта объёмного расхода (Модуль 3А, [S13, PDF p. 16, 50])',
-        `Q1=${valOf('c3a_q1')} NL/s (SI), P1=${fmtFieldSummary('c3a_p1')}, T1=${fmtFieldSummary('c3a_t1')} → P2=${fmtFieldSummary('c3a_p2')}, T2=${fmtFieldSummary('c3a_t2')}`,
+        `Q1=${valOf('c3a_q1')} NL/s (SI)${originParen('c3a_q1')}, P1=${fmtFieldSummary('c3a_p1')}, T1=${fmtFieldSummary('c3a_t1')} → P2=${fmtFieldSummary('c3a_p2')}, T2=${fmtFieldSummary('c3a_t2')}`,
         bodyHtml,
         isHe ? 'משוואת גז אידיאלי לאוויר יבש בקיזוז לחץ חלקי של אדי מים (P_dry = P_abs − φ·p_sat).' : 'Закон идеального газа для сухой части воздуха с вычетом парциального давления пара (P_dry = P_abs − φ·p_sat).'
       );
@@ -1536,7 +1606,7 @@
       const card = buildCalcCardHtml(
         '3B',
         isHe ? 'תוצאות הערכת דליפות אוויר דחוס (מודול 3ב, [S12, PDF p. 53–54])' : 'Результаты оценки утечек сжатого воздуха (Модуль 3Б, [S12, PDF p. 53–54])',
-        `method=${r.method}, V_rec=${fmtFieldSummary('c3b_vr')}, P1=${fmtFieldSummary('c3b_pstart')}→P2=${fmtFieldSummary('c3b_pend')}, t=${valOf('c3b_tdecay')} min, Q_comp=${fmtFieldSummary('c3b_qcomp')}`,
+        `method=${r.method}${originParen('c3b_method')}, V_rec=${fmtFieldSummary('c3b_vr')}, P1=${fmtFieldSummary('c3b_pstart')}→P2=${fmtFieldSummary('c3b_pend')}, t=${valOf('c3b_tdecay')} min${originParen('c3b_tdecay')}, Q_comp=${fmtFieldSummary('c3b_qcomp')}`,
         bodyHtml,
         isHe ? 'המדידה מתבצעת בזמן השבתת צרכני הייצור לפי נוהל US DOE [S12, PDF p. 53–54].' : 'Замер выполняется при остановленных технологических потребителях по методике US DOE [S12, PDF p. 53–54].'
       );
@@ -1598,7 +1668,7 @@
       const card = buildCalcCardHtml(
         '3C',
         isHe ? 'תוצאות מאזן התעבות לחות לפי Atlas Copco (מודול 3ג, [S13, PDF p. 122])' : 'Результаты балансового расчёта влаги по Atlas Copco (Модуль 3В, [S13, PDF p. 122])',
-        `q_c=${valOf('c3_qc')} L/s, RH=${valOf('c3_rh')}, ρ_in=${valOf('c3_rho_in')} g/m³, p_after=${valOf('c3_pafter')} bar(a), ρ_out=${valOf('c3_rho_out')} g/m³`,
+        `q_c=${valOf('c3_qc')} L/s${originParen('c3_qc')}, RH=${valOf('c3_rh')}${originParen('c3_rh')}, ρ_in=${valOf('c3_rho_in')} g/m³${originParen('c3_rho_in')}, p_after=${valOf('c3_pafter')} bar(a)${originParen('c3_pafter')}, ρ_out=${valOf('c3_rho_out')} g/m³${originParen('c3_rho_out')}`,
         bodyHtml,
         isHe ? 'מציג הן את החישוב המדויק והן את שיטת העיגול של Atlas Copco [S13, Section 5.4.1, PDF p. 122].' : 'Показаны как точный расчёт с температурной поправкой, так и упрощённая формула с округлением из примера Atlas Copco [S13, PDF p. 122].'
       );
@@ -1713,7 +1783,7 @@
       const card = buildCalcCardHtml(
         '4A',
         isHe ? 'תוצאות מאזן זרימה ומוליכות RO (מודול 4א, [S16, PDF p. 35, 102, 152])' : 'Результаты баланса потоков и проводимости RO (Модуль 4А, [S16, PDF p. 35, 102, 152])',
-        `Qp=${fmtFieldSummary('c4a_qp')}, Qc=${fmtFieldSummary('c4a_qc')}, ECf=${valOf('c4a_ecf')} µS/cm, ECp=${valOf('c4a_ecp')} µS/cm, ECc=${valOf('c4a_ecc') || '—'} µS/cm`,
+        `Qp=${fmtFieldSummary('c4a_qp')}, Qc=${fmtFieldSummary('c4a_qc')}, ECf=${valOf('c4a_ecf')} µS/cm${originParen('c4a_ecf')}, ECp=${valOf('c4a_ecp')} µS/cm${originParen('c4a_ecp')}, ECc=${valOf('c4a_ecc') || '—'} µS/cm${originParen('c4a_ecc')}`,
         bodyHtml,
         isHe ? 'מוליכות חשמלית EC (µS/cm) היא קירוב תפעולי לריכוז מלחים TDS (mg/L); הקשר אינו ליניארי לחלוטין [S16, PDF p. 152].' : 'Электропроводность EC (мкСм/см) — удобное эксплуатационное приближение; связь между EC и TDS (мг/л) не строго линейна [S16, PDF p. 152].',
         warningsList
@@ -1793,7 +1863,7 @@
       const card = buildCalcCardHtml(
         '4B',
         isHe ? 'תוצאות נרמול RO לפי נוסחת DuPont Eq. 72 (מודול 4ב, [S16, PDF p. 131–133])' : 'Результаты нормализации RO по формуле DuPont Eq. 72 (Модуль 4Б, [S16, PDF p. 131–133])',
-        `Qp_o=${fmtFieldSummary('c4_qp')}, Qp_s=${fmtFieldSummary('c4_qbase')}, NDP_s=${fmtFieldSummary('c4_ndps')}→NDP_o=${fmtFieldSummary('c4_ndpo')}, TCF_s=${valOf('c4_tcfs')}→TCF_o=${valOf('c4_tcfo')}`,
+        `Qp_o=${fmtFieldSummary('c4_qp')}, Qp_s=${fmtFieldSummary('c4_qbase')}, NDP_s=${fmtFieldSummary('c4_ndps')}→NDP_o=${fmtFieldSummary('c4_ndpo')}, TCF_s=${fmtFieldSummary('c4_tcfs')}→TCF_o=${fmtFieldSummary('c4_tcfo')}`,
         bodyHtml,
         isHe
           ? 'בדיקת לחץ נגדי בתוצר: P_p − P_c ≤ 0.3 bar (≈ 4.35 psi) / 5 psi (≈ 0.345 bar) למניעת סיכון היפרדות שכבות [S16, p. 106, 165; S17; S20, p. 51].'
@@ -1927,7 +1997,7 @@
       const card = buildCalcCardHtml(
         '5A',
         isHe ? `תוצאות המרת לחץ (מודול 5א, עבור P_atm = ${r.pAtmBar} bar)` : `Результаты перевода давления (Модуль 5А, при P_atm = ${r.pAtmBar} бар)`,
-        `mode=${valOf('c5a_mode')}, P_in=${valOf('c5a_pval')} ${selectedUnit}, P_atm=${fmtFieldSummary('c5a_patm')}`,
+        `mode=${valOf('c5a_mode')}${originParen('c5a_mode')}, P_in=${valOf('c5a_pval')} ${selectedUnit}${originParen('c5a_pval')}, P_atm=${fmtFieldSummary('c5a_patm')}`,
         bodyHtml,
         satNotice,
         warningsList
@@ -2055,7 +2125,7 @@
       const card = buildCalcCardHtml(
         '5B',
         isHe ? 'תוצאות חישוב ספיקת קיטור וניקוז TDS (מודול 5ב, [S01, PDF p. 25, 34; S22])' : 'Результаты расчёта расхода пара и продувки по TDS (Модуль 5Б, [S01, PDF p. 25, 34; S22])',
-        `Q_load=${r.qLoadKw.toFixed(2)} kW, h_fg=${fmtFieldSummary('c5_hfg')}, x=${r.xDryness}, SF=${valOf('c5_sf') || '—'}, TDS_fw=${valOf('c5_tdsfw') || '—'} ppm`,
+        `Q_load=${r.qLoadKw.toFixed(2)} kW${originParen('c5_qkw')}, h_fg=${fmtFieldSummary('c5_hfg')}, x=${r.xDryness}${originParen('c5_x')}, SF=${valOf('c5_sf') || '—'}${originParen('c5_sf')}, TDS_fw=${valOf('c5_tdsfw') || '—'} ppm${originParen('c5_tdsfw')}`,
         bodyHtml,
         isHe
           ? 'בחירת מלכודת קיטור סופית מחייבת ידיעת מפל הלחץ ΔP = P₁ − P₂, לחץ עבודה מרבי MOP וטבלאות יצרן [S01, PDF p. 45–46; S02–S04].'
@@ -2968,5 +3038,432 @@
     });
     // Re-render calculator outputs in the active language without losing user input values
     root.runAllCalculators();
+    renderFieldOriginTags(lang);
+    root.renderExperiments(lang);
+  };
+
+  // ===========================================================================
+  // v15.4 Task 2.4b: Ярлыки происхождения полей («измерено» / «принято» / «справочно»)
+  // ===========================================================================
+  function renderFieldOriginTags(lang) {
+    if (typeof document === 'undefined') return;
+    const expData = getExpData();
+    if (!expData || !expData.FIELD_ORIGIN) return;
+
+    for (const [fid, origin] of Object.entries(expData.FIELD_ORIGIN)) {
+      const fieldEl = document.getElementById(fid);
+      if (!fieldEl) continue;
+      const fieldBox = fieldEl.closest('.field');
+      if (!fieldBox) continue;
+
+      let tagsRow = fieldBox.querySelector('.field-origin-tags-row');
+      if (!tagsRow) {
+        tagsRow = document.createElement('div');
+        tagsRow.className = 'field-origin-tags-row';
+        tagsRow.setAttribute('aria-hidden', 'true');
+        const lblEl = fieldBox.querySelector('label');
+        if (lblEl && lblEl.nextSibling) {
+          fieldBox.insertBefore(tagsRow, lblEl.nextSibling);
+        } else if (lblEl) {
+          fieldBox.appendChild(tagsRow);
+        } else {
+          fieldBox.insertBefore(tagsRow, fieldBox.firstChild);
+        }
+      }
+
+      let tagSpan = tagsRow.querySelector(`span.field-origin-tag[data-field-id="${fid}"]`);
+      if (!tagSpan) {
+        tagSpan = document.createElement('span');
+        tagSpan.className = 'field-origin-tag';
+        tagSpan.setAttribute('data-field-id', fid);
+        tagSpan.setAttribute('aria-hidden', 'true');
+        tagsRow.appendChild(tagSpan);
+      }
+
+      tagSpan.setAttribute('data-origin', origin);
+      tagSpan.setAttribute('title', getFieldOriginTooltip(fid, lang));
+      tagSpan.textContent = getFieldOriginLabel(fid, lang);
+    }
+  }
+
+  // ===========================================================================
+  // v15.4 Task 2.2: Учебные опыты в калькуляторах (1А, 2, 3Б, 4А, 4Б, 5Б)
+  // ===========================================================================
+  const STORAGE_KEY_EXPERIMENTS = 'eng_lib_v15_experiments_v1';
+  let memoryExperimentsProgress = {};
+  const openExperimentModules = new Set();
+  const pendingRadioSelection = {};
+
+  function loadExperimentsProgress() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const raw = localStorage.getItem(STORAGE_KEY_EXPERIMENTS);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            memoryExperimentsProgress = { ...parsed };
+            return memoryExperimentsProgress;
+          }
+        }
+      }
+    } catch (_) {
+      if (typeof root.setStorageAvailabilityForTest === 'function') {
+        root.setStorageAvailabilityForTest(false);
+      }
+    }
+    return { ...memoryExperimentsProgress };
+  }
+
+  function saveExperimentsProgress(progObj) {
+    memoryExperimentsProgress = { ...(progObj || {}) };
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY_EXPERIMENTS, JSON.stringify(memoryExperimentsProgress));
+      }
+    } catch (_) {
+      if (typeof root.setStorageAvailabilityForTest === 'function') {
+        root.setStorageAvailabilityForTest(false);
+      }
+    }
+  }
+
+  const EXP_MODULE_OUT_CONTAINERS = {
+    '1A': 'out-calc-1a',
+    '2': 'out-calc-2',
+    '3B': 'out-calc-3b',
+    '4A': 'out-calc-4a',
+    '4B': 'out-calc-4',
+    '5B': 'out-calc-5'
+  };
+
+  function clearUnusedModuleFieldsForExperiment(exp) {
+    const UC = root.UnitConverter;
+    if (!UC || !UC.FIELD_UNIT_MAP) return;
+    const mappedIds = new Set(Object.values(exp.fieldMap || {}).map((m) => m.id));
+    for (const [id, cfg] of Object.entries(UC.FIELD_UNIT_MAP)) {
+      if (cfg.module !== exp.moduleId) continue;
+      if (mappedIds.has(id)) continue;
+      const el = document.getElementById(id);
+      if (!el || el.tagName === 'SELECT') continue;
+      setFieldFromSiValue(id, '');
+    }
+  }
+
+  function applyExperimentPayloadToForm(exp, payload, isVariant) {
+    clearUnusedModuleFieldsForExperiment(exp);
+    for (const [key, mapCfg] of Object.entries(exp.fieldMap || {})) {
+      const val = payload[key];
+      if (val === undefined) continue;
+      if (mapCfg.selectId) {
+        const selEl = document.getElementById(mapCfg.selectId);
+        const selVal = isVariant ? mapCfg.variantSelectValue : mapCfg.baseSelectValue;
+        if (selEl && selVal !== undefined) {
+          selEl.value = String(selVal);
+          selEl.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        // Clear hg/hf when setting custom hfg so thermodynamic identity check does not reject manual hfg
+        setFieldFromSiValue('c5_hg', '');
+        setFieldFromSiValue('c5_hf', '');
+      }
+      const domEl = document.getElementById(mapCfg.id);
+      if (!domEl) continue;
+      if (mapCfg.isSelect || domEl.tagName === 'SELECT') {
+        domEl.value = String(val);
+        domEl.dispatchEvent(new Event('change', { bubbles: true }));
+      } else {
+        setFieldFromSiValue(mapCfg.id, String(val));
+      }
+    }
+    if (typeof root[exp.uiRunFn] === 'function') {
+      root[exp.uiRunFn]();
+    }
+  }
+
+  function formatExperimentValue(val, exp, lang, sys) {
+    const UC = root.UnitConverter;
+    const q = (exp.expect && exp.expect.quantity) || 'none';
+    const key = (exp.expect && exp.expect.key) || '';
+    if (UC && q && q !== 'none' && q !== 'si_only') {
+      return UC.formatDual(val, q, lang, sys, {
+        siDecPrimary: 2,
+        siDecSecondary: 2,
+        usDecPrimary: 2,
+        usDecSecondary: 2
+      });
+    }
+    const suffix = key.toLowerCase().endsWith('pct') ? '%' : '';
+    return `<code dir="ltr"><strong>${Number(val).toFixed(2)}${suffix}</strong></code>`;
+  }
+
+  function buildExperimentResultBoxHtml(exp, selectedIdx, lang) {
+    const EC = root.EngineeringCalculators;
+    const expUi = getExpUi(lang);
+    if (!EC || typeof EC[exp.runFn] !== 'function' || !expUi) return '';
+
+    const rBase = EC[exp.runFn](exp.base);
+    const rVar = EC[exp.runFn](exp.variant);
+    const outKey = exp.expect.key;
+    const valBase = Number(rBase[outKey]);
+    const valVar = Number(rVar[outKey]);
+    const diff = valVar - valBase;
+    const deltaPct = Math.abs(valBase) > 1e-12 ? (diff / valBase) * 100 : 0;
+    const deltaPctSigned = `${deltaPct >= 0 ? '+' : ''}${deltaPct.toFixed(1).replace(/\.0$/, '')} %`;
+
+    const sys = getUnitSystem();
+    const baseDual = formatExperimentValue(valBase, exp, lang, sys);
+    const varDual = formatExperimentValue(valVar, exp, lang, sys);
+
+    const isCorrect = Number(selectedIdx) === Number(exp.correct);
+    const verdictClass = isCorrect ? 'is-correct' : 'is-wrong';
+    const verdictIcon = isCorrect ? '✓' : '✗';
+    const verdictWord = isCorrect ? expUi.verdictCorrect : expUi.verdictWrong;
+
+    const metaKey = `calc-${exp.moduleId.toLowerCase()}`;
+    const metaObj = root.I18N_UI && root.I18N_UI.CALC_METADATA && root.I18N_UI.CALC_METADATA[metaKey];
+    const formulaText = (metaObj && metaObj.formula && (metaObj.formula[lang] || metaObj.formula.ru)) || '';
+    const explainText = (exp.explain && (exp.explain[lang] || exp.explain.ru)) || '';
+
+    const deltaHtml =
+      `<strong>${expUi.beforeAfterLabel}:</strong> ` +
+      `${expUi.beforeWord} ${baseDual} → ${expUi.afterWord} ${varDual} (<code dir="ltr">${deltaPctSigned}</code>)`;
+
+    return `
+      <div class="exp-verdict ${verdictClass}" data-exp-correct="${isCorrect ? 'true' : 'false'}">
+        <strong>${verdictIcon} ${verdictWord}</strong>
+      </div>
+      <div class="exp-delta" data-base-val="${valBase}" data-variant-val="${valVar}" data-delta-pct="${deltaPct.toFixed(4)}">
+        ${deltaHtml}
+      </div>
+      <div class="exp-explain">
+        <strong>${expUi.whySoLabel}:</strong> ${explainText}
+      </div>
+      <div class="exp-formula">
+        <strong>${expUi.formulaLabel}:</strong> <span class="exp-formula-text">${formulaText}</span>
+      </div>
+      <div class="exp-links">
+        <span><strong>${expUi.sourceLabel}:</strong> <a href="${exp.sourceHref}" class="exp-source-link">${exp.source}</a></span>
+        <a href="${exp.guideHref}" class="exp-guide-link">${expUi.openInGuideLink} →</a>
+      </div>
+    `;
+  }
+
+  root.runSingleExperiment = function (expId) {
+    const expData = getExpData();
+    if (!expData || !Array.isArray(expData.EXPERIMENTS)) return false;
+    const exp = expData.EXPERIMENTS.find((e) => e.id === expId);
+    if (!exp) return false;
+    const lang = getLang();
+    const expUi = getExpUi(lang);
+
+    const itemEl = document.querySelector(`.exp-item[data-exp-id="${expId}"]`);
+    const checkedRadio = document.querySelector(`input[name="exp-${expId}"]:checked`);
+    const hintBox = itemEl ? itemEl.querySelector('.exp-hint-warning') : null;
+
+    if (!checkedRadio) {
+      if (hintBox && expUi) {
+        hintBox.textContent = `⚠️ ${expUi.selectHypothesisHint}`;
+        hintBox.hidden = false;
+      }
+      return false;
+    }
+
+    if (hintBox) {
+      hintBox.hidden = true;
+      hintBox.textContent = '';
+    }
+
+    const selectedIdx = Number(checkedRadio.value);
+    pendingRadioSelection[expId] = selectedIdx;
+
+    const prog = loadExperimentsProgress();
+    prog[expId] = selectedIdx;
+    saveExperimentsProgress(prog);
+
+    const detEl = itemEl && itemEl.closest('details.calc-experiments');
+    if (detEl) {
+      openExperimentModules.add(exp.moduleId);
+    }
+
+    // (1) Apply base to form and run calculator
+    applyExperimentPayloadToForm(exp, exp.base, false);
+    // (2) Apply variant to form and run calculator so the card displays the variant result
+    applyExperimentPayloadToForm(exp, exp.variant, true);
+
+    // (3) Render result box for this experiment
+    const resBox = itemEl ? itemEl.querySelector('.exp-result-box') : null;
+    if (resBox) {
+      resBox.innerHTML = buildExperimentResultBoxHtml(exp, selectedIdx, lang);
+      resBox.hidden = false;
+    }
+    return true;
+  };
+
+  root.resetModuleExperiments = function (modId) {
+    const expData = getExpData();
+    if (!expData || !Array.isArray(expData.EXPERIMENTS)) return;
+    const normMod = String(modId || '').toUpperCase();
+    const prog = loadExperimentsProgress();
+    expData.EXPERIMENTS.forEach((exp) => {
+      if (exp.moduleId === normMod) {
+        delete prog[exp.id];
+        delete pendingRadioSelection[exp.id];
+      }
+    });
+    const detEl = typeof document !== 'undefined'
+      ? document.getElementById(`calc-experiments-${normMod.toLowerCase()}`)
+      : null;
+    if (detEl) {
+      detEl.querySelectorAll('input[type="radio"]:checked').forEach((r) => {
+        r.checked = false;
+      });
+    }
+    saveExperimentsProgress(prog);
+    openExperimentModules.add(normMod);
+    root.renderExperiments(getLang());
+  };
+
+  root.renderExperiments = function (langInput) {
+    if (typeof document === 'undefined') return;
+    const expData = getExpData();
+    if (!expData || !Array.isArray(expData.EXPERIMENTS)) return;
+    const lang = langInput === 'he' ? 'he' : (langInput === 'ru' ? 'ru' : getLang());
+    const expUi = getExpUi(lang);
+    if (!expUi) return;
+
+    const prog = loadExperimentsProgress();
+
+    for (const [modId, outContainerId] of Object.entries(EXP_MODULE_OUT_CONTAINERS)) {
+      const outEl = document.getElementById(outContainerId);
+      if (!outEl || !outEl.parentElement) continue;
+      const modExps = expData.EXPERIMENTS.filter((e) => e.moduleId === modId);
+      if (!modExps.length) continue;
+
+      const detailsId = `calc-experiments-${modId.toLowerCase()}`;
+      let detailsEl = document.getElementById(detailsId);
+      if (detailsEl) {
+        if (detailsEl.open) {
+          openExperimentModules.add(modId);
+        } else {
+          openExperimentModules.delete(modId);
+        }
+        // Preserve any unsaved radio selection before re-render
+        modExps.forEach((exp) => {
+          const checked = detailsEl.querySelector(`input[name="exp-${exp.id}"]:checked`);
+          if (checked) {
+            pendingRadioSelection[exp.id] = Number(checked.value);
+          }
+        });
+      } else {
+        detailsEl = document.createElement('details');
+        detailsEl.id = detailsId;
+        detailsEl.className = 'calc-experiments no-print';
+        detailsEl.setAttribute('data-exp-module', modId);
+        if (outEl.nextSibling) {
+          outEl.parentElement.insertBefore(detailsEl, outEl.nextSibling);
+        } else {
+          outEl.parentElement.appendChild(detailsEl);
+        }
+        detailsEl.addEventListener('toggle', () => {
+          if (detailsEl.open) {
+            openExperimentModules.add(modId);
+          } else {
+            openExperimentModules.delete(modId);
+          }
+        });
+      }
+
+      detailsEl.open = openExperimentModules.has(modId);
+
+      const itemsHtml = modExps.map((exp, idx) => {
+        const savedChoice = Object.prototype.hasOwnProperty.call(prog, exp.id)
+          ? Number(prog[exp.id])
+          : undefined;
+        const activeChoice = savedChoice !== undefined
+          ? savedChoice
+          : pendingRadioSelection[exp.id];
+
+        const badgeStr = expUi.experimentIndexOf
+          .replace('{n}', String(idx + 1))
+          .replace('{m}', String(modExps.length));
+        const qText = (exp.question && (exp.question[lang] || exp.question.ru)) || '';
+
+        const optionsHtml = (exp.options || []).map((opt, optIdx) => {
+          const radioId = `exp-radio-${exp.id}-${optIdx}`;
+          const optText = opt[lang] || opt.ru;
+          const isChecked = activeChoice === optIdx ? ' checked' : '';
+          return `
+            <div class="exp-option-row">
+              <input type="radio" id="${radioId}" name="exp-${exp.id}" value="${optIdx}"${isChecked}>
+              <label for="${radioId}">${optText}</label>
+            </div>
+          `;
+        }).join('');
+
+        const hasSavedAnswer = savedChoice !== undefined && Number.isFinite(savedChoice);
+        const resultInnerHtml = hasSavedAnswer
+          ? buildExperimentResultBoxHtml(exp, savedChoice, lang)
+          : '';
+
+        return `
+          <div class="exp-item" data-exp-id="${exp.id}">
+            <div class="exp-item-header">
+              <span class="exp-item-badge">${badgeStr} · <code dir="ltr">${exp.id}</code></span>
+            </div>
+            <p class="exp-question"><strong>${qText}</strong></p>
+            <div class="exp-hypothesis-label">${expUi.myHypothesis}:</div>
+            <div class="exp-options">
+              ${optionsHtml}
+            </div>
+            <div class="exp-actions">
+              <button type="button" class="btn btn-primary btn-sm exp-check-btn" data-exp-check="${exp.id}">${expUi.btnCheckByCalc}</button>
+            </div>
+            <div class="exp-hint-warning" role="alert" hidden></div>
+            <div class="exp-result-box"${hasSavedAnswer ? '' : ' hidden'}>
+              ${resultInnerHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      detailsEl.innerHTML = `
+        <summary class="calc-experiments-summary">🔬 ${expUi.experimentsTitle} (${modExps.length})</summary>
+        <div class="calc-experiments-body">
+          <div class="calc-experiments-toolbar">
+            <span class="calc-experiments-subtitle">${expUi.experimentsSummaryPrefix}</span>
+            <button type="button" class="btn btn-outline btn-sm exp-reset-btn" data-exp-reset="${modId}">${expUi.btnResetExperiments}</button>
+          </div>
+          <div class="calc-experiments-list">
+            ${itemsHtml}
+          </div>
+        </div>
+      `;
+
+      detailsEl.querySelectorAll('.exp-check-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const eid = btn.getAttribute('data-exp-check');
+          root.runSingleExperiment(eid);
+        });
+      });
+
+      detailsEl.querySelectorAll('input[type="radio"]').forEach((rad) => {
+        rad.addEventListener('change', () => {
+          const eid = rad.name.replace(/^exp-/, '');
+          pendingRadioSelection[eid] = Number(rad.value);
+          const itemEl = rad.closest('.exp-item');
+          const hintBox = itemEl && itemEl.querySelector('.exp-hint-warning');
+          if (hintBox) {
+            hintBox.hidden = true;
+            hintBox.textContent = '';
+          }
+        });
+      });
+
+      const resetBtn = detailsEl.querySelector('.exp-reset-btn');
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          root.resetModuleExperiments(modId);
+        });
+      }
+    }
   };
 })(typeof globalThis !== 'undefined' ? globalThis : window);
