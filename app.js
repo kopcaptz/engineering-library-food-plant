@@ -5,8 +5,8 @@
   'use strict';
 
   const APP_VERSION = root.APP_VERSION = {
-    edition: 'v15.4',
-    date: '2026-10-30',
+    edition: 'v15.5',
+    date: '2026-10-31',
     core: 'v10.0'
   };
 
@@ -1351,15 +1351,41 @@
         return `${meta.fullHe} <span class="sec-term" dir="ltr" lang="ru">(${ruTitle})</span>`;
       }
 
+      function injectDeterministicBlockIds(htmlStr, sysId, key) {
+        let detIdx = 0;
+        let h3Idx = 0;
+        let h4Idx = 0;
+        let h5Idx = 0;
+        return String(htmlStr || '').replace(/<(details|h3|h4|h5)\b([^>]*)>/gi, (full, tag, attrs) => {
+          if (/\bid\s*=/i.test(attrs)) return full;
+          const lower = tag.toLowerCase();
+          let suffix = '';
+          if (lower === 'details') suffix = `details-${++detIdx}`;
+          else if (lower === 'h3') suffix = `h3-${++h3Idx}`;
+          else if (lower === 'h4') suffix = `h4-${++h4Idx}`;
+          else if (lower === 'h5') suffix = `h5-${++h5Idx}`;
+          return `<${tag} id="guide-${sysId}-${key}-${suffix}"${attrs}>`;
+        });
+      }
+
+      const applyTermLinks = (htmlStr, l) => {
+        if (root.__disableTermLinks || typeof root.linkGlossaryTerms !== 'function') {
+          return htmlStr;
+        }
+        return root.linkGlossaryTerms(htmlStr, l, root.GLOSSARY_ITEMS, root.TERM_ALIASES);
+      };
+
       function renderGuideBlockBodyHtml(key) {
         const gb = guideBlockMap[key];
         if (!gb || !gb.html) return '';
         const bodyIdAttr = key === 'nodes' ? ` id="guide-body-${sys.id}-nodes"` : '';
         if (!isHe) {
-          return `<div class="guide-block-body"${bodyIdAttr}>${root.renderGuideMathHtml(gb.html.ru || '')}</div>`;
+          const mathRu = injectDeterministicBlockIds(root.renderGuideMathHtml(gb.html.ru || ''), sys.id, key);
+          return `<div class="guide-block-body"${bodyIdAttr}>${applyTermLinks(mathRu, 'ru')}</div>`;
         }
         if (gb.html.he) {
-          return `<div class="guide-block-body"${bodyIdAttr}>${root.renderGuideMathHtml(gb.html.he, 'he')}</div>`;
+          const mathHe = injectDeterministicBlockIds(root.renderGuideMathHtml(gb.html.he, 'he'), sys.id, key);
+          return `<div class="guide-block-body"${bodyIdAttr}>${applyTermLinks(mathHe, 'he')}</div>`;
         }
         return `
           <div class="guide-ru-only-notice" dir="rtl">${ruOnlyNoticeText}</div>
@@ -1542,20 +1568,23 @@
       const scAllHe = scQuestions.length > 0 && scQuestions.every((qItem) =>
         qItem.q && qItem.q.he && qItem.q.he.trim() && qItem.a && qItem.a.he && qItem.a.he.trim()
       );
-      const selfCheckListHtml = scQuestions.map((qItem) => {
+      const selfCheckRawHtml = scQuestions.map((qItem) => {
         const qHtml = (qItem.q && (qItem.q[lang] || qItem.q.ru)) || '';
         const aHtml = (qItem.a && (qItem.a[lang] || qItem.a.ru)) || '';
         const scMathLang = isHe && scAllHe ? 'he' : 'ru';
         return `
-        <div class="selfcheck-question-card" data-question-num="${qItem.n}">
+        <div class="selfcheck-question-card" id="selfcheck-card-${sys.id}-${qItem.n}" data-question-num="${qItem.n}">
           <div class="selfcheck-q-text"><strong>${qItem.n}.</strong> ${root.renderGuideMathHtml(qHtml, scMathLang)}</div>
-          <details class="selfcheck-answer" ontoggle="window.syncSelfCheckToggleBtn('${sys.id}')">
+          <details class="selfcheck-answer" id="selfcheck-details-${sys.id}-${qItem.n}" ontoggle="window.syncSelfCheckToggleBtn('${sys.id}')">
             <summary>${isHe ? 'הצג תשובה' : 'Показать ответ'}</summary>
             <div class="selfcheck-a-text">${root.renderGuideMathHtml(aHtml, scMathLang)}</div>
           </details>
         </div>
       `;
       }).join('');
+      const selfCheckListHtml = (!isHe || scAllHe)
+        ? applyTermLinks(selfCheckRawHtml, isHe ? 'he' : 'ru')
+        : selfCheckRawHtml;
 
       return `
         <article class="section-card system-article searchable-block ${isCurrent ? 'active-system-article' : ''}"
@@ -1612,6 +1641,7 @@
           <!-- БЛОК 1: summary (Коротко: shortSummary + purposeHtml) -->
           <section class="guide-textbook-block" id="guide-${sys.id}-summary" data-guide-key="summary">
             <h2 class="guide-block-h2" id="guide-heading-${sys.id}-summary" tabindex="-1">${renderBlockHeadingText('summary')}</h2>
+            ${applyTermLinks(`
             <div class="system-short-summary-box">
               ${lines3.map((line) => `<p class="system-short-summary-line">${line}</p>`).join('')}
             </div>
@@ -1619,6 +1649,7 @@
               <h3>${isHe ? 'א. ייעוד המערכת בשפה פשוטה וכללי בטיחות קריטיים' : 'А. Назначение системы простым языком и правила безопасности'}</h3>
               ${purpose}
             </div>
+            `, lang)}
           </section>
 
           <!-- БЛОК 2: how (Как работает: principleHtml + гайд how) -->
@@ -1917,8 +1948,15 @@
       lastDialogTriggerEl = candTrigger;
     }
 
+    dlg.dataset.modalMode = 'node';
+    dlg.dataset.nodeSys = sysId;
+    dlg.dataset.nodeId = nodeId;
+    dlg.dataset.fromFullscreen = fromFullscreen ? 'true' : 'false';
+
     const pick = (o) => (o && (o[lang] || o.ru)) || '';
-    if (titleEl) titleEl.textContent = `${node.num}. ${pick(node.title).replace(/^\d+\.\s*/, '')}`;
+    const rawNodeTitle = pick(node.title).replace(/^\d+\.\s*/, '');
+    const cleanNodeTitle = isHe ? rawNodeTitle.replace(/\s*\/\s*[А-Яа-яЁё][^)]*/g, '') : rawNodeTitle;
+    if (titleEl) titleEl.textContent = `${node.num}. ${cleanNodeTitle}`;
     if (closeBtn) closeBtn.textContent = isHe ? 'סגירה ✕' : 'Закрыть ✕';
     content.innerHTML = `
       <div class="node-modal-grid">
@@ -1974,6 +2012,11 @@
     if (candTrigger && !dlg.contains(candTrigger)) {
       lastDialogTriggerEl = candTrigger;
     }
+
+    dlg.dataset.modalMode = 'fullscreen';
+    dlg.dataset.nodeSys = sysId;
+    delete dlg.dataset.nodeId;
+    dlg.dataset.fromFullscreen = 'false';
 
     const diag = sys.diagram;
     const svgSrc = isHe ? (diag.svgPathHe || diag.svgPath) : (diag.svgPathRu || diag.svgPath);
@@ -2077,11 +2120,56 @@
     const symDetail = symObj && symObj.observedDetails ? (symObj.observedDetails[lang] || symObj.observedDetails.ru) : '';
     const symLocation = symObj && symObj.whereVisible ? (symObj.whereVisible[lang] || symObj.whereVisible.ru) : '';
 
+    const ctxData = root.CASE_CONTEXT || {};
+    const ctxUi = (ctxData.UI && (ctxData.UI[lang] || ctxData.UI.ru)) || {};
+    const caseCtx = (ctxData.CASES && ctxData.CASES[nc.id]) || null;
+    const stepStatusObj = (ctxData.STEP_STATUS && ctxData.STEP_STATUS[stepObj.num]) || null;
+    const stepStatusText = (stepStatusObj && (stepStatusObj[lang] || stepStatusObj.ru)) || '';
+    const applyCaseTermLinks = (htmlStr) => {
+      if (root.__disableTermLinks || typeof root.linkGlossaryTerms !== 'function') {
+        return htmlStr;
+      }
+      return root.linkGlossaryTerms(htmlStr, lang, root.GLOSSARY_ITEMS, root.TERM_ALIASES);
+    };
+
     let stepBodyHtml = '';
     if (stepObj.type === 'info') {
+      let readingsBoxHtml = '';
+      if (caseCtx) {
+        const sysObj = getSystemsMap()[nc.systemId];
+        const sysNodes = (sysObj && sysObj.diagram && sysObj.diagram.nodes) || [];
+        const nodeObj = sysNodes.find((n) => n.id === caseCtx.nodeId) || null;
+        const rawNodeTitle = (nodeObj && nodeObj.title && (nodeObj.title[lang] || nodeObj.title.ru)) || caseCtx.nodeId;
+        const cleanNodeTitle = isHe
+          ? rawNodeTitle.replace(/\s*\/\s*[А-Яа-яЁё][^)]*/g, '')
+          : rawNodeTitle;
+        readingsBoxHtml = `
+          <div class="trainer-readings-box" id="trainer-readings-box-${nc.id}">
+            <div class="trainer-readings-header">
+              <h5 class="trainer-readings-title">${ctxUi.readingsBoxTitle || (isHe ? 'תרשים ומדידות באירוע זה' : 'Схема и показания в этом случае')}</h5>
+              <button type="button" class="btn btn-outline btn-sm trainer-open-node-btn"
+                data-node-sys="${nc.systemId}"
+                data-node-id="${caseCtx.nodeId}"
+                onclick="window.openDiagramNodeModal('${nc.systemId}', '${caseCtx.nodeId}', this)">
+                📍 ${ctxUi.openNodeBtn || (isHe ? 'הצג רכיב בתרשים' : 'Показать узел на схеме')}
+              </button>
+            </div>
+            <div class="trainer-readings-node-row">
+              <strong>${ctxUi.nodeLabel || (isHe ? 'רכיב במערכת:' : 'Узел системы:')}</strong>
+              <span class="trainer-readings-node-title">${cleanNodeTitle}</span>
+            </div>
+            <ul class="trainer-readings-list">
+              ${(caseCtx.readings || []).map((r) => `
+                <li><span class="reading-label">${(r.label && (r.label[lang] || r.label.ru)) || ''}:</span> <code dir="ltr">${r.value}</code></li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }
       stepBodyHtml = `
         <div class="trainer-step-content">
-          ${stepObj.contentHtml}
+          <div class="trainer-step-observations">${applyCaseTermLinks(stepObj.contentHtml)}</div>
+          ${readingsBoxHtml}
           <div class="trainer-step-actions">
             <button type="button" class="btn btn-primary" onclick="window.goToTrainerStep('${nc.id}', 2)">
               ${isHe ? 'המשך לשלב 2: מה ניתן להסיק ←' : 'Перейти к Шагу 2: Что можно и нельзя утверждать →'}
@@ -2097,6 +2185,9 @@
       const chkState = prog.checked[stepObj.num] || null;
       const hintOpen = Boolean(prog.showHint[stepObj.num]);
       const chosenOpt = stepObj.options.find((o) => o.id === selId);
+      const showNoSelectionAlert = !selId && prog.noSelectionAlertStep === stepObj.num;
+      const otherWrongOpts = (stepObj.options || []).filter((o) => !o.isCorrect && o.id !== selId);
+      const isOtherOptionsOpen = Boolean(prog.otherOptionsOpen && prog.otherOptionsOpen[stepObj.num]);
 
       stepBodyHtml = `
         <div class="trainer-step-content">
@@ -2120,6 +2211,12 @@
             }).join('')}
           </div>
 
+          ${showNoSelectionAlert ? `
+            <div class="trainer-no-selection-alert" role="alert">
+              ⚠️ ${ctxUi.selectOptionAlert || (isHe ? 'בחרו אפשרות לפני הבדיקה.' : 'Выберите вариант перед проверкой.')}
+            </div>
+          ` : ''}
+
           ${hintOpen ? `<div class="trainer-hint-box">💡 <strong>${isHe ? 'רמז הנדסי:' : 'Инженерная подсказка:'}</strong> ${stepObj.hint}</div>` : ''}
 
           ${chkState && chosenOpt ? `
@@ -2127,6 +2224,20 @@
               <strong>${chosenOpt.isCorrect ? (isHe ? '✓ תשובה נכונה!' : '✓ Верный инженерный вывод!') : (isHe ? '⚠️ שימו לב לכשל בטיחותי/מתודולוגי:' : '⚠️ Обратите внимание на ошибку в рассуждении:')}</strong>
               <p style="margin-block:0.35rem 0;">${chosenOpt.feedback}</p>
             </div>
+            ${otherWrongOpts.length > 0 ? `
+              <details class="trainer-other-options"${isOtherOptionsOpen ? ' open' : ''}
+                ontoggle="window.setTrainerOtherOptionsOpen('${nc.id}', ${stepObj.num}, this.open)">
+                <summary>${ctxUi.otherOptionsSummary || (isHe ? 'מדוע שאר האפשרויות שגויות' : 'Почему остальные варианты неверны')}</summary>
+                <div class="trainer-other-options-list">
+                  ${otherWrongOpts.map((o) => `
+                    <div class="trainer-other-option-item" data-option-id="${o.id}">
+                      <div class="trainer-other-option-title">✗ ${o.text}</div>
+                      <p class="trainer-other-option-why">${o.feedback}</p>
+                    </div>
+                  `).join('')}
+                </div>
+              </details>
+            ` : ''}
           ` : ''}
 
           <div class="trainer-step-actions">
@@ -2178,16 +2289,41 @@
           </div>
         `;
       }
+
+      let conclusionBoxHtml = '';
+      if (caseCtx && ctxData.PROCEDURE_NOTE) {
+        const srcCodeMatch = String(caseCtx.causeSource || '').match(/^S\d+/);
+        const srcCode = srcCodeMatch ? srcCodeMatch[0] : 'S01';
+        const procNote = ctxData.PROCEDURE_NOTE;
+        const procSys = procNote.sourceSys || 'condensate';
+        const procHref = `#guide-${procSys}-boundaries`;
+        conclusionBoxHtml = `
+          <div class="trainer-conclusion-box" id="trainer-conclusion-box-${nc.id}">
+            <h5>${ctxUi.conclusionTitle || (isHe ? 'מסקנה' : 'Вывод')}</h5>
+            <p class="trainer-confirmed-cause">
+              <strong>${ctxUi.confirmedCausePrefix || (isHe ? 'סיבה מאומתת:' : 'Подтверждённая причина:')}</strong>
+              ${(caseCtx.confirmedCause && (caseCtx.confirmedCause[lang] || caseCtx.confirmedCause.ru)) || ''}
+              (<a href="#source-${srcCode}">${escapeGuideHtml(caseCtx.causeSource || srcCode)}</a>)
+            </p>
+            <p class="trainer-procedure-note">
+              ${procNote[lang] || procNote.ru || ''}
+              (<a href="${procHref}">${isHe ? 'גבולות בדיקת מפעיל ←' : 'Границы проверки оператора →'}</a>)
+            </p>
+          </div>
+        `;
+      }
+
       stepBodyHtml = `
         <div class="trainer-step-content">
           ${calcActionHtml ? `<div class="trainer-step-calc-top" style="margin-block-end:0.85rem;">${calcActionHtml}</div>` : ''}
-          ${stepObj.contentHtml}
+          ${conclusionBoxHtml}
+          <div class="trainer-step-solution">${applyCaseTermLinks(stepObj.contentHtml)}</div>
           <div class="trainer-step-actions" style="flex-wrap:wrap;">
             <button type="button" class="btn btn-outline" onclick="window.goToTrainerStep('${nc.id}', 5)">
               ${isHe ? '→ שלב קודם (5/6)' : '← Предыдущий шаг (5/6)'}
             </button>
-            <button type="button" class="btn btn-outline" onclick="window.resetSingleCase('${nc.id}')">
-              ↺ ${isHe ? 'איפוס אירוע זה והתחלה מחדש' : 'Сбросить этот случай и пройти заново'}
+            <button type="button" class="btn btn-outline trainer-restart-case-btn" onclick="window.resetSingleCase('${nc.id}')">
+              ↺ ${ctxUi.restartCaseBtn || (isHe ? 'התחל מחדש' : 'Пройти заново')}
             </button>
           </div>
         </div>
@@ -2201,8 +2337,9 @@
           <h2>${isHe ? 'סימולטור אינטראקטיבי לניתוח 10 אירועי שטח (6 שלבים)' : 'Интерактивный тренажёр: разбор 10 производственных случаев (6 шагов)'}</h2>
           <p class="trainer-subtitle">
             ${isHe
-              ? `הושלמו ${completedCount} מתוך ${allCases.length} אירועים. כל ההתקדמות נשמרת בדפדפן גם בעת מעבר בין רוסית לעברית.`
-              : `Разобрано ${completedCount} из ${allCases.length} случаев. Прогресс сохраняется локально в браузере и не теряется при переключении языка.`}
+              ? `הושלמו ${completedCount} מתוך ${allCases.length} אירועים.`
+              : `Разобрано ${completedCount} из ${allCases.length} случаев.`}
+            <span class="trainer-local-storage-note">${ctxUi.localProgressNotice || (isHe ? 'ההתקדמות והתשובות נשמרות רק בדפדפן זה במכשיר זה.' : 'Прогресс и ответы хранятся только в этом браузере на этом устройстве.')}</span>
           </p>
         </div>
         <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
@@ -2228,9 +2365,14 @@
               </div>
               <h3 id="case-heading-${nc.id}" tabindex="-1">${nc.title}</h3>
             </div>
-            <a class="btn btn-outline btn-sm" href="#system-${nc.systemId}">
-              ${isHe ? 'חזרה לתיאוריית המערכת ולתרשים' : 'К устройству и схеме системы'}
-            </a>
+            <div class="trainer-case-header-actions">
+              <button type="button" class="btn btn-outline btn-sm trainer-restart-case-btn" onclick="window.resetSingleCase('${nc.id}')">
+                ↺ ${ctxUi.restartCaseBtn || (isHe ? 'התחל מחדש' : 'Пройти заново')}
+              </button>
+              <a class="btn btn-outline btn-sm" href="#system-${nc.systemId}">
+                ${isHe ? 'חזרה לתיאוריית המערכת ולתרשים' : 'К устройству и схеме системы'}
+              </a>
+            </div>
           </div>
           <div class="trainer-symptom-summary">
             <strong>${isHe ? 'תסמין בשטח:' : 'Признак на оборудовании:'}</strong> ${symHeadline}
@@ -2243,13 +2385,22 @@
         </div>
 
         <div class="trainer-step-box">
-          <h4>${stepObj.title}</h4>
+          <div class="trainer-step-header-row">
+            <h4>${stepObj.title}</h4>
+            ${stepStatusText ? `<span class="trainer-step-status" data-step-status="${stepObj.num}">${stepStatusText}</span>` : ''}
+          </div>
           ${stepBodyHtml}
         </div>
         </div>
       </div>
     `;
   }
+
+  root.setTrainerOtherOptionsOpen = function (caseId, stepNum, isOpen) {
+    const p = getCaseProgress(caseId);
+    if (!p.otherOptionsOpen) p.otherOptionsOpen = {};
+    p.otherOptionsOpen[stepNum] = Boolean(isOpen);
+  };
 
   root.selectTrainerCase = function (caseId) {
     AppState.activeCaseId = caseId;
@@ -2263,6 +2414,7 @@
   root.goToTrainerStep = function (caseId, stepNum) {
     const p = getCaseProgress(caseId);
     p.currentStep = stepNum;
+    delete p.noSelectionAlertStep;
     if (stepNum === 6) p.completed = true;
     saveTrainerProgress();
     root.recordLastPlace({ type: 'case', caseId, step: stepNum });
@@ -2274,6 +2426,7 @@
     const p = getCaseProgress(caseId);
     p.selected[stepNum] = optId;
     delete p.checked[stepNum];
+    delete p.noSelectionAlertStep;
     saveTrainerProgress();
     renderTrainerSection();
   };
@@ -2287,12 +2440,12 @@
     const p = getCaseProgress(caseId);
     const selId = p.selected[stepNum];
     if (!selId) {
-      // Auto-select first option if user clicked Check immediately so feedback is always shown
-      if (stepObj.options && stepObj.options[0]) {
-        p.selected[stepNum] = stepObj.options[0].id;
-      }
+      p.noSelectionAlertStep = stepNum;
+      renderTrainerSection();
+      return;
     }
-    const chosen = (stepObj.options || []).find((o) => o.id === p.selected[stepNum]);
+    delete p.noSelectionAlertStep;
+    const chosen = (stepObj.options || []).find((o) => o.id === selId);
     if (chosen) {
       p.checked[stepNum] = chosen.isCorrect ? 'correct' : 'wrong';
       if ([2, 3, 4, 5].every((n) => p.checked[n] === 'correct')) {
@@ -2315,6 +2468,8 @@
     const p = getCaseProgress(caseId);
     delete p.selected[stepNum];
     delete p.checked[stepNum];
+    delete p.noSelectionAlertStep;
+    if (p.otherOptionsOpen) delete p.otherOptionsOpen[stepNum];
     saveTrainerProgress();
     renderTrainerSection();
   };
@@ -2322,6 +2477,7 @@
   root.revealFullCaseSolution = function (caseId) {
     const p = getCaseProgress(caseId);
     p.currentStep = 6;
+    delete p.noSelectionAlertStep;
     p.completed = true;
     saveTrainerProgress();
     renderTrainerSection();
@@ -2334,6 +2490,7 @@
       selected: {},
       checked: {},
       showHint: {},
+      otherOptionsOpen: {},
       showFullSolution: false,
       completed: false
     };
@@ -2647,6 +2804,10 @@
 
   root.filterGlossaryByQuery = function (q) {
     AppState.glossaryFilterQuery = String(q || '');
+    const inp = document.getElementById('glossary-quick-search-input');
+    if (inp && inp.value !== AppState.glossaryFilterQuery) {
+      inp.value = AppState.glossaryFilterQuery;
+    }
     applyGlossaryDomFilters();
   };
 
@@ -2827,9 +2988,199 @@
   }
 
   // =========================================================================
-  // LANGUAGE & SECONDARY TERMS SWITCHING (PRESERVING STATE)
+  // LANGUAGE & SECONDARY TERMS SWITCHING (PRESERVING STATE, v15.5 п. 2.5)
   // =========================================================================
+  function captureUiState() {
+    if (typeof document === 'undefined' || typeof window === 'undefined') return null;
+    const openDetailsIds = {};
+    document.querySelectorAll('.app-view details[id]').forEach((d) => {
+      if (d.id) openDetailsIds[d.id] = Boolean(d.open);
+    });
+
+    const activeSysId = AppState.activeSystemId || 'chillers';
+    const activeTocBtn = document.querySelector(`#guide-toc-${activeSysId} .guide-toc-btn.active`);
+    const activeTocKey = activeTocBtn ? activeTocBtn.getAttribute('data-toc-key') : 'summary';
+
+    const dlg = document.getElementById('diagram-node-dialog');
+    const isDlgOpen = Boolean(dlg && (dlg.open || dlg.hasAttribute('open')));
+    const nodeModal = isDlgOpen
+      ? {
+          open: true,
+          mode: dlg.dataset.modalMode || 'node',
+          sysId: dlg.dataset.nodeSys || activeSysId,
+          nodeId: dlg.dataset.nodeId || '',
+          fromFullscreen: dlg.dataset.fromFullscreen === 'true'
+        }
+      : { open: false };
+
+    const pop = document.getElementById('term-popover');
+    const isPopOpen = Boolean(pop && !pop.hasAttribute('hidden') && pop.dataset.termId);
+    const termPopover = isPopOpen
+      ? { open: true, termId: pop.dataset.termId }
+      : { open: false };
+
+    let scrollAnchor = null;
+    const activeViewEl = document.querySelector(`.app-view[data-view="${AppState.activeView}"]`) || document.querySelector('.app-view.active-view');
+    const scrolledTw = activeViewEl
+      ? Array.from(activeViewEl.querySelectorAll('.table-wrapper')).find((tw) => tw.getClientRects().length > 0 && tw.scrollTop > 0)
+      : null;
+    if (activeViewEl && (window.scrollY > 0 || scrolledTw)) {
+      const twRect = scrolledTw ? scrolledTw.getBoundingClientRect() : null;
+      const twThead = scrolledTw ? scrolledTw.querySelector('thead') : null;
+      const twTopEdge = twRect ? (twRect.top + (twThead ? twThead.getBoundingClientRect().height : 0)) : 0;
+      const candidates = [];
+      activeViewEl.querySelectorAll('[id]').forEach((el) => {
+        if (!el.id || el.classList.contains('legacy-anchor-target')) return;
+        if (el.classList.contains('system-article') || el.classList.contains('guide-toc-bar') || el.closest('.guide-toc-bar')) return;
+        if (el.id.startsWith('dynamic-') || el.id.startsWith('sec-') || el.id.endsWith('-heading')) return;
+        if (el.getClientRects().length === 0) return;
+        const r = el.getBoundingClientRect();
+        if (r.bottom <= 0 || r.top >= window.innerHeight) return;
+        const inScrolledTw = Boolean(scrolledTw && scrolledTw.contains(el));
+        if (scrolledTw && !inScrolledTw) return;
+        if (inScrolledTw && (r.bottom <= twTopEdge || r.top >= twRect.bottom)) return;
+        const tag = el.tagName.toLowerCase();
+        const tagPriority = (tag === 'h4' || tag === 'h5' || tag === 'h3' || tag === 'tr') ? 0 : (tag === 'h2' || tag === 'details' ? 1 : 2);
+        const refTop = inScrolledTw ? twTopEdge : 0;
+        const relTop = r.top - refTop;
+        candidates.push({
+          id: el.id,
+          top: r.top,
+          dist: Math.abs(relTop),
+          relTop,
+          tagPriority,
+          inTableWrapper: inScrolledTw,
+          twOffsetFromTop: inScrolledTw ? (r.top - twRect.top) : 0
+        });
+      });
+      candidates.sort((a, b) => {
+        const aNearTop = a.relTop >= -16 && a.relTop <= 220 ? 0 : 1;
+        const bNearTop = b.relTop >= -16 && b.relTop <= 220 ? 0 : 1;
+        if (aNearTop !== bNearTop) return aNearTop - bNearTop;
+        if (Math.abs(a.dist - b.dist) <= 6 && a.tagPriority !== b.tagPriority) {
+          return a.tagPriority - b.tagPriority;
+        }
+        return a.dist - b.dist;
+      });
+      if (candidates.length > 0) {
+        scrollAnchor = {
+          id: candidates[0].id,
+          top: candidates[0].top,
+          scrollY: window.scrollY,
+          inTableWrapper: candidates[0].inTableWrapper,
+          twOffsetFromTop: candidates[0].twOffsetFromTop
+        };
+      } else {
+        scrollAnchor = { id: '', top: 0, scrollY: window.scrollY };
+      }
+    }
+
+    return {
+      activeView: AppState.activeView,
+      hash: window.location.hash,
+      activeSystemId: AppState.activeSystemId,
+      guideDepth: AppState.guideDepth,
+      activeTocKey,
+      openDetailsIds,
+      calcViewMode: AppState.calcViewMode || 'overview',
+      activeSubmoduleId: AppState.activeSubmoduleId || null,
+      activeCalcPanelId: AppState.activeCalcPanelId || 'calc-panel-2',
+      activeToolId: AppState.activeToolId || 'sec-survey',
+      savedCalcsState: typeof root.getSavedCalcsUiState === 'function' ? root.getSavedCalcsUiState() : null,
+      glossaryFilterSys: AppState.glossaryFilterSys || 'all',
+      glossaryFilterQuery: (document.getElementById('glossary-quick-search-input') && document.getElementById('glossary-quick-search-input').value !== undefined)
+        ? document.getElementById('glossary-quick-search-input').value
+        : (AppState.glossaryFilterQuery || ''),
+      nodeModal,
+      termPopover,
+      scrollAnchor
+    };
+  }
+  root.captureUiState = captureUiState;
+
+  function restoreUiState(st) {
+    if (!st || typeof document === 'undefined' || typeof window === 'undefined') return;
+
+    if (st.savedCalcsState && typeof root.setSavedCalcsUiState === 'function') {
+      root.setSavedCalcsUiState(st.savedCalcsState);
+    }
+
+    if (st.glossaryFilterSys !== undefined || st.glossaryFilterQuery !== undefined) {
+      AppState.glossaryFilterSys = st.glossaryFilterSys || 'all';
+      AppState.glossaryFilterQuery = st.glossaryFilterQuery || '';
+      const glInput = document.getElementById('glossary-quick-search-input');
+      if (glInput) glInput.value = AppState.glossaryFilterQuery;
+      if (typeof applyGlossaryDomFilters === 'function') applyGlossaryDomFilters();
+    }
+
+    if (st.activeView === 'calc') {
+      if (st.calcViewMode === 'single' && st.activeSubmoduleId) {
+        root.showSingleCalcModule(st.activeSubmoduleId, false);
+      } else if (st.calcViewMode === 'panel' && st.activeCalcPanelId) {
+        root.openCalculatorTab(st.activeCalcPanelId, false);
+      } else {
+        root.showCalcOverview(false);
+      }
+    } else if (st.activeView === 'tools') {
+      root.showToolSubview(st.activeToolId || 'sec-survey', { scrollTop: false, focusHeading: false });
+    }
+
+    if (st.openDetailsIds) {
+      for (const [detId, isOpen] of Object.entries(st.openDetailsIds)) {
+        const d = document.getElementById(detId);
+        if (d && d.tagName === 'DETAILS') {
+          d.open = Boolean(isOpen);
+        }
+      }
+    }
+
+    if (st.activeView === 'learn' && st.activeSystemId && st.activeTocKey) {
+      root.setActiveGuideTocKey(st.activeSystemId, st.activeTocKey);
+    }
+
+    if (st.nodeModal && st.nodeModal.open) {
+      if (st.nodeModal.mode === 'fullscreen') {
+        root.openFullscreenDiagram(st.nodeModal.sysId);
+      } else if (st.nodeModal.sysId && st.nodeModal.nodeId) {
+        root.openDiagramNodeModal(st.nodeModal.sysId, st.nodeModal.nodeId, lastDialogTriggerEl, st.nodeModal.fromFullscreen);
+      }
+    }
+
+    if (st.termPopover && st.termPopover.open && st.termPopover.termId && typeof root.openTermPopover === 'function') {
+      const triggerLink = document.querySelector(`.app-view.active-view a.term-link[data-term-id="${st.termPopover.termId}"]`);
+      root.openTermPopover(st.termPopover.termId, triggerLink);
+    }
+
+    if (st.scrollAnchor) {
+      if (st.scrollAnchor.id) {
+        const anchorEl = document.getElementById(st.scrollAnchor.id);
+        if (anchorEl && anchorEl.getClientRects().length > 0) {
+          if (st.scrollAnchor.inTableWrapper && typeof anchorEl.closest === 'function') {
+            const tw = anchorEl.closest('.table-wrapper');
+            if (tw) {
+              const twRect = tw.getBoundingClientRect();
+              const r0 = anchorEl.getBoundingClientRect();
+              tw.scrollTop = Math.max(0, Math.round(tw.scrollTop + ((r0.top - twRect.top) - (st.scrollAnchor.twOffsetFromTop || 0))));
+            }
+          }
+          const newRect = anchorEl.getBoundingClientRect();
+          const targetY = Math.max(0, Math.round(window.scrollY + (newRect.top - st.scrollAnchor.top)));
+          window.scrollTo({ top: targetY, behavior: 'instant' });
+          return;
+        }
+      }
+      if (st.scrollAnchor.scrollY > 0) {
+        window.scrollTo({ top: st.scrollAnchor.scrollY, behavior: 'instant' });
+      }
+    }
+  }
+  root.restoreUiState = restoreUiState;
+
   root.setAppLanguage = function (lang) {
+    const uiSnapshot = captureUiState();
+    if (typeof root.clearSearchHighlightsNow === 'function') {
+      root.clearSearchHighlightsNow();
+    }
     AppState.lang = lang === 'he' ? 'he' : 'ru';
     try { localStorage.setItem(STORAGE_KEY_LANG, AppState.lang); } catch (_) {}
 
@@ -2994,6 +3345,7 @@
     if (gSearch && gSearch.value.trim()) {
       gSearch.dispatchEvent(new Event('input'));
     }
+    restoreUiState(uiSnapshot);
   };
 
   function syncHeaderTitleByViewport() {
@@ -3039,6 +3391,16 @@
     const padTop = options.padTop !== undefined ? options.padTop : 12;
     const elToScroll = targetEl || focusEl;
     if (elToScroll) {
+      if (elToScroll.tagName === 'TR' && typeof elToScroll.closest === 'function') {
+        const tw = elToScroll.closest('.table-wrapper');
+        if (tw && tw.scrollHeight > tw.clientHeight + 4) {
+          const thead = tw.querySelector('thead');
+          const theadH = thead ? Math.ceil(thead.getBoundingClientRect().height) : 40;
+          const twRect = tw.getBoundingClientRect();
+          const rowRect = elToScroll.getBoundingClientRect();
+          tw.scrollTop = Math.max(0, Math.round(tw.scrollTop + (rowRect.top - twRect.top) - theadH - 4));
+        }
+      }
       const rect = elToScroll.getBoundingClientRect();
       const targetTop = Math.max(0, Math.round(window.scrollY + rect.top - (headerHeight + padTop)));
       window.scrollTo({ top: targetTop, behavior: 'instant' });
@@ -3250,11 +3612,11 @@
   let suppressNextHashChangeFor = null;
   root.navigateToHash = function (hash) {
     if (window.location.hash === hash) {
-      handleHashRoute();
+      handleHashRoute(hash);
     } else {
       suppressNextHashChangeFor = hash;
       window.location.hash = hash;
-      handleHashRoute();
+      handleHashRoute(hash);
     }
   };
 
@@ -3706,8 +4068,14 @@
   // =========================================================================
   // URL HASH ROUTING & BROWSER BACK/FORWARD SUPPORT
   // =========================================================================
-  function handleHashRoute() {
-    const rawHash = (window.location.hash || '').replace(/^#/, '').trim();
+  function handleHashRoute(explicitHash) {
+    if (typeof root.closeTermPopover === 'function') {
+      root.closeTermPopover(false);
+    }
+    if (!suppressHighlightClearOnRoute && typeof root.clearSearchHighlightsNow === 'function') {
+      root.clearSearchHighlightsNow();
+    }
+    const rawHash = (typeof explicitHash === 'string' && explicitHash.length > 0 ? explicitHash : (window.location.hash || '')).replace(/^#/, '').trim();
     const searchBanner = document.getElementById('search-results-banner');
     if (searchBanner) searchBanner.style.display = 'none';
     const searchDrawer = document.getElementById('header-search-drawer');
@@ -3942,6 +4310,28 @@
       return;
     }
 
+    // Diagram node route (#node-<nodeId>)
+    if (rawHash.startsWith('node-')) {
+      const nodeId = rawHash.replace(/^node-/, '');
+      let foundSysId = null;
+      getSystemsList().forEach((sys) => {
+        const nodes = (sys.diagram && sys.diagram.nodes) || [];
+        if (nodes.some((n) => n.id === nodeId)) {
+          foundSysId = sys.id;
+        }
+      });
+      if (foundSysId) {
+        root.selectSystem(foundSysId, false);
+        const diagCard = document.getElementById(`diag-card-${foundSysId}`);
+        if (diagCard) {
+          root.scrollAndFocusBlock(diagCard, diagCard.querySelector('h2, h3'));
+        }
+        const pinEl = document.querySelector(`.diagram-node-pin[data-node-id="${nodeId}"]`);
+        root.openDiagramNodeModal(foundSysId, nodeId, pinEl);
+        return;
+      }
+    }
+
     // Any other DOM ID (e.g. #params-table-* or engineer details inside a system lesson)
     const targetEl = document.getElementById(rawHash);
     if (targetEl) {
@@ -3990,10 +4380,280 @@
   }
 
   // =========================================================================
-  // GLOBAL INSTANT SEARCH (v13.1 Stage 3: GRANULAR 8-GROUP INDEX + KEYBOARD)
+  // TERM POPOVER IN CONTEXT (v15.5 Task 2.3c)
+  // =========================================================================
+  let lastTermPopoverTrigger = null;
+
+  function positionTermPopover(popEl, triggerEl) {
+    if (!popEl) return;
+    const vw = typeof window !== 'undefined' ? (window.innerWidth || document.documentElement.clientWidth || 1280) : 1280;
+    const vh = typeof window !== 'undefined' ? (window.innerHeight || document.documentElement.clientHeight || 800) : 800;
+    if (vw < 600 || !triggerEl || typeof triggerEl.getBoundingClientRect !== 'function') {
+      popEl.style.top = '';
+      popEl.style.left = '';
+      popEl.style.right = '';
+      return;
+    }
+    const rect = triggerEl.getBoundingClientRect();
+    const popRect = popEl.getBoundingClientRect();
+    const popW = popRect.width || 360;
+    const popH = popRect.height || 220;
+
+    let top = rect.bottom + 8;
+    if (top + popH > vh - 12 && rect.top - popH - 8 >= 12) {
+      top = rect.top - popH - 8;
+    } else if (top + popH > vh - 12) {
+      top = Math.max(12, vh - popH - 12);
+    }
+
+    let left = AppState.lang === 'he' ? (rect.right - popW) : rect.left;
+    if (left + popW > vw - 12) {
+      left = vw - popW - 12;
+    }
+    if (left < 12) {
+      left = 12;
+    }
+    popEl.style.top = `${Math.round(top)}px`;
+    popEl.style.left = `${Math.round(left)}px`;
+    popEl.style.right = 'auto';
+  }
+
+  root.openTermPopover = function (termId, triggerEl) {
+    const popEl = document.getElementById('term-popover');
+    if (!popEl) return;
+    const glossary = (root.GLOSSARY_ITEMS && Array.isArray(root.GLOSSARY_ITEMS)) ? root.GLOSSARY_ITEMS : [];
+    const normId = String(termId || '').replace(/^#/, '');
+    const g = glossary.find((item) => item.id === normId);
+    if (!g) return;
+
+    const lang = AppState.lang === 'he' ? 'he' : 'ru';
+    const isHe = lang === 'he';
+    const ui = (root.TERM_ALIASES && root.TERM_ALIASES.UI && root.TERM_ALIASES.UI[lang]) || {};
+    const uiStrings = (root.I18N_UI && root.I18N_UI.UI_STRINGS && root.I18N_UI.UI_STRINGS[lang]) || {};
+
+    const primaryTitle = isHe ? (g.he || g.en || '') : (g.ru || g.en || '');
+    const secondaryTitle = isHe ? (g.ru || '') : (g.he || '');
+    const secLangAttr = isHe ? 'ru' : 'he';
+    const secDirAttr = isHe ? 'ltr' : 'rtl';
+
+    let metaBadgeHtml = '';
+    if (g.abbr && g.en) {
+      metaBadgeHtml = `<div class="term-popover-meta" dir="ltr"><code>${escapeSearchHtml(g.abbr)}</code> · <span>${escapeSearchHtml(g.en)}</span></div>`;
+    } else if (g.abbr) {
+      metaBadgeHtml = `<div class="term-popover-meta" dir="ltr"><code>${escapeSearchHtml(g.abbr)}</code></div>`;
+    } else if (g.en) {
+      metaBadgeHtml = `<div class="term-popover-meta" dir="ltr"><span>${escapeSearchHtml(g.en)}</span></div>`;
+    }
+
+    let defBodyHtml = '';
+    if (isHe) {
+      if (g.def && g.def.he) {
+        defBodyHtml = `<div id="term-popover-def" class="term-popover-def">${g.def.he}</div>`;
+      } else {
+        const notice = uiStrings.guideRuOnlyNotice || '';
+        const ruDef = (g.def && g.def.ru) || '';
+        defBodyHtml = `
+          <div id="term-popover-def" class="term-popover-def">
+            <p class="guide-ru-only-notice">${escapeSearchHtml(notice)}</p>
+            <div class="sec-term" lang="ru" dir="ltr">${ruDef}</div>
+          </div>
+        `;
+      }
+    } else {
+      defBodyHtml = `<div id="term-popover-def" class="term-popover-def">${(g.def && g.def.ru) || ''}</div>`;
+    }
+
+    const toGlossaryLabel = ui.toGlossary || (isHe ? 'למילון ←' : 'В словарь →');
+    const toGuideLabel = ui.toGuide || (isHe ? 'איפה בספר הלימוד ←' : 'Где в учебнике →');
+    const closeLabel = ui.closePopover || (isHe ? 'סגור חלונית מונח' : 'Закрыть окно термина');
+    const guideHref = g.link || '#learn';
+
+    popEl.setAttribute('dir', isHe ? 'rtl' : 'ltr');
+    popEl.setAttribute('data-term-id', g.id);
+    popEl.innerHTML = `
+      <div class="term-popover-header">
+        <div class="term-popover-title-wrap">
+          <strong id="term-popover-title" class="term-popover-title">${escapeSearchHtml(primaryTitle)}</strong>
+          ${secondaryTitle ? `<span class="sec-term term-popover-sec-title" lang="${secLangAttr}" dir="${secDirAttr}">${escapeSearchHtml(secondaryTitle)}</span>` : ''}
+        </div>
+        <button type="button" class="term-popover-close" aria-label="${escapeSearchHtml(closeLabel)}">✕</button>
+      </div>
+      ${metaBadgeHtml}
+      ${defBodyHtml}
+      <div class="term-popover-actions">
+        <a href="#${escapeSearchHtml(g.id)}" class="term-popover-link term-popover-to-glossary" data-popover-nav="#${escapeSearchHtml(g.id)}">${escapeSearchHtml(toGlossaryLabel)}</a>
+        <a href="${escapeSearchHtml(guideHref)}" class="term-popover-link term-popover-to-guide" data-popover-nav="${escapeSearchHtml(guideHref)}">${escapeSearchHtml(toGuideLabel)}</a>
+      </div>
+    `;
+
+    popEl.removeAttribute('hidden');
+    lastTermPopoverTrigger = triggerEl || null;
+    positionTermPopover(popEl, triggerEl);
+
+    const closeBtn = popEl.querySelector('.term-popover-close');
+    if (closeBtn) {
+      try {
+        closeBtn.focus({ preventScroll: true });
+      } catch (_) {
+        closeBtn.focus();
+      }
+    }
+  };
+
+  root.closeTermPopover = function (restoreFocus) {
+    const popEl = document.getElementById('term-popover');
+    if (!popEl || popEl.hasAttribute('hidden')) return;
+    popEl.setAttribute('hidden', '');
+    popEl.removeAttribute('data-term-id');
+    if (restoreFocus !== false && lastTermPopoverTrigger && typeof lastTermPopoverTrigger.focus === 'function' && document.contains(lastTermPopoverTrigger)) {
+      try {
+        lastTermPopoverTrigger.focus({ preventScroll: true });
+      } catch (_) {
+        lastTermPopoverTrigger.focus();
+      }
+    }
+    lastTermPopoverTrigger = null;
+  };
+
+  // =========================================================================
+  // GLOBAL INSTANT SEARCH (v13.1 + v15.5: ALIASES, NODES, TARGET HIGHLIGHT)
   // =========================================================================
   let activeSearchIndex = [];
   let activeSearchResultIdx = -1;
+  let activeSearchHighlightState = null;
+  let activeSearchHighlightTimer = null;
+  let suppressHighlightClearOnRoute = false;
+
+  function normalizeSearchPhrase(str) {
+    return normalizeSearchStr(str)
+      .replace(/[\/\-]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  root.clearSearchHighlightsNow = function () {
+    if (activeSearchHighlightTimer) {
+      clearTimeout(activeSearchHighlightTimer);
+      activeSearchHighlightTimer = null;
+    }
+    if (activeSearchHighlightState && activeSearchHighlightState.el) {
+      const targetEl = activeSearchHighlightState.el;
+      if (activeSearchHighlightState.canRestoreInnerHtml) {
+        targetEl.innerHTML = activeSearchHighlightState.html;
+      } else {
+        targetEl.querySelectorAll('mark.search-hit').forEach((m) => {
+          const txt = document.createTextNode(m.textContent || '');
+          if (m.parentNode) m.parentNode.replaceChild(txt, m);
+        });
+        targetEl.normalize();
+      }
+    }
+    activeSearchHighlightState = null;
+  };
+
+  function resolveSearchHighlightContainer(href) {
+    const rawHash = String(href || '').replace(/^#/, '').trim();
+    if (!rawHash) return null;
+    if (rawHash.startsWith('node-')) {
+      return document.getElementById('diagram-node-dialog');
+    }
+    if (rawHash.startsWith('gl-')) {
+      const termId = rawHash.replace(/^gl-/, 'term-');
+      return document.getElementById(termId) || document.getElementById(rawHash);
+    }
+    if (rawHash.startsWith('problem-case-') || rawHash.startsWith('symptom-')) {
+      return document.getElementById('problem-aside-card') || document.getElementById(rawHash);
+    }
+    const calcMatch = rawHash.match(/^calc-(1a|1b|2|3a|3b|3c|4a|4b|5a|5b)$/);
+    if (calcMatch) {
+      return document.getElementById(`calc-subblock-${calcMatch[1]}`) || document.getElementById(rawHash);
+    }
+    return document.getElementById(rawHash);
+  }
+
+  function highlightSearchTarget(href, rawQuery) {
+    root.clearSearchHighlightsNow();
+    const qTokens = tokenizeSearchWords(rawQuery);
+    if (qTokens.length === 0) return 0;
+    const targetEl = resolveSearchHighlightContainer(href);
+    if (!targetEl) return 0;
+
+    const hasFormInputs = Boolean(targetEl.querySelector('input, select, textarea'));
+    activeSearchHighlightState = {
+      el: targetEl,
+      html: targetEl.innerHTML,
+      canRestoreInnerHtml: !hasFormInputs
+    };
+
+    const excludedSelector = 'code, pre, script, style, input, textarea, select, option, mark, .formula-box, .ltr-math, .sec-term';
+    const textNodes = [];
+    const walker = document.createTreeWalker(targetEl, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if (!parent) return NodeFilter.FILTER_REJECT;
+        if (parent.closest(excludedSelector)) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    let current;
+    while ((current = walker.nextNode()) !== null) {
+      textNodes.push(current);
+    }
+
+    let matchCount = 0;
+    const wordRegex = /[A-Za-zА-Яа-яЁё\u0591-\u05C7\u05D0-\u05EA0-9'׳’]+/g;
+
+    textNodes.forEach((tNode) => {
+      const text = tNode.nodeValue;
+      wordRegex.lastIndex = 0;
+      const matches = [];
+      let m;
+      while ((m = wordRegex.exec(text)) !== null) {
+        const normW = normalizeSearchStr(m[0]);
+        const hit = qTokens.some((qt) => wordMatchesSearchToken(normW, qt).matched);
+        if (hit) {
+          matches.push({ start: m.index, end: m.index + m[0].length, word: m[0] });
+        }
+      }
+      if (matches.length === 0) return;
+
+      const frag = document.createDocumentFragment();
+      let cursor = 0;
+      matches.forEach((mt) => {
+        if (mt.start > cursor) {
+          frag.appendChild(document.createTextNode(text.slice(cursor, mt.start)));
+        }
+        const markEl = document.createElement('mark');
+        markEl.className = 'search-hit';
+        markEl.textContent = mt.word;
+        frag.appendChild(markEl);
+        cursor = mt.end;
+        matchCount++;
+      });
+      if (cursor < text.length) {
+        frag.appendChild(document.createTextNode(text.slice(cursor)));
+      }
+      if (tNode.parentNode) {
+        tNode.parentNode.replaceChild(frag, tNode);
+      }
+    });
+
+    const liveEl = document.getElementById('search-live-region');
+    if (liveEl) {
+      const isHe = AppState.lang === 'he';
+      liveEl.textContent = isHe
+        ? `נמצאו ${matchCount} התאמות`
+        : `Найдено ${matchCount} совпадений`;
+    }
+
+    activeSearchHighlightTimer = setTimeout(() => {
+      root.clearSearchHighlightsNow();
+    }, 10000);
+
+    return matchCount;
+  }
+  root.highlightSearchTarget = highlightSearchTarget;
 
   function escapeSearchHtml(s) {
     return String(s || '')
@@ -4132,11 +4792,18 @@
     const lang = langArg === 'he' ? 'he' : 'ru';
     const isHe = lang === 'he';
     const items = [];
+    const termAliasesMap = (root.TERM_ALIASES && root.TERM_ALIASES.TERMS) || {};
+    const blockAliasesMap = (root.TERM_ALIASES && root.TERM_ALIASES.BLOCK_ALIASES) || {};
 
     const addItem = (entry) => {
       const title = cleanTextForSearchLang(entry.title, lang);
       const text = cleanTextForSearchLang(entry.text, lang);
-      const words = tokenizeSearchWords(title + ' ' + text);
+      const extraWords = entry.extraSearchText ? tokenizeSearchWords(entry.extraSearchText) : [];
+      const baseWords = tokenizeSearchWords(title + ' ' + text);
+      const wordsSet = new Set(baseWords.concat(extraWords));
+      const exactTriggers = (entry.exactTriggers || [])
+        .map((s) => normalizeSearchPhrase(s))
+        .filter(Boolean);
       items.push({
         type: entry.type,
         code: entry.code || '',
@@ -4145,7 +4812,8 @@
         title,
         text,
         href: entry.href,
-        words
+        words: Array.from(wordsSet),
+        exactTriggers
       });
     };
 
@@ -4162,7 +4830,8 @@
         systemId: s.systemId,
         title: isHe ? `תסמין ${s.code}: ${shortSym}` : `Признак ${s.code}: ${shortSym}`,
         text: `${shortSym}. ${obs} (${where})`,
-        href: `#problem-${s.caseId}`
+        href: `#problem-${s.caseId}`,
+        exactTriggers: [shortSym]
       });
     });
 
@@ -4178,11 +4847,12 @@
         systemId: nc.systemId,
         title: nc.title,
         text: `${nc.title}. ${step1Html}`,
-        href: `#${nc.id}`
+        href: `#${nc.id}`,
+        exactTriggers: [nc.title, nc.code]
       });
     });
 
-    // 3. Расчёты (10 модулей из CALC_OVERVIEW_GROUPS + подписи полей из CALC_FORM_LABELS)
+    // 3. Расчёты (10 модулей из CALC_OVERVIEW_GROUPS + подписи полей из CALC_FORM_LABELS + BLOCK_ALIASES)
     const formLabelsDict = (root.I18N_UI && root.I18N_UI.CALC_FORM_LABELS) || {};
     const modFieldRegexMap = {
       '1a': /c1a_/,
@@ -4213,23 +4883,32 @@
           });
         }
         const fieldsJoined = fieldLabels.join(' · ');
+        const bAliases = (blockAliasesMap[m.hash] && blockAliasesMap[m.hash][lang]) || [];
+        const bAliasJoined = bAliases.join(' · ');
         addItem({
           type: 'calc',
           code: isHe ? m.codeHe : m.code,
           systemId: grp.sysId,
           title: mTitle,
-          text: `${mTitle}. ${mWhat} (${mInputs}). ${fieldsJoined}`,
-          href: m.hash
+          text: `${mTitle}. ${mWhat} (${mInputs}). ${fieldsJoined}${bAliasJoined ? ' · ' + bAliasJoined : ''}`,
+          extraSearchText: bAliases.join(' '),
+          href: m.hash,
+          exactTriggers: [mTitle, m.code, m.codeHe].concat(bAliases)
         });
       });
     });
 
-    // 4. Термины (все термины словаря GLOSSARY_ITEMS -> #term-...)
+    // 4. Термины (все термины словаря GLOSSARY_ITEMS -> #term-... + searchAliases)
     const uiDict = (root.I18N_UI && root.I18N_UI.UI_STRINGS && root.I18N_UI.UI_STRINGS[lang]) || {};
     const glossary = (root.GLOSSARY_ITEMS && Array.isArray(root.GLOSSARY_ITEMS)) ? root.GLOSSARY_ITEMS : [];
     glossary.forEach((g) => {
       const codePrefix = g.abbr ? `${g.abbr} (${g.en}) — ` : '';
       const codeSuffix = !g.abbr && g.en ? ` (${g.en})` : '';
+      const tAliasEntry = termAliasesMap[g.id] || {};
+      const sAliasesLang = (tAliasEntry.searchAliases && tAliasEntry.searchAliases[lang]) || [];
+      const sAliasesEn = (tAliasEntry.searchAliases && tAliasEntry.searchAliases.en) || [];
+      const allTermAliases = sAliasesLang.concat(sAliasesEn);
+      const aliasSuffix = allTermAliases.length > 0 ? ` · ${allTermAliases.join(' · ')}` : '';
       if (isHe) {
         const defHe = (g.def && g.def.he) ? g.def.he : (uiDict.guideRuOnlyNotice || '');
         addItem({
@@ -4237,25 +4916,26 @@
           code: g.abbr || g.id,
           systemId: g.systemId || '',
           title: `${codePrefix}${g.he}${codeSuffix}`,
-          text: `${codePrefix}${g.he}${codeSuffix} ${g.heVariants || ''}. ${defHe}`,
-          href: `#${g.id}`
+          text: `${codePrefix}${g.he}${codeSuffix} ${g.heVariants || ''}. ${defHe}${aliasSuffix}`,
+          extraSearchText: allTermAliases.join(' '),
+          href: `#${g.id}`,
+          exactTriggers: [g.abbr, g.he, g.en].concat(allTermAliases)
         });
       } else {
-        const extraSyn = (g.id === 'term-boiler-blowdown' || g.id === 'term-concentration-factor')
-          ? ' (кратность упаривания / концентрирования котловой воды Cycles of Concentration)'
-          : '';
         addItem({
           type: 'term',
           code: g.abbr || g.id,
           systemId: g.systemId || '',
           title: `${codePrefix}${g.ru}${codeSuffix}`,
-          text: `${codePrefix}${g.ru} ${g.v9RuTitle || ''}${codeSuffix} — ${g.heVariants || g.he}. ${(g.def && g.def.ru) || ''} ${g.v9DefRu || ''}${extraSyn}`,
-          href: `#${g.id}`
+          text: `${codePrefix}${g.ru} ${g.v9RuTitle || ''}${codeSuffix} — ${g.heVariants || g.he}. ${(g.def && g.def.ru) || ''} ${g.v9DefRu || ''}${aliasSuffix}`,
+          extraSearchText: allTermAliases.join(' '),
+          href: `#${g.id}`,
+          exactTriggers: [g.abbr, g.ru, g.en].concat(allTermAliases)
         });
       }
     });
 
-    // 4B. Учебник (все блоки GUIDE_SECTIONS каждой системы -> #guide-<sysId>-<key>)
+    // 4B. Учебник (все блоки GUIDE_SECTIONS каждой системы -> #guide-<sysId>-<key> + BLOCK_ALIASES)
     getSystemsList().forEach((sys) => {
       const sysShort = getSystemVisualMeta(sys.id).shortTitle[lang];
       const guideData = (root.GUIDE_SECTIONS && root.GUIDE_SECTIONS[sys.id]) || { blocks: [] };
@@ -4306,13 +4986,40 @@
           blockText = (isHe && !gHtml) ? `${blockTitle}. ${uiDict.guideRuOnlyNotice || ''}` : `${blockTitle}. ${gHtml}`;
         }
 
+        const guideHref = `#guide-${sys.id}-${b.key}`;
+        const gAliases = (blockAliasesMap[guideHref] && blockAliasesMap[guideHref][lang]) || [];
+        const gAliasSuffix = gAliases.length > 0 ? ` · ${gAliases.join(' · ')}` : '';
+
         addItem({
           type: 'guide',
           code: b.key,
           systemId: sys.id,
           title: fullTitle,
-          text: blockText,
-          href: `#guide-${sys.id}-${b.key}`
+          text: `${blockText}${gAliasSuffix}`,
+          extraSearchText: gAliases.join(' '),
+          href: guideHref,
+          exactTriggers: [fullTitle].concat(gAliases)
+        });
+      });
+    });
+
+    // 4C. Узлы схем (50 узлов 5 систем -> #node-<nodeId>)
+    getSystemsList().forEach((sys) => {
+      const sysShort = getSystemVisualMeta(sys.id).shortTitle[lang];
+      const nodes = (sys.diagram && sys.diagram.nodes) || [];
+      nodes.forEach((n) => {
+        const nt = (n.title && (n.title[lang] || n.title.ru)) || '';
+        const nw = (n.whatIs && (n.whatIs[lang] || n.whatIs.ru)) || '';
+        const np = (n.purpose && (n.purpose[lang] || n.purpose.ru)) || '';
+        const no = (n.operatorWatches && (n.operatorWatches[lang] || n.operatorWatches.ru)) || '';
+        addItem({
+          type: 'node',
+          code: n.id,
+          systemId: sys.id,
+          title: `${sysShort}: ${nt}`,
+          text: `${nt}. ${nw} ${np} ${no}`,
+          href: `#node-${n.id}`,
+          exactTriggers: [nt]
         });
       });
     });
@@ -4411,9 +5118,19 @@
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
     }
+    const searchInput = document.getElementById('global-search');
+    const capturedQuery = searchInput ? searchInput.value.trim() : '';
     root.clearSearch();
     root.toggleHeaderSearch(false);
-    root.navigateToHash(href);
+    suppressHighlightClearOnRoute = true;
+    try {
+      root.navigateToHash(href);
+    } finally {
+      suppressHighlightClearOnRoute = false;
+    }
+    if (capturedQuery) {
+      highlightSearchTarget(href, capturedQuery);
+    }
     return false;
   };
 
@@ -4436,13 +5153,15 @@
       root.rebuildSearchIndex(AppState.lang);
     }
 
-    const groupOrder = ['symptom', 'case', 'calc', 'term', 'guide', 'param', 'system', 'source', 'tool'];
+    const groupOrder = ['symptom', 'case', 'calc', 'term', 'guide', 'node', 'param', 'system', 'source', 'tool'];
+    const exactPromoteOrder = ['term', 'calc', 'case', 'symptom', 'guide', 'node', 'param', 'system', 'source', 'tool'];
     const groupLabels = {
       symptom: { ru: 'Признаки', he: 'תסמינים' },
       case:    { ru: 'Случаи', he: 'אירועים' },
       calc:    { ru: 'Расчёты', he: 'חישובים' },
       term:    { ru: 'Термины словаря', he: 'מונחי מילון' },
       guide:   { ru: 'Учебник', he: 'ספר לימוד' },
+      node:    { ru: 'Узлы схем', he: 'צמתי תרשים' },
       param:   { ru: 'Таблицы параметров', he: 'טבלאות פרמטרים' },
       system:  { ru: 'Системы', he: 'מערכות' },
       source:  { ru: 'Источники S01–S23', he: 'מקורות S01–S23' },
@@ -4513,6 +5232,7 @@
         if (searchList) searchList.innerHTML = '';
         return;
       }
+      const normQ = normalizeSearchPhrase(rawQuery);
 
       const groupedMatches = {};
       groupOrder.forEach((g) => { groupedMatches[g] = []; });
@@ -4526,13 +5246,27 @@
         }
       });
 
-      // Cap at 5 per group and 35 total in groupOrder (with title-match priority inside each group)
+      const hasExactTriggerInGroup = {};
+      groupOrder.forEach((gType) => {
+        hasExactTriggerInGroup[gType] = (groupedMatches[gType] || []).some(
+          (item) => (item.exactTriggers || []).includes(normQ)
+        );
+      });
+
+      const effectiveGroupOrder = exactPromoteOrder
+        .filter((gType) => hasExactTriggerInGroup[gType])
+        .concat(groupOrder.filter((gType) => !hasExactTriggerInGroup[gType]));
+
+      // Cap at 5 per group and 35 total in effectiveGroupOrder (with exactTrigger + title-match priority inside each group)
       let totalSelected = 0;
       const finalGroups = [];
-      for (const gType of groupOrder) {
+      for (const gType of effectiveGroupOrder) {
         if (totalSelected >= 35) break;
         const rawList = groupedMatches[gType] || [];
         const sortedList = rawList.slice().sort((a, b) => {
+          const aExact = (a.exactTriggers || []).includes(normQ) ? 1 : 0;
+          const bExact = (b.exactTriggers || []).includes(normQ) ? 1 : 0;
+          if (bExact !== aExact) return bExact - aExact;
           const aTitleWords = tokenizeSearchWords(a.title);
           const bTitleWords = tokenizeSearchWords(b.title);
           const aTitleHits = qTokens.filter((qt) => aTitleWords.some((w) => wordMatchesSearchToken(w, qt).matched)).length;
@@ -4644,10 +5378,48 @@
       });
     }
 
+    // Delegated click handler for a.term-link and #term-popover (v15.5 Task 2.3c)
+    document.addEventListener('click', (e) => {
+      const termLinkEl = e.target && typeof e.target.closest === 'function' ? e.target.closest('a.term-link') : null;
+      if (termLinkEl) {
+        e.preventDefault();
+        const termId = termLinkEl.getAttribute('data-term-id') || (termLinkEl.getAttribute('href') || '').replace(/^#/, '');
+        root.openTermPopover(termId, termLinkEl);
+        return;
+      }
+      const popEl = document.getElementById('term-popover');
+      if (popEl && !popEl.hasAttribute('hidden')) {
+        const closeBtn = e.target && typeof e.target.closest === 'function' ? e.target.closest('.term-popover-close') : null;
+        if (closeBtn) {
+          e.preventDefault();
+          root.closeTermPopover(true);
+          return;
+        }
+        const navLink = e.target && typeof e.target.closest === 'function' ? e.target.closest('[data-popover-nav]') : null;
+        if (navLink) {
+          e.preventDefault();
+          const targetHref = navLink.getAttribute('data-popover-nav') || navLink.getAttribute('href');
+          root.closeTermPopover(false);
+          if (targetHref) root.navigateToHash(targetHref);
+          return;
+        }
+        const insidePop = e.target && typeof e.target.closest === 'function' ? e.target.closest('#term-popover') : null;
+        if (!insidePop) {
+          root.closeTermPopover(false);
+        }
+      }
+    });
+
     root.setAppLanguage(AppState.lang);
     initGlobalSearch();
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        const popEl = document.getElementById('term-popover');
+        if (popEl && !popEl.hasAttribute('hidden')) {
+          e.preventDefault();
+          root.closeTermPopover(true);
+          return;
+        }
         if (typeof root.closeHelpPopovers === 'function') root.closeHelpPopovers();
         const dlg = document.getElementById('diagram-node-dialog');
         if (dlg && (dlg.open || dlg.hasAttribute('open'))) {
@@ -4663,6 +5435,10 @@
     window.addEventListener('resize', syncHeaderTitleByViewport);
     window.addEventListener('resize', () => {
       if (AppState.activeView === 'learn') setupGuideTocObserver();
+      const popEl = document.getElementById('term-popover');
+      if (popEl && !popEl.hasAttribute('hidden') && lastTermPopoverTrigger) {
+        positionTermPopover(popEl, lastTermPopoverTrigger);
+      }
     });
 
     // v14 Stage 2.3 + v15.2 (п. 2.4d): Expand all self-check answers and depth details automatically in print mode

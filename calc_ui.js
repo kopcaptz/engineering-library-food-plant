@@ -3136,21 +3136,7 @@
     '5B': 'out-calc-5'
   };
 
-  function clearUnusedModuleFieldsForExperiment(exp) {
-    const UC = root.UnitConverter;
-    if (!UC || !UC.FIELD_UNIT_MAP) return;
-    const mappedIds = new Set(Object.values(exp.fieldMap || {}).map((m) => m.id));
-    for (const [id, cfg] of Object.entries(UC.FIELD_UNIT_MAP)) {
-      if (cfg.module !== exp.moduleId) continue;
-      if (mappedIds.has(id)) continue;
-      const el = document.getElementById(id);
-      if (!el || el.tagName === 'SELECT') continue;
-      setFieldFromSiValue(id, '');
-    }
-  }
-
   function applyExperimentPayloadToForm(exp, payload, isVariant) {
-    clearUnusedModuleFieldsForExperiment(exp);
     for (const [key, mapCfg] of Object.entries(exp.fieldMap || {})) {
       const val = payload[key];
       if (val === undefined) continue;
@@ -3159,11 +3145,30 @@
         const selVal = isVariant ? mapCfg.variantSelectValue : mapCfg.baseSelectValue;
         if (selEl && selVal !== undefined) {
           selEl.value = String(selVal);
-          selEl.dispatchEvent(new Event('change', { bubbles: true }));
         }
-        // Clear hg/hf when setting custom hfg so thermodynamic identity check does not reject manual hfg
-        setFieldFromSiValue('c5_hg', '');
-        setFieldFromSiValue('c5_hf', '');
+        const EC = root.EngineeringCalculators;
+        const row = EC && Array.isArray(EC.VERIFIED_STEAM_TABLE)
+          ? EC.VERIFIED_STEAM_TABLE.find((r) => r.p_barg === Number(selVal))
+          : null;
+        if (row) {
+          setFieldFromSiValue('c5_hg', String(row.hg));
+          setFieldFromSiValue('c5_hf', String(row.hf));
+        }
+      } else if (mapCfg.id === 'c5_hfg') {
+        const hgNow = parseFloat(siValOf('c5_hg'));
+        const hfNow = parseFloat(siValOf('c5_hf'));
+        if (Number.isFinite(hgNow) && Number.isFinite(hfNow) && Math.abs((hgNow - hfNow) - Number(val)) > 0.5) {
+          const EC = root.EngineeringCalculators;
+          const row = EC && Array.isArray(EC.VERIFIED_STEAM_TABLE)
+            ? EC.VERIFIED_STEAM_TABLE.find((r) => Math.abs(r.hfg - Number(val)) <= 0.5)
+            : null;
+          if (row) {
+            const selEl = document.getElementById('c5_steam_preset');
+            if (selEl) selEl.value = String(row.p_barg);
+            setFieldFromSiValue('c5_hg', String(row.hg));
+            setFieldFromSiValue('c5_hf', String(row.hf));
+          }
+        }
       }
       const domEl = document.getElementById(mapCfg.id);
       if (!domEl) continue;
@@ -3223,9 +3228,10 @@
     const formulaText = (metaObj && metaObj.formula && (metaObj.formula[lang] || metaObj.formula.ru)) || '';
     const explainText = (exp.explain && (exp.explain[lang] || exp.explain.ru)) || '';
 
+    const arrowChar = lang === 'he' ? '←' : '→';
     const deltaHtml =
       `<strong>${expUi.beforeAfterLabel}:</strong> ` +
-      `${expUi.beforeWord} ${baseDual} → ${expUi.afterWord} ${varDual} (<code dir="ltr">${deltaPctSigned}</code>)`;
+      `${expUi.beforeWord} ${baseDual} ${arrowChar} ${expUi.afterWord} ${varDual} (<code dir="ltr">${deltaPctSigned}</code>)`;
 
     return `
       <div class="exp-verdict ${verdictClass}" data-exp-correct="${isCorrect ? 'true' : 'false'}">
@@ -3284,10 +3290,34 @@
       openExperimentModules.add(exp.moduleId);
     }
 
+    // Snapshot all module fields outside fieldMap (except c5_hg/c5_hf for 5B-3) before applying base
+    const UC = root.UnitConverter;
+    const mappedIds = new Set(Object.values(exp.fieldMap || {}).map((m) => m.id));
+    if (exp.id === '5B-3') {
+      mappedIds.add('c5_hg');
+      mappedIds.add('c5_hf');
+    }
+    const preservedSiValues = {};
+    if (UC && UC.FIELD_UNIT_MAP) {
+      for (const [fid, cfg] of Object.entries(UC.FIELD_UNIT_MAP)) {
+        if (cfg.module !== exp.moduleId || mappedIds.has(fid)) continue;
+        const el = document.getElementById(fid);
+        if (!el || el.tagName === 'SELECT') continue;
+        preservedSiValues[fid] = siValOf(fid);
+      }
+    }
+
     // (1) Apply base to form and run calculator
     applyExperimentPayloadToForm(exp, exp.base, false);
     // (2) Apply variant to form and run calculator so the card displays the variant result
     applyExperimentPayloadToForm(exp, exp.variant, true);
+
+    // Ensure non-fieldMap fields match pre-experiment values
+    for (const [fid, prevVal] of Object.entries(preservedSiValues)) {
+      if (siValOf(fid) !== prevVal) {
+        setFieldFromSiValue(fid, prevVal === null || prevVal === undefined ? '' : String(prevVal));
+      }
+    }
 
     // (3) Render result box for this experiment
     const resBox = itemEl ? itemEl.querySelector('.exp-result-box') : null;

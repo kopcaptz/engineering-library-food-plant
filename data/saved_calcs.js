@@ -1225,7 +1225,9 @@
       for (const out of def.outputs) {
         const val = getRecordOutputVal(rec, out);
         if (val !== null && val !== undefined && val !== '') {
-          keyNums.push(`${out.key}: ${formatValueInActiveUnits(val, out, lang, sys, rec.currency)}`);
+          const rawLabel = (out.label && (out.label[lang] || out.label.ru)) || out.key;
+          const shortLabel = rawLabel.length > 28 ? `${rawLabel.slice(0, 28)}…` : rawLabel;
+          keyNums.push(`${shortLabel}: ${formatValueInActiveUnits(val, out, lang, sys, rec.currency)}`);
           if (keyNums.length >= 2) break;
         }
       }
@@ -1500,6 +1502,18 @@
     root.setSavedCompareSlot = function (slot, id) {
       if (slot === 'A') compareIdA = id;
       else compareIdB = id;
+      renderSavedCalcsSection();
+    };
+
+    root.getSavedCalcsUiState = function () {
+      return { filterModule, compareIdA, compareIdB };
+    };
+
+    root.setSavedCalcsUiState = function (st) {
+      if (!st || typeof st !== 'object') return;
+      if (st.filterModule !== undefined) filterModule = st.filterModule || 'ALL';
+      if (st.compareIdA !== undefined) compareIdA = st.compareIdA;
+      if (st.compareIdB !== undefined) compareIdB = st.compareIdB;
       renderSavedCalcsSection();
     };
 

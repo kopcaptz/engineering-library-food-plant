@@ -4544,7 +4544,7 @@
   }
 
   .calc-save-error-banner {
-    margin-block-top: 8px;
+    margin-block-start: 8px;
     padding: 8px 12px;
     border-radius: 8px;
     background: #fef2f2;
@@ -4904,6 +4904,354 @@
       flex: 0 0 42%;
     }
   }
+
+  /* =========================================================================
+   * v15.5: Случаи (показания приборов, статус шага, разбор дистракторов, вывод)
+   *        и справочник в контексте (a.term-link, #term-popover, mark.search-hit)
+   * ========================================================================= */
+  .sr-only {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .trainer-case-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .trainer-step-header-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-block-end: 10px;
+  }
+
+  .trainer-step-header-row h4 {
+    margin: 0;
+  }
+
+  .trainer-step-status {
+    display: inline-flex;
+    align-items: center;
+    padding-block: 4px;
+    padding-inline: 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: #e0f2fe;
+    color: #075985;
+    border: 1px solid #bae6fd;
+  }
+
+  .trainer-step-status[data-step-status="5"] {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+  }
+
+  .trainer-step-status[data-step-status="6"] {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #86efac;
+  }
+
+  .trainer-readings-box {
+    margin-block-start: 12px;
+    margin-block-end: 12px;
+    padding-block: 12px;
+    padding-inline: 14px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-inline-start: 4px solid #0284c7;
+  }
+
+  .trainer-readings-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-block-end: 8px;
+  }
+
+  .trainer-readings-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  .trainer-readings-node-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-block-end: 8px;
+    font-size: 0.88rem;
+    color: #334155;
+  }
+
+  .trainer-readings-list {
+    margin: 0;
+    padding-inline-start: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 6px 14px;
+    font-size: 0.88rem;
+    color: #1e293b;
+  }
+
+  .trainer-readings-list li {
+    line-height: 1.4;
+  }
+
+  .trainer-no-selection-alert {
+    margin-block-start: 10px;
+    padding-block: 9px;
+    padding-inline: 12px;
+    border-radius: 8px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    color: #92400e;
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  details.trainer-other-options {
+    margin-block-start: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    background: #f8fafc;
+    overflow: hidden;
+  }
+
+  details.trainer-other-options > summary {
+    padding-block: 9px;
+    padding-inline: 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f4c81;
+    cursor: pointer;
+    user-select: none;
+    background: #f1f5f9;
+  }
+
+  details.trainer-other-options[open] > summary {
+    border-block-end: 1px solid #cbd5e1;
+    background: #e0f2fe;
+  }
+
+  .trainer-other-options-list {
+    padding-block: 10px;
+    padding-inline: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .trainer-other-option-item {
+    padding-block: 8px;
+    padding-inline: 10px;
+    border-radius: 7px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    font-size: 0.86rem;
+    line-height: 1.42;
+  }
+
+  .trainer-other-option-title {
+    font-weight: 700;
+    color: #1e293b;
+    margin-block-end: 4px;
+  }
+
+  .trainer-other-option-why {
+    color: #475569;
+    margin: 0;
+  }
+
+  .trainer-conclusion-box {
+    margin-block-end: 14px;
+    padding-block: 12px;
+    padding-inline: 14px;
+    border-radius: 10px;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-inline-start: 4px solid #16a34a;
+    color: #14532d;
+  }
+
+  .trainer-conclusion-box h5 {
+    margin-block: 0 6px;
+    font-size: 0.96rem;
+    color: #14532d;
+  }
+
+  .trainer-confirmed-cause {
+    margin-block: 0 8px;
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .trainer-procedure-note {
+    margin: 0;
+    padding-block-start: 8px;
+    border-block-start: 1px dashed #86efac;
+    font-size: 0.84rem;
+    line-height: 1.42;
+    color: #166534;
+  }
+
+  .trainer-local-storage-note {
+    display: inline-block;
+    font-size: 0.84rem;
+    color: #475569;
+  }
+
+  a.term-link {
+    color: inherit;
+    text-decoration: underline dotted #0284c7;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background-color 0.15s ease;
+  }
+
+  a.term-link:hover,
+  a.term-link:focus-visible {
+    background-color: #e0f2fe;
+    color: #0369a1;
+  }
+
+  .term-popover {
+    position: fixed;
+    z-index: 1250;
+    inline-size: min(380px, calc(100vw - 16px));
+    max-inline-size: calc(100vw - 16px);
+    max-block-size: min(75vh, 420px);
+    overflow-y: auto;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #94a3b8;
+    border-radius: 12px;
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.22);
+    padding-block: 12px;
+    padding-inline: 14px;
+    box-sizing: border-box;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .term-popover[hidden] {
+    display: none !important;
+  }
+
+  .term-popover-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-block-end: 6px;
+  }
+
+  .term-popover-title-wrap {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
+  .term-popover-title {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+  }
+
+  .term-popover-sec-title {
+    display: block;
+    font-size: 0.82rem;
+    color: #475569;
+    margin-block-start: 2px;
+  }
+
+  .term-popover-close {
+    flex-shrink: 0;
+    inline-size: 28px;
+    block-size: 28px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .term-popover-close:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .term-popover-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-block-end: 8px;
+    font-size: 0.8rem;
+    color: #475569;
+  }
+
+  .term-popover-def {
+    color: #1e293b;
+    margin-block-end: 10px;
+    overflow-wrap: anywhere;
+  }
+
+  .term-popover-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-block-start: 8px;
+    border-block-start: 1px dashed #cbd5e1;
+  }
+
+  mark.search-hit {
+    background-color: #fef08a;
+    color: #713f12;
+    padding-inline: 2px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 599px) {
+    .term-popover {
+      inset-inline-start: 8px !important;
+      inset-inline-end: 8px !important;
+      inset-block-end: 8px !important;
+      inset-block-start: auto !important;
+      inline-size: auto !important;
+      max-inline-size: calc(100vw - 16px) !important;
+    }
+  }
 }
 
 @layer print {
@@ -5134,24 +5482,32 @@
       font-size: 8.5pt !important;
     }
 
-    /* v14 Stage 2.3 + v15.2 (п. 2.4d): Expand all self-check answers and depth details in print mode */
+    /* v14 Stage 2.3 + v15.2 (п. 2.4d) + v15.5 (п. 2.8): Expand all self-check answers, depth details, and trainer-other-options in print mode */
     .guide-toc-bar,
     .guide-steps-strip,
     .guide-depth-toggle,
     .selfcheck-toolbar,
-    details.calc-experiments {
+    details.calc-experiments,
+    #term-popover {
       display: none !important;
     }
 
+    a.term-link {
+      text-decoration: none !important;
+      color: inherit !important;
+    }
+
     details.selfcheck-answer::details-content,
-    details.guide-depth-details::details-content {
+    details.guide-depth-details::details-content,
+    details.trainer-other-options::details-content {
       display: block !important;
       content-visibility: visible !important;
     }
 
     details.selfcheck-answer > .selfcheck-answer-body,
     details.selfcheck-answer > .selfcheck-a-text,
-    details.guide-depth-details > * {
+    details.guide-depth-details > *,
+    details.trainer-other-options > .trainer-other-options-list {
       display: block !important;
       content-visibility: visible !important;
     }

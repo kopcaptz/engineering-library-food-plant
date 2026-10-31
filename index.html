@@ -19,7 +19,7 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"></path><path d="M8 7h7M8 11h5"></path></svg>
             <span id="site-title-el">Инженерная библиотека завода</span>
           </a>
-          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v15.4</span>
+          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v15.5</span>
         </h1>
         <p class="site-subtitle" id="site-subtitle-el" style="display:none;">Пар • Конденсат • Чиллеры • Сжатый воздух • Обратный осмос (RO)</p>
       </div>
@@ -903,8 +903,11 @@
     <div class="node-dialog-body" id="node-dialog-body"></div>
   </dialog>
 
+  <div id="term-popover" class="term-popover no-print" role="dialog" aria-modal="false" aria-labelledby="term-popover-title" aria-describedby="term-popover-def" hidden></div>
+  <div id="search-live-region" class="sr-only no-print" aria-live="polite" aria-atomic="true"></div>
+
   <footer class="site-footer no-print" id="site-footer-el">
-    Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.4 (2026-10-30), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
+    Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.5 (2026-10-31), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
   </footer>
 
   <!-- МОБИЛЬНАЯ НИЖНЯЯ НАВИГАЦИЯ (< 768px: 5 КНОПОК С ИКОНКОЙ И КОРОТКОЙ ПОДПИСЬЮ) -->
@@ -954,6 +957,9 @@
   <script src="data/steam_table.js"></script>
   <script src="data/symptoms.js"></script>
   <script src="data/learning_map.js"></script>
+  <script src="data/case_context.js"></script>
+  <script src="data/term_aliases.js"></script>
+  <script src="data/term_linker.js"></script>
   <script src="calc_ui.js"></script>
   <script src="app.js"></script>
 </body>
