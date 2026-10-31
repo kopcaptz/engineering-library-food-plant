@@ -5252,6 +5252,159 @@
       max-inline-size: calc(100vw - 16px) !important;
     }
   }
+
+  /* =========================================================================
+     v15.6: Trust Labels (.trust-label, .trust-label-row, .trust-legend) & LTR Bidi
+     ========================================================================= */
+  .trust-legend {
+    margin-block-end: 14px;
+    padding-block: 10px;
+    padding-inline: 14px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-inline-start: 4px solid #0f4c81;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: #1e293b;
+  }
+
+  .trust-legend > summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: #0f4c81;
+    user-select: none;
+    list-style-position: inside;
+  }
+
+  .trust-legend > summary:focus-visible {
+    outline: 2px solid #0f4c81;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .trust-legend-body {
+    margin-block-start: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .trust-legend-intro {
+    margin: 0;
+    color: #334155;
+  }
+
+  .trust-legend-list {
+    margin: 0;
+    padding-inline-start: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .trust-legend-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .trust-label-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin-block-start: 4px;
+    margin-block-end: 10px;
+    padding-block: 4px;
+    padding-inline: 8px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    font-size: 0.81rem;
+    line-height: 1.38;
+    max-inline-size: 100%;
+    box-sizing: border-box;
+  }
+
+  .trust-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding-block: 2px;
+    padding-inline: 8px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.3;
+    border: 1px solid transparent;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .trust-label--example {
+    background-color: #fef3c7;
+    color: #78350f;
+    border-color: #d97706;
+  }
+
+  .trust-label--principle {
+    background-color: #e0f2fe;
+    color: #0c4a6e;
+    border-color: #0284c7;
+  }
+
+  .trust-label--manufacturer {
+    background-color: #f3e8ff;
+    color: #4c1d95;
+    border-color: #7c3aed;
+  }
+
+  .trust-label-source {
+    color: #0f4c81;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    overflow-wrap: anywhere;
+  }
+
+  .trust-label-source:hover {
+    color: #075985;
+  }
+
+  .trust-label-source:focus-visible,
+  .trust-label-guide-link:focus-visible {
+    outline: 2px solid #0f4c81;
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  .trust-label-note {
+    color: #475569;
+    font-style: italic;
+    overflow-wrap: anywhere;
+  }
+
+  .trust-label-guide-link {
+    color: #0f4c81;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .trainer-verify-calc-btn {
+    display: inline-block;
+    text-align: center;
+    line-height: 1.45;
+  }
+
+  .case-calc-ltr {
+    display: inline;
+    unicode-bidi: isolate;
+    white-space: nowrap;
+  }
 }
 
 @layer print {
@@ -5499,7 +5652,8 @@
 
     details.selfcheck-answer::details-content,
     details.guide-depth-details::details-content,
-    details.trainer-other-options::details-content {
+    details.trainer-other-options::details-content,
+    details.trust-legend::details-content {
       display: block !important;
       content-visibility: visible !important;
     }
@@ -5507,9 +5661,44 @@
     details.selfcheck-answer > .selfcheck-answer-body,
     details.selfcheck-answer > .selfcheck-a-text,
     details.guide-depth-details > *,
-    details.trainer-other-options > .trainer-other-options-list {
+    details.trainer-other-options > .trainer-other-options-list,
+    details.trust-legend > .trust-legend-body {
       display: block !important;
       content-visibility: visible !important;
+    }
+
+    .trust-legend {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #000000 !important;
+      padding-block: 6px !important;
+      padding-inline: 10px !important;
+    }
+
+    .trust-legend > summary {
+      color: #000000 !important;
+    }
+
+    .trust-label-row {
+      background: #ffffff !important;
+      border: 1px solid #000000 !important;
+      color: #000000 !important;
+    }
+
+    .trust-label,
+    .trust-label--example,
+    .trust-label--principle,
+    .trust-label--manufacturer {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #000000 !important;
+    }
+
+    .trust-label-source,
+    .trust-label-note,
+    .trust-label-guide-link {
+      color: #000000 !important;
+      text-decoration: none !important;
     }
   }
 }

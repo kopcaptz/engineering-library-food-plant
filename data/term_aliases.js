@@ -254,8 +254,7 @@
         },
         "searchAliases": {
             "ru": [
-                "деаэратор",
-                "деаэрация"
+                "деаэратор"
             ],
             "he": [
                 "דאורטור"
@@ -415,9 +414,7 @@
         },
         "searchAliases": {
             "ru": [
-                "паровой коллектор",
-                "гребенка",
-                "гребёнка"
+                "паровой коллектор"
             ],
             "he": [
                 "מרכזת קיטור",
@@ -525,7 +522,6 @@
         "searchAliases": {
             "ru": [
                 "предохранительный клапан",
-                "взрывной клапан",
                 "PSV"
             ],
             "he": [
@@ -2002,8 +1998,7 @@
         "searchAliases": {
             "ru": [
                 "SDI",
-                "индекс коллоидного загрязнения",
-                "SDI15"
+                "индекс коллоидного загрязнения"
             ],
             "he": [
                 "SDI",
@@ -2486,7 +2481,6 @@
     "#calc-3a": {
         "ru": [
             "пересчет расхода воздуха",
-            "FAD в нормальные кубометры",
             "стандартный расход воздуха Nl/s"
         ],
         "he": [
@@ -2585,6 +2579,9 @@
         "closeBtnLabel": "Закрыть карточку термина",
         "closePopover": "Закрыть окно термина",
         "searchMatchesFound": "Найдено {count} совпадений",
+        "searchMatchesFoundOne": "Найдено {count} совпадение",
+        "searchMatchesFoundFew": "Найдено {count} совпадения",
+        "searchMatchesFoundMany": "Найдено {count} совпадений",
         "searchMatchesLive": "Найдено {n} совпадений",
         "nodeGroupLabel": "Узлы схем"
     },
@@ -2597,14 +2594,40 @@
         "closeBtnLabel": "סגור כרטיס מונח",
         "closePopover": "סגור חלונית מונח",
         "searchMatchesFound": "נמצאו {count} התאמות",
+        "searchMatchesFoundOne": "נמצאה התאמה אחת",
+        "searchMatchesFoundFew": "נמצאו {count} התאמות",
+        "searchMatchesFoundMany": "נמצאו {count} התאמות",
         "searchMatchesLive": "נמצאו {n} התאמות",
         "nodeGroupLabel": "צמתי תרשים"
     }
 };
 
+  function formatSearchMatches(n, lang) {
+    const count = Math.abs(Math.trunc(Number(n) || 0));
+    const isHe = lang === 'he';
+    const dict = UI[isHe ? 'he' : 'ru'] || UI.ru;
+    if (isHe) {
+      if (count === 1) return dict.searchMatchesFoundOne;
+      return dict.searchMatchesFoundMany.replace('{count}', String(count));
+    }
+    const mod100 = count % 100;
+    const mod10 = count % 10;
+    if (mod100 >= 11 && mod100 <= 14) {
+      return dict.searchMatchesFoundMany.replace('{count}', String(count));
+    }
+    if (mod10 === 1) {
+      return dict.searchMatchesFoundOne.replace('{count}', String(count));
+    }
+    if (mod10 >= 2 && mod10 <= 4) {
+      return dict.searchMatchesFoundFew.replace('{count}', String(count));
+    }
+    return dict.searchMatchesFoundMany.replace('{count}', String(count));
+  }
+
   return Object.freeze({
     TERMS,
     BLOCK_ALIASES,
-    UI
+    UI,
+    formatSearchMatches
   });
 });

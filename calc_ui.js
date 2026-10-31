@@ -622,6 +622,47 @@
     );
   }
 
+  function escapeTrustHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function buildTrustLabelRowHtml(opts, lang) {
+    if (typeof root.renderTrustLabelRowHtml === 'function') {
+      return root.renderTrustLabelRowHtml(opts, lang);
+    }
+    const tl = root.TRUST_LABELS;
+    if (!tl || !tl.KINDS || !opts) return '';
+    const l = lang === 'he' ? 'he' : 'ru';
+    const kindKey = opts.kind || 'example';
+    const kindObj = tl.KINDS[kindKey] || tl.KINDS.example;
+    const ui = (tl.UI && tl.UI[l]) || (tl.UI && tl.UI.ru) || {};
+    const symbol = kindObj.symbol || '●';
+    const labelText = (kindObj.label && (kindObj.label[l] || kindObj.label.ru)) || kindKey;
+    const explanation = (kindObj.explanation && (kindObj.explanation[l] || kindObj.explanation.ru)) || '';
+    const formattedSource = typeof tl.formatSourceForLang === 'function'
+      ? tl.formatSourceForLang(opts.source || '', l)
+      : String(opts.source || '');
+    const segments = formattedSource.split(/;\s*(?=S\d\d\b)/).map((s) => s.trim()).filter(Boolean);
+    const sourceLinksHtml = segments.map((seg) => {
+      const m = seg.match(/^(S\d\d)\b/);
+      const code = m ? m[1] : 'S01';
+      return `<a href="#source-${code}" class="trust-label-source"><span dir="ltr">${escapeTrustHtml(seg)}</span></a>`;
+    }).join('<span dir="ltr">; </span>');
+    const noteHtml = opts.note
+      ? ` <span class="trust-label-note">[${escapeTrustHtml(ui.assumptionLabel || (l === 'he' ? 'הנחה' : 'Допущение'))}: ${escapeTrustHtml(opts.note)}]</span>`
+      : '';
+    const guideLinkHtml = opts.guideAnchor
+      ? ` <a href="${escapeTrustHtml(opts.guideAnchor)}" class="trust-label-guide-link">${escapeTrustHtml(ui.whereInTextbook || (l === 'he' ? 'איפה בספר הלימוד' : 'Где в учебнике'))} →</a>`
+      : '';
+    const modAttr = opts.moduleId ? ` data-module="${escapeTrustHtml(opts.moduleId)}"` : '';
+    const expAttr = opts.expId ? ` data-exp="${escapeTrustHtml(opts.expId)}"` : '';
+    return `<div class="trust-label-row"${modAttr}${expAttr}><span class="trust-label trust-label--${escapeTrustHtml(kindKey)}" data-kind="${escapeTrustHtml(kindKey)}" data-source="${escapeTrustHtml(formattedSource)}" title="${escapeTrustHtml(explanation)}">${symbol}&nbsp;${escapeTrustHtml(labelText)}</span> ${sourceLinksHtml}${noteHtml}${guideLinkHtml}</div>`;
+  }
+
   function buildCalcCardHtml(moduleCode, titleText, inputsSummary, resultsHtml, assumptionsText, warningsList = []) {
     const lang = getLang();
     const isHe = lang === 'he';
@@ -633,6 +674,17 @@
     const lblMeaning = (expUi && expUi.whatItMeansTitle) || (isHe ? 'מה משמעות התוצאה' : 'Что это значит');
     const lblLimits = (expUi && expUi.applicabilityLimitsTitle) || (isHe ? 'גבולות גזרה ותחום תקפות' : 'Границы применимости');
     const btnCompare = (expUi && expUi.btnCompareWithSaved) || (isHe ? '⚖️ השוואה עם חישוב שמור ←' : '⚖️ Сравнить с сохранённым →');
+
+    const tl = root.TRUST_LABELS;
+    const modTrust = (tl && tl.MODULES && tl.MODULES[normMod]) || null;
+    const modTrustRowHtml = modTrust
+      ? buildTrustLabelRowHtml({
+          kind: modTrust.kind,
+          source: modTrust.source,
+          guideAnchor: modTrust.guideAnchor,
+          moduleId: normMod
+        }, lang)
+      : '';
 
     const lblDate = isHe ? 'תאריך וגרסה:' : 'Дата и редакция:';
     const lblInputs = isHe ? 'נתוני קלט שהוזנו:' : 'Введённые исходные данные:';
@@ -654,6 +706,7 @@
         <div class="calc-card-body">
           ${resultsHtml}
           ${warningsHtml}
+          ${modTrustRowHtml}
           ${meaningText ? `<div class="calc-card-meaning"><strong>${lblMeaning}:</strong> ${meaningText}</div>` : ''}
           ${assumptionsText ? `<div class="calc-card-limits"><strong>${lblLimits}:</strong> ${assumptionsText}</div>` : ''}
         </div>
@@ -2267,7 +2320,7 @@
       anchorId: 'calc-5a',
       btnLabel: {
         ru: '🧮 Проверить расчётом (Модуль 5А: P₃ = 1.2 бар изб. → 2.213 бар абс.)',
-        he: '🧮 בדיקה במחשבון (מודול 5א: \u200EP₃ = 1.2 barg → 2.213 bara\u200E)'
+        he: '🧮 בדיקה במחשבון (מודול 5א: <span dir="ltr" class="case-calc-ltr">P₃ = 1.2 barg → 2.213 bara</span>\u2060)'
       },
       apply: function () {
         document.getElementById('c5a_mode').value = 'gauge_to_abs';
@@ -2285,7 +2338,7 @@
       anchorId: 'calc-5a',
       btnLabel: {
         ru: '🧮 Проверить расчётом (Модуль 5А: P₁ = 6.5 бар изб. → 7.513 бар абс.)',
-        he: '🧮 בדיקה במחשבון (מודול 5א: \u200EP₁ = 6.5 barg → 7.513 bara\u200E)'
+        he: '🧮 בדיקה במחשבון (מודול 5א: <span dir="ltr" class="case-calc-ltr">P₁ = 6.5 barg → 7.513 bara</span>\u2060)'
       },
       apply: function () {
         document.getElementById('c5a_mode').value = 'gauge_to_abs';
@@ -2303,7 +2356,7 @@
       anchorId: 'calc-1b',
       btnLabel: {
         ru: '🧮 Проверить расчётом (Модуль 1Б: x_flash = 11.15%, m_flash = 167.32 кг/ч, D_cr = 200 мм)',
-        he: '🧮 בדיקה במחשבון (מודול 1ב: \u200Ex_flash = 11.15%, m_flash = 167.32 kg/h, D_cr = 200 mm\u200E)'
+        he: '🧮 בדיקה במחשבון (מודול 1ב: <span dir="ltr" class="case-calc-ltr">x_flash = 11.15%</span>, <span dir="ltr" class="case-calc-ltr">m_flash = 167.32 kg/h</span>, <span dir="ltr" class="case-calc-ltr">D_cr = 200 mm</span>\u2060)'
       },
       apply: function () {
         setFieldFromSiValue('c1_mc', '1500');
@@ -2327,7 +2380,7 @@
       anchorId: 'calc-1a',
       btnLabel: {
         ru: '🧮 Проверить расчётом (Модуль 1А: 6.0 л/мин, 50→20 °C → 12.56 кВт, 2880 м³/год)',
-        he: '🧮 בדיקה במחשבון (מודול 1א: \u200E6.0 L/min, 50→20 °C → 12.56 kW, 2880 m³/yr\u200E)'
+        he: '🧮 בדיקה במחשבון (מודול 1א: <span dir="ltr" class="case-calc-ltr">6.0 L/min</span>, <span dir="ltr" class="case-calc-ltr">50→20 °C → 12.56 kW</span>, <span dir="ltr" class="case-calc-ltr">2880 m³/yr</span>\u2060)'
       },
       apply: function () {
         document.getElementById('c1a_mode').value = 'direct_l_min';
@@ -2353,7 +2406,7 @@
       anchorId: 'calc-2',
       btnLabel: {
         ru: '🧮 Проверить расчётом (Модуль 2: подход конденсатора ΔT_app,cond = 10.0 °C)',
-        he: '🧮 בדיקה במחשבון (מודול 2: הפרש גישה במעבה \u200EΔT_app,cond = 10.0 °C\u200E)'
+        he: '🧮 בדיקה במחשבון (מודול 2: הפרש גישה במעבה <span dir="ltr" class="case-calc-ltr">ΔT_app,cond = 10.0 °C</span>\u2060)'
       },
       apply: function () {
         document.getElementById('c2_fluid').value = 'water';
@@ -2379,7 +2432,7 @@
       anchorId: 'calc-2',
       btnLabel: {
         ru: '🧮 Проверить расчётом (Модуль 2: V_w = 44.81 м³/ч, 13.2→3.6 °C → Q_evap = 500 кВт, ΔT_app,evap = 2.8 °C)',
-        he: '🧮 בדיקה במחשבון (מודול 2: \u200EV_w = 44.81 m³/h, 13.2→3.6 °C → Q_evap = 500 kW, ΔT_app,evap = 2.8 °C\u200E)'
+        he: '🧮 בדיקה במחשבון (מודול 2: <span dir="ltr" class="case-calc-ltr">V_w = 44.81 m³/h</span>, <span dir="ltr" class="case-calc-ltr">13.2→3.6 °C → Q_evap = 500 kW</span>, <span dir="ltr" class="case-calc-ltr">ΔT_app,evap = 2.8 °C</span>\u2060)'
       },
       apply: function () {
         document.getElementById('c2_fluid').value = 'water';
@@ -2413,7 +2466,7 @@
       anchorId: 'calc-3b',
       btnLabel: {
         ru: '🧮 Проверить расчётом (Модуль 3Б: t_load = 1.5 мин, t_unload = 3.5 мин, Q_comp = 10 м³/мин → 30%, 3.0 м³/мин)',
-        he: '🧮 בדיקה במחשבון (מודול 3ב: \u200Et_load = 1.5 min, t_unload = 3.5 min, Q_comp = 10 m³/min → 30%, 3.0 m³/min\u200E)'
+        he: '🧮 בדיקה במחשבון (מודול 3ב: <span dir="ltr" class="case-calc-ltr">t_load = 1.5 min</span>, <span dir="ltr" class="case-calc-ltr">t_unload = 3.5 min</span>, <span dir="ltr" class="case-calc-ltr">Q_comp = 10 m³/min → 30%</span>, <span dir="ltr" class="case-calc-ltr">3.0 m³/min</span>\u2060)'
       },
       apply: function () {
         document.getElementById('c3b_method').value = 'load_unload';
@@ -2531,8 +2584,10 @@
       }
     }
     if (CALC_METADATA) {
+      const tl = root.TRUST_LABELS;
       for (const [modKey, metaObj] of Object.entries(CALC_METADATA)) {
         const shortId = modKey.replace(/^calc-/, '');
+        const normMod = shortId.toUpperCase();
         const box = document.getElementById(`calc-meta-${shortId}`) || document.getElementById(`calc-meta-${modKey}`);
         if (box && metaObj) {
           const pick = (field) => (field && typeof field === 'object' ? (field[lang] || field.ru) : '');
@@ -2546,6 +2601,15 @@
           const lblWhere = lang === 'he' ? '🔗 איפה מיושם:' : '🔗 Где применяется:';
           const whereObj = MODULE_WHERE_APPLIED[shortId];
           const whereHtml = whereObj ? (whereObj[lang] || whereObj.ru) : '';
+          const modTrust = (tl && tl.MODULES && tl.MODULES[normMod]) || null;
+          const modHeaderTrustHtml = modTrust
+            ? buildTrustLabelRowHtml({
+                kind: modTrust.kind,
+                source: modTrust.source,
+                guideAnchor: modTrust.guideAnchor,
+                moduleId: normMod
+              }, lang)
+            : '';
           const showReturn = activeReturnCase && activeReturnCase.moduleId === shortId;
           const returnBannerHtml = showReturn
             ? `<div class="calc-return-case-bar no-print" style="margin-block-top:0.65rem; padding-block-start:0.55rem; border-block-start:1px dashed var(--border-color); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
@@ -2559,6 +2623,7 @@
           box.innerHTML = `
             <div class="calc-meta-box">
               <h3 class="calc-meta-title" id="calc-heading-${shortId}" tabindex="-1"><strong>${titleStr}</strong></h3>
+              ${modHeaderTrustHtml}
               <div class="calc-meta-grid">
                 <div><strong>${lblTask}</strong> ${taskStr}</div>
                 ${whereHtml ? `<div class="calc-where-applied"><strong>${lblWhere}</strong> ${whereHtml}</div>` : ''}
@@ -3434,10 +3499,21 @@
           ? buildExperimentResultBoxHtml(exp, savedChoice, lang)
           : '';
 
+        const tl = root.TRUST_LABELS;
+        const expTrust = (tl && tl.EXPERIMENTS && tl.EXPERIMENTS[exp.id]) || null;
+        const expTrustRowHtml = expTrust
+          ? buildTrustLabelRowHtml({
+              kind: expTrust.kind || 'example',
+              source: expTrust.source || exp.source || '',
+              expId: exp.id
+            }, lang)
+          : '';
+
         return `
           <div class="exp-item" data-exp-id="${exp.id}">
             <div class="exp-item-header">
               <span class="exp-item-badge">${badgeStr} · <code dir="ltr">${exp.id}</code></span>
+              ${expTrustRowHtml}
             </div>
             <p class="exp-question"><strong>${qText}</strong></p>
             <div class="exp-hypothesis-label">${expUi.myHypothesis}:</div>

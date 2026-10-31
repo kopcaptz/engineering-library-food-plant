@@ -59,7 +59,10 @@
     'ltr-math',
     'sec-term',
     'term-link',
-    'guide-ru-fallback'
+    'guide-ru-fallback',
+    'trust-label',
+    'trust-label-row',
+    'trust-legend'
   ];
 
   const WORD_CHAR_CLASS = 'A-Za-zА-Яа-яЁё0-9\\u0590-\\u05FF';
@@ -221,7 +224,8 @@
       if (id) linkedTermIds.add(id);
     }
 
-    const tokens = html.match(/<!--[\s\S]*?-->|<[^>]+>|[^<]+/g);
+    // Тегом считается только «<» с последующим символом [A-Za-z/!]; иначе «<» — часть текста (например, в $SDI_{15} < 3.0$)
+    const tokens = html.match(/<!--[\s\S]*?-->|<[A-Za-z/!][^>]*>|(?:[^<]|<(?![A-Za-z/!]))+/g);
     if (!tokens) return html;
 
     const stack = [];
@@ -232,7 +236,7 @@
         outTokens.push(token);
         continue;
       }
-      if (token.startsWith('<')) {
+      if (/^<[A-Za-z/!]/.test(token)) {
         const closeMatch = token.match(/^<\s*\/\s*([A-Za-z0-9:-]+)/);
         if (closeMatch) {
           const closeTag = closeMatch[1].toLowerCase();

@@ -5,7 +5,7 @@
   'use strict';
 
   const APP_VERSION = root.APP_VERSION = {
-    edition: 'v15.5',
+    edition: 'v15.6',
     date: '2026-10-31',
     core: 'v10.0'
   };
@@ -1274,6 +1274,64 @@
     root.syncSelfCheckToggleBtn(sysId);
   };
 
+  root.renderTrustSourceLinksHtml = function (sourceStr, lang) {
+    const tl = root.TRUST_LABELS;
+    const l = lang === 'he' ? 'he' : 'ru';
+    const formatted = tl && typeof tl.formatSourceForLang === 'function'
+      ? tl.formatSourceForLang(sourceStr, l)
+      : String(sourceStr || '');
+    const segments = formatted.split(/;\s*(?=S\d\d\b)/).map((s) => s.trim()).filter(Boolean);
+    if (segments.length === 0) return '';
+    return segments.map((seg) => {
+      const m = seg.match(/^(S\d\d)\b/);
+      const code = m ? m[1] : 'S01';
+      return `<a href="#source-${code}" class="trust-label-source"><span dir="ltr">${escapeGuideHtml(seg)}</span></a>`;
+    }).join('<span dir="ltr">; </span>');
+  };
+
+  root.renderTrustLabelRowHtml = function (opts, lang) {
+    const tl = root.TRUST_LABELS;
+    if (!tl || !tl.KINDS || !opts) return '';
+    const l = lang === 'he' ? 'he' : 'ru';
+    const kindKey = opts.kind || 'example';
+    const kindObj = tl.KINDS[kindKey] || tl.KINDS.example;
+    const ui = (tl.UI && tl.UI[l]) || (tl.UI && tl.UI.ru) || {};
+    const symbol = kindObj.symbol || '●';
+    const labelText = (kindObj.label && (kindObj.label[l] || kindObj.label.ru)) || kindKey;
+    const explanation = (kindObj.explanation && (kindObj.explanation[l] || kindObj.explanation.ru)) || '';
+    const formattedSource = typeof tl.formatSourceForLang === 'function'
+      ? tl.formatSourceForLang(opts.source || '', l)
+      : String(opts.source || '');
+    const sourceLinksHtml = root.renderTrustSourceLinksHtml(opts.source || '', l);
+    const noteHtml = opts.note
+      ? ` <span class="trust-label-note">[${escapeGuideHtml(ui.assumptionLabel || (l === 'he' ? 'הנחה' : 'Допущение'))}: ${escapeGuideHtml(opts.note)}]</span>`
+      : '';
+    const guideLinkHtml = opts.guideAnchor
+      ? ` <a href="${escapeGuideHtml(opts.guideAnchor)}" class="trust-label-guide-link">${escapeGuideHtml(ui.whereInTextbook || (l === 'he' ? 'איפה בספר הלימוד' : 'Где в учебнике'))} →</a>`
+      : '';
+    const anchorAttr = opts.anchorId ? ` data-anchor="${escapeGuideHtml(opts.anchorId)}"` : '';
+    const modAttr = opts.moduleId ? ` data-module="${escapeGuideHtml(opts.moduleId)}"` : '';
+    const caseAttr = opts.caseId ? ` data-case="${escapeGuideHtml(opts.caseId)}"` : '';
+    const expAttr = opts.expId ? ` data-exp="${escapeGuideHtml(opts.expId)}"` : '';
+    return `<div class="trust-label-row"${anchorAttr}${modAttr}${caseAttr}${expAttr}><span class="trust-label trust-label--${escapeGuideHtml(kindKey)}" data-kind="${escapeGuideHtml(kindKey)}" data-source="${escapeGuideHtml(formattedSource)}" title="${escapeGuideHtml(explanation)}">${symbol}&nbsp;${escapeGuideHtml(labelText)}</span> ${sourceLinksHtml}${noteHtml}${guideLinkHtml}</div>`;
+  };
+
+  root.renderTrustLegendHtml = function (legendId, lang) {
+    const tl = root.TRUST_LABELS;
+    if (!tl || !tl.KINDS) return '';
+    const l = lang === 'he' ? 'he' : 'ru';
+    const ui = (tl.UI && tl.UI[l]) || (tl.UI && tl.UI.ru) || {};
+    const order = ['example', 'principle', 'manufacturer'];
+    const itemsHtml = order.map((k) => {
+      const ko = tl.KINDS[k];
+      if (!ko) return '';
+      const lbl = (ko.label && (ko.label[l] || ko.label.ru)) || k;
+      const exp = (ko.explanation && (ko.explanation[l] || ko.explanation.ru)) || '';
+      return `<li class="trust-legend-item"><span class="trust-label trust-label--${escapeGuideHtml(k)}" data-kind="${escapeGuideHtml(k)}" title="${escapeGuideHtml(exp)}">${ko.symbol}&nbsp;${escapeGuideHtml(lbl)}</span> <span>— ${escapeGuideHtml(exp)}</span></li>`;
+    }).join('');
+    return `<details class="trust-legend" id="${escapeGuideHtml(legendId || 'trust-legend')}"><summary>${escapeGuideHtml(ui.legendSummary || (l === 'he' ? 'מה משמעות התוויות' : 'Что означают ярлыки'))}</summary><div class="trust-legend-body"><p class="trust-legend-intro">${escapeGuideHtml(ui.legendIntro || '')}</p><ul class="trust-legend-list">${itemsHtml}</ul></div></details>`;
+  };
+
   function renderSystemsSection() {
     const lang = AppState.lang;
     const isHe = lang === 'he';
@@ -1375,16 +1433,47 @@
         return root.linkGlossaryTerms(htmlStr, l, root.GLOSSARY_ITEMS, root.TERM_ALIASES);
       };
 
+      function injectTrustLabelsIntoFormulasHtml(htmlStr, sysId, l) {
+        const tl = root.TRUST_LABELS;
+        if (!tl || !Array.isArray(tl.FORMULAS)) return htmlStr;
+        const formulaMap = {};
+        tl.FORMULAS.forEach((f) => {
+          if (f && f.anchor) formulaMap[f.anchor] = f;
+        });
+        const legendHtml = typeof root.renderTrustLegendHtml === 'function'
+          ? root.renderTrustLegendHtml(`trust-legend-${sysId}`, l)
+          : '';
+        const withRows = String(htmlStr || '').replace(/<(h4|h5)\s+id="(guide-[^"]+)"[^>]*>[\s\S]*?<\/\1>/gi, (fullMatch, _tag, anchorId) => {
+          const item = formulaMap[anchorId];
+          if (!item || typeof root.renderTrustLabelRowHtml !== 'function') return fullMatch;
+          const noteText = l === 'he' ? (item.noteHe || '') : (item.noteRu || '');
+          const rowHtml = root.renderTrustLabelRowHtml({
+            kind: item.kind,
+            source: item.source,
+            note: noteText,
+            anchorId: anchorId
+          }, l);
+          return `${fullMatch}\n${rowHtml}`;
+        });
+        return `${legendHtml}\n${withRows}`;
+      }
+
       function renderGuideBlockBodyHtml(key) {
         const gb = guideBlockMap[key];
         if (!gb || !gb.html) return '';
         const bodyIdAttr = key === 'nodes' ? ` id="guide-body-${sys.id}-nodes"` : '';
         if (!isHe) {
-          const mathRu = injectDeterministicBlockIds(root.renderGuideMathHtml(gb.html.ru || ''), sys.id, key);
+          let mathRu = injectDeterministicBlockIds(root.renderGuideMathHtml(gb.html.ru || ''), sys.id, key);
+          if (key === 'formulas') {
+            mathRu = injectTrustLabelsIntoFormulasHtml(mathRu, sys.id, 'ru');
+          }
           return `<div class="guide-block-body"${bodyIdAttr}>${applyTermLinks(mathRu, 'ru')}</div>`;
         }
         if (gb.html.he) {
-          const mathHe = injectDeterministicBlockIds(root.renderGuideMathHtml(gb.html.he, 'he'), sys.id, key);
+          let mathHe = injectDeterministicBlockIds(root.renderGuideMathHtml(gb.html.he, 'he'), sys.id, key);
+          if (key === 'formulas') {
+            mathHe = injectTrustLabelsIntoFormulasHtml(mathHe, sys.id, 'he');
+          }
           return `<div class="guide-block-body"${bodyIdAttr}>${applyTermLinks(mathHe, 'he')}</div>`;
         }
         return `
@@ -2303,7 +2392,7 @@
             <p class="trainer-confirmed-cause">
               <strong>${ctxUi.confirmedCausePrefix || (isHe ? 'סיבה מאומתת:' : 'Подтверждённая причина:')}</strong>
               ${(caseCtx.confirmedCause && (caseCtx.confirmedCause[lang] || caseCtx.confirmedCause.ru)) || ''}
-              (<a href="#source-${srcCode}">${escapeGuideHtml(caseCtx.causeSource || srcCode)}</a>)
+              <span dir="ltr">(<a href="#source-${srcCode}">${escapeGuideHtml(caseCtx.causeSource || srcCode)}</a>)</span>
             </p>
             <p class="trainer-procedure-note">
               ${procNote[lang] || procNote.ru || ''}
@@ -2331,6 +2420,17 @@
     }
 
     const activeCaseMeta = getSystemVisualMeta(nc.systemId);
+    const tl = root.TRUST_LABELS;
+    const caseTrustEntry = (tl && tl.CASES && tl.CASES[nc.id]) || null;
+    const caseTrustSource = (caseTrustEntry && caseTrustEntry.source) || (caseCtx && caseCtx.causeSource) || '';
+    const caseTrustLabelHtml = (caseTrustSource && typeof root.renderTrustLabelRowHtml === 'function')
+      ? root.renderTrustLabelRowHtml({
+          kind: (caseTrustEntry && caseTrustEntry.kind) || 'example',
+          source: caseTrustSource,
+          caseId: nc.id
+        }, lang)
+      : '';
+
     container.innerHTML = `
       <div class="trainer-header-bar">
         <div>
@@ -2364,6 +2464,7 @@
                 ${symLocation ? `<span class="problem-symptom-loc">${symLocation}</span>` : ''}
               </div>
               <h3 id="case-heading-${nc.id}" tabindex="-1">${nc.title}</h3>
+              ${caseTrustLabelHtml}
             </div>
             <div class="trainer-case-header-actions">
               <button type="button" class="btn btn-outline btn-sm trainer-restart-case-btn" onclick="window.resetSingleCase('${nc.id}')">
@@ -3899,12 +4000,16 @@
 
     const box = document.getElementById('calc-overview-container');
     if (!box) return;
+    const calcLegendHtml = typeof root.renderTrustLegendHtml === 'function'
+      ? root.renderTrustLegendHtml('trust-legend-calculators', lang)
+      : '';
     box.innerHTML = `
       <div class="calc-overview-intro">
         <p>${isHe
           ? 'בחרו אחד מ-10 מודולי החישוב ההנדסיים לפי מערכת. כל מודול נפתח בנפרד עם שדות קלט, ערכות דוגמה (Presets), תוצאה מיידית וחישוב עלות שנתית.'
           : 'Выберите один из 10 расчётных модулей по нужной системе. По нажатию открывается выбранный модуль с полями ввода, готовыми примерами и расчётом годовой стоимости.'}</p>
       </div>
+      ${calcLegendHtml}
       <div class="calc-overview-groups">
         ${CALC_OVERVIEW_GROUPS.map((grp) => {
           const gMeta = getSystemVisualMeta(grp.sysId);
@@ -4402,17 +4507,16 @@
     let top = rect.bottom + 8;
     if (top + popH > vh - 12 && rect.top - popH - 8 >= 12) {
       top = rect.top - popH - 8;
-    } else if (top + popH > vh - 12) {
-      top = Math.max(12, vh - popH - 12);
     }
+    const maxTop = Math.max(12, vh - popH - 12);
+    if (top > maxTop) top = maxTop;
+    if (top < 12) top = 12;
 
     let left = AppState.lang === 'he' ? (rect.right - popW) : rect.left;
-    if (left + popW > vw - 12) {
-      left = vw - popW - 12;
-    }
-    if (left < 12) {
-      left = 12;
-    }
+    const maxLeft = Math.max(12, vw - popW - 12);
+    if (left > maxLeft) left = maxLeft;
+    if (left < 12) left = 12;
+
     popEl.style.top = `${Math.round(top)}px`;
     popEl.style.left = `${Math.round(left)}px`;
     popEl.style.right = 'auto';
@@ -4641,10 +4745,14 @@
 
     const liveEl = document.getElementById('search-live-region');
     if (liveEl) {
-      const isHe = AppState.lang === 'he';
-      liveEl.textContent = isHe
-        ? `נמצאו ${matchCount} התאמות`
-        : `Найдено ${matchCount} совпадений`;
+      const lang = AppState.lang === 'he' ? 'he' : 'ru';
+      if (root.TERM_ALIASES && typeof root.TERM_ALIASES.formatSearchMatches === 'function') {
+        liveEl.textContent = root.TERM_ALIASES.formatSearchMatches(matchCount, lang);
+      } else {
+        liveEl.textContent = lang === 'he'
+          ? (matchCount === 1 ? 'נמצאה התאמה אחת' : `נמצאו ${matchCount} התאמות`)
+          : `Найдено ${matchCount} совпадений`;
+      }
     }
 
     activeSearchHighlightTimer = setTimeout(() => {
@@ -4654,6 +4762,15 @@
     return matchCount;
   }
   root.highlightSearchTarget = highlightSearchTarget;
+  root.formatSearchMatches = function (n, lang) {
+    const l = (lang || AppState.lang) === 'he' ? 'he' : 'ru';
+    if (root.TERM_ALIASES && typeof root.TERM_ALIASES.formatSearchMatches === 'function') {
+      return root.TERM_ALIASES.formatSearchMatches(n, l);
+    }
+    return l === 'he'
+      ? (n === 1 ? 'נמצאה התאמה אחת' : `נמצאו ${n} התאמות`)
+      : `Найдено ${n} совпадений`;
+  };
 
   function escapeSearchHtml(s) {
     return String(s || '')
@@ -5378,11 +5495,18 @@
       });
     }
 
-    // Delegated click handler for a.term-link and #term-popover (v15.5 Task 2.3c)
+    // Delegated click handler for a.term-link and #term-popover (v15.5 Task 2.3c + v15.6 Task 2.0h)
     document.addEventListener('click', (e) => {
       const termLinkEl = e.target && typeof e.target.closest === 'function' ? e.target.closest('a.term-link') : null;
       if (termLinkEl) {
         e.preventDefault();
+        if (e.detail === 0 && document.activeElement === termLinkEl && typeof termLinkEl.getBoundingClientRect === 'function') {
+          const r = termLinkEl.getBoundingClientRect();
+          const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+          if (r.top < 12 || r.bottom > vh - 12) {
+            termLinkEl.scrollIntoView({ block: 'center', behavior: 'instant' });
+          }
+        }
         const termId = termLinkEl.getAttribute('data-term-id') || (termLinkEl.getAttribute('href') || '').replace(/^#/, '');
         root.openTermPopover(termId, termLinkEl);
         return;
@@ -5413,6 +5537,22 @@
     root.setAppLanguage(AppState.lang);
     initGlobalSearch();
     document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const termLinkEl = e.target && typeof e.target.closest === 'function' ? e.target.closest('a.term-link') : null;
+        if (termLinkEl) {
+          e.preventDefault();
+          if (typeof termLinkEl.getBoundingClientRect === 'function') {
+            const r = termLinkEl.getBoundingClientRect();
+            const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+            if (r.top < 12 || r.bottom > vh - 12) {
+              termLinkEl.scrollIntoView({ block: 'center', behavior: 'instant' });
+            }
+          }
+          const termId = termLinkEl.getAttribute('data-term-id') || (termLinkEl.getAttribute('href') || '').replace(/^#/, '');
+          root.openTermPopover(termId, termLinkEl);
+          return;
+        }
+      }
       if (e.key === 'Escape') {
         const popEl = document.getElementById('term-popover');
         if (popEl && !popEl.hasAttribute('hidden')) {
@@ -5441,19 +5581,19 @@
       }
     });
 
-    // v14 Stage 2.3 + v15.2 (п. 2.4d): Expand all self-check answers and depth details automatically in print mode
+    // v14 Stage 2.3 + v15.2 (п. 2.4d) + v15.6 (п. 2.2a): Expand all self-check answers, depth details, and trust legends automatically in print mode
     if (typeof window !== 'undefined' && window.matchMedia) {
       const printMql = window.matchMedia('print');
       const handlePrintMediaChange = (e) => {
         if (e.matches) {
-          document.querySelectorAll('details.selfcheck-answer, details.guide-depth-details').forEach((d) => {
+          document.querySelectorAll('details.selfcheck-answer, details.guide-depth-details, details.trust-legend').forEach((d) => {
             if (!d.open) {
               d.setAttribute('data-opened-for-print', 'true');
               d.open = true;
             }
           });
         } else {
-          document.querySelectorAll('details.selfcheck-answer[data-opened-for-print="true"], details.guide-depth-details[data-opened-for-print="true"]').forEach((d) => {
+          document.querySelectorAll('details.selfcheck-answer[data-opened-for-print="true"], details.guide-depth-details[data-opened-for-print="true"], details.trust-legend[data-opened-for-print="true"]').forEach((d) => {
             d.removeAttribute('data-opened-for-print');
             d.open = false;
           });
