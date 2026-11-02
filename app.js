@@ -5,8 +5,8 @@
   'use strict';
 
   const APP_VERSION = root.APP_VERSION = {
-    edition: 'v15.8',
-    date: '2026-10-31',
+    edition: 'v15.9',
+    date: '2026-11-02',
     core: 'v10.0'
   };
 
@@ -63,7 +63,40 @@
     }
   }
 
+  function getLangFromUrl() {
+    try {
+      if (typeof window === 'undefined' || !window.location || typeof URLSearchParams === 'undefined') {
+        return null;
+      }
+      const params = new URLSearchParams(window.location.search || '');
+      if (!params.has('lang')) return null;
+      const raw = params.get('lang');
+      if (typeof raw !== 'string') return null;
+      const val = raw.trim().toLowerCase();
+      if (val === 'ru' || val === 'he') return val;
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
   function getInitialLang() {
+    const fromUrl = getLangFromUrl();
+    if (fromUrl) {
+      if (storageAvailable) {
+        try {
+          localStorage.setItem(STORAGE_KEY_LANG, fromUrl);
+        } catch (_) {
+          storageAvailable = false;
+        }
+      }
+      try {
+        if (typeof window !== 'undefined' && window.history && typeof window.history.replaceState === 'function' && window.location) {
+          window.history.replaceState(window.history.state, '', (window.location.pathname || '') + (window.location.hash || ''));
+        }
+      } catch (_) {}
+      return fromUrl;
+    }
     try {
       if (!storageAvailable) return 'ru';
       return localStorage.getItem(STORAGE_KEY_LANG) || 'ru';
