@@ -2475,6 +2475,57 @@
     border-color: var(--brand-primary);
   }
 
+  /* v15.10 «Путь назад»: ссылка на работы Вагуса — раздел «Ещё» (#tools-back-link) и подвал (#footer-back-link).
+     Кнопка не ниже 48 px везде; на телефоне (≤ 768px) — во всю ширину. */
+  .back-to-studio-row {
+    display: flex;
+    margin-block-end: 1rem;
+  }
+
+  .back-to-studio-btn,
+  .back-to-studio-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    box-sizing: border-box;
+    min-block-size: 48px;
+    min-inline-size: 48px;
+    padding: 0.55rem 1.1rem;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--brand-primary);
+    background: var(--bg-surface);
+    color: var(--brand-primary);
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: background-color 0.12s ease, color 0.12s ease;
+  }
+
+  .back-to-studio-btn:hover,
+  .back-to-studio-link:hover {
+    background: var(--brand-primary);
+    color: #ffffff;
+  }
+
+  .site-footer .site-footer-text {
+    display: block;
+  }
+
+  .site-footer .back-to-studio-link {
+    margin-block-start: 0.75rem;
+  }
+
+  @media (max-width: 768px) {
+    .back-to-studio-btn,
+    .site-footer .back-to-studio-link {
+      inline-size: 100%;
+      min-block-size: 52px;
+      font-size: 1rem;
+    }
+  }
+
   /* v13 Stage 3 & Stage 7: Home Entrance (#home) & First-Visit Banner */
   .home-v13-wrapper {
     max-inline-size: 1200px;

@@ -5,7 +5,7 @@
   'use strict';
 
   const APP_VERSION = root.APP_VERSION = {
-    edition: 'v15.9',
+    edition: 'v15.10',
     date: '2026-11-02',
     core: 'v10.0'
   };
@@ -3919,9 +3919,11 @@
     setTxt('tab-btn-calc-5',
       '5. Пар (5А: Перевод давления • 5Б: Расход пара по нагрузке)',
       '5. קיטור (5א: המרת לחץ • 5ב: ספיקת קיטור לפי עומס)');
-    setTxt('site-footer-el',
+    setTxt('site-footer-text-el',
       `Инженерная библиотека пищевого предприятия (RU / HE, редакция ${APP_VERSION.edition} (${APP_VERSION.date}), расчётное ядро ${APP_VERSION.core}) • Все утверждения верифицированы по первоисточникам S01–S23.`,
       `ספריית ההנדסה למפעל מזון (עברית / RU, מהדורה ${APP_VERSION.edition} (${APP_VERSION.date}), ליבת חישוב ${APP_VERSION.core}) • כל הנתונים והנוסחאות מאומתים מול המקורות הראשוניים S01–S23.`);
+    // v15.10 «Путь назад»: ссылки на работы Вагуса (раздел «Ещё» и подвал) — адрес и текст по текущему языку
+    syncStudioBackLinks();
     const gSearch = document.getElementById('global-search');
     if (gSearch) {
       gSearch.placeholder = isHe
@@ -4080,6 +4082,22 @@
       if (btnEl) btnEl.setAttribute('aria-expanded', 'false');
     }
   };
+
+  // v15.10 «Путь назад»: две ссылки data-studio-back-link (раздел «Ещё» #tools-back-link и подвал #footer-back-link).
+  // Иврит -> https://studio-vagus.com/he/works/, русский -> https://studio-vagus.com/ru/works/; текст «← Работы Вагуса» / «→ העבודות של וגוס».
+  function syncStudioBackLinks() {
+    const isHe = AppState.lang === 'he';
+    const href = isHe ? 'https://studio-vagus.com/he/works/' : 'https://studio-vagus.com/ru/works/';
+    const label = isHe ? '→ העבודות של וגוס' : '← Работы Вагуса';
+    const title = isHe ? 'חזרה לאתר האולפן של וגוס' : 'Вернуться на сайт студии Вагуса';
+    document.querySelectorAll('a[data-studio-back-link]').forEach((a) => {
+      a.setAttribute('href', href);
+      a.setAttribute('title', title);
+      a.setAttribute('hreflang', isHe ? 'he' : 'ru');
+      a.textContent = label;
+    });
+  }
+  root.syncStudioBackLinks = syncStudioBackLinks;
 
   function renderToolsSubnavAndSettingsAndAbout() {
     const lang = AppState.lang;

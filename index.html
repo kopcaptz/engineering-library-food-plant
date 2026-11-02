@@ -21,7 +21,7 @@
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2.5z"></path><path d="M8 7h7M8 11h5"></path></svg>
             <span id="site-title-el">Инженерная библиотека завода</span>
           </a>
-          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v15.9</span>
+          <span class="badge-sub" id="site-badge-el" style="display:none;">RU / HE • v15.10</span>
         </h1>
         <p class="site-subtitle" id="site-subtitle-el" style="display:none;">Пар • Конденсат • Чиллеры • Сжатый воздух • Обратный осмос (RO)</p>
       </div>
@@ -62,7 +62,7 @@
 
   <div id="offline-bar" class="offline-bar no-print" role="status" aria-live="polite" hidden>
     <div class="offline-bar-inner">
-      <span id="offline-bar-text" class="offline-bar-text">Нет связи с сетью — открыта сохранённая копия сайта (редакция v15.9). Расчёты, учебник, схемы и тренажёр работают; внешние ссылки на источники недоступны.</span>
+      <span id="offline-bar-text" class="offline-bar-text">Нет связи с сетью — открыта сохранённая копия сайта (редакция v15.10). Расчёты, учебник, схемы и тренажёр работают; внешние ссылки на источники недоступны.</span>
     </div>
   </div>
 
@@ -865,6 +865,10 @@
     <!-- 6. ИНСТРУМЕНТЫ СМЕНЫ (VIEW: tools) -->
     <div id="view-tools" class="app-view" data-view="tools">
       <div id="tools-subnav-bar" class="tools-subnav-bar no-print"></div>
+      <!-- v15.10 «ПУТЬ НАЗАД»: ССЫЛКА НА САЙТ СТУДИИ (АДРЕС И ТЕКСТ ПО ТЕКУЩЕМУ ЯЗЫКУ, app.js syncStudioBackLinks) -->
+      <div class="back-to-studio-row no-print" id="tools-back-row">
+        <a href="https://studio-vagus.com/ru/works/" class="back-to-studio-btn" id="tools-back-link" rel="noopener" data-studio-back-link="tools">← Работы Вагуса</a>
+      </div>
 
       <!-- 4Б. ОБХОД ОБОРУДОВАНИЯ: КОНДЕНСАТООТВОДЧИКИ И УТЕЧКИ ВОЗДУХА (A4) -->
       <section class="section-card searchable-block tool-subview active-tool-subview" id="sec-survey" data-tool-id="sec-survey" data-keywords="обход конденсатоотводчики утечки воздуха סיור מלכודות קיטור דליפות אוויר a4">
@@ -925,7 +929,8 @@
   <div id="search-live-region" class="sr-only no-print" aria-live="polite" aria-atomic="true"></div>
 
   <footer class="site-footer no-print" id="site-footer-el">
-    Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.9 (2026-11-02), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.
+    <span class="site-footer-text" id="site-footer-text-el">Инженерная библиотека пищевого предприятия (RU / HE, редакция v15.10 (2026-11-02), расчётное ядро v10.0) • Все утверждения верифицированы по первоисточникам S01–S23.</span>
+    <a href="https://studio-vagus.com/ru/works/" class="back-to-studio-link" id="footer-back-link" rel="noopener" data-studio-back-link="footer">← Работы Вагуса</a>
   </footer>
 
   <!-- МОБИЛЬНАЯ НИЖНЯЯ НАВИГАЦИЯ (< 768px: 5 КНОПОК С ИКОНКОЙ И КОРОТКОЙ ПОДПИСЬЮ) -->

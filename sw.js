@@ -1,9 +1,9 @@
 // 06_web_project/sw.js
-// Generated deterministically by scripts/build_sw.mjs (Edition v15.9)
+// Generated deterministically by scripts/build_sw.mjs (Edition v15.10)
 
 'use strict';
 
-const BUILD_ID = 'v15.9-75d01213';
+const BUILD_ID = 'v15.10-726cbb6b';
 const CACHE_NAME = 'eng-lib-' + BUILD_ID;
 const PRECACHE = [
   "./",
